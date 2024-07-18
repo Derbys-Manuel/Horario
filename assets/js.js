@@ -171,16 +171,6 @@ $(document).ready(function() {
         resetForm(); // Restablecer el formulario al abrir el modal para añadir
         $('#staticBackdrop').modal('show');
     });
-
-    //MOSTRAR MODAL DE CALENDARIO
-
-    $(document).on('click', '.calender', function() {
-        $('#calendario').modal('show');
-    });
-
-    $(document).on('click', '#rojo', function() {
-        $('#calendario2').modal('show');
-    });
     
     // *NUEVO* Manejar los checkboxes AM y PM
     $(document).on('change', '#inlineCheckbox1', function() {
@@ -195,6 +185,35 @@ $(document).ready(function() {
         }
     })
     
+    //MARCAR HORARIO
 
+    $(document).on('click', '.mañana', function(e) {
+        $(this).toggle(500,function(){
+            $(this).html(`<svg class="text-success" bg-secondary xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-calendar-check-fill" viewBox="0 0 16 16">
+                <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-5.146-5.146-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+              </svg>`);
+        })
+        e.preventDefault();
+ 
+    })
+    $(document).on('click', '.tarde', function() {
+        $(this).html(`<svg class="text-success" bg-secondary xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-calendar-check-fill" viewBox="0 0 16 16">
+  <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2m-5.146-5.146-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+</svg>`);
+    })
 
+    // MOSTRAR MODAL DE CALENDARIO
+
+    $(document).on('click', '.calender', function() {
+        if ($('#inlineCheckbox1').is(':checked')) {
+            $('#calendario2').modal('hide'); // Asegurarse de que el otro modal esté cerrado
+            $('#calendario').modal('show'); // Mostrar modal AM
+        } else if ($('#inlineCheckbox2').is(':checked')) {
+            $('#calendario').modal('hide'); // Asegurarse de que el otro modal esté cerrado
+            $('#calendario2').modal('show'); // Mostrar modal PM
+        } else {
+            alert("Seleccione AM o PM"); // Mostrar alerta si no se seleccionó AM o PM
+            return false; // Detener cualquier acción posterior
+        }
+    });
 });

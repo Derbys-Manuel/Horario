@@ -98,7 +98,6 @@
                         </table>
                     </div>
                 </div>
-                <butttom class="btn btn-primary" id="rojo">aaaa</butttom>
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
                     <button class="btn btn-secondary" onclick="history.back()">Volver</button>

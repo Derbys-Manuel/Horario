@@ -24,13 +24,13 @@
                     <tbody>
                         <tr id="h8">
                             <th scope="row" class="p-3">8:00 - 8:50</th>
-                            <td id="lu8" rowspan="2"></td>
-                            <td id="ma8" rowspan="2"></td>
-                            <td id="mi8" rowspan="2"></td>
-                            <td id="ju8" rowspan="2"></td>
-                            <td id="vi8" rowspan="2"></td>
-                            <td id="sa8" rowspan="2"></td>
-                            <td id="do8" rowspan="2"></td>
+                            <td id="lu8" class="mañana menu" rowspan="2"></td>
+                            <td id="ma8" class="mañana menu" rowspan="2"></td>
+                            <td id="mi8" class="mañana menu" rowspan="2"></td>
+                            <td id="ju8" class="mañana menu" rowspan="2"></td>
+                            <td id="vi8" class="mañana menu" rowspan="2"></td>
+                            <td id="sa8" class="mañana menu" rowspan="2"></td>
+                            <td id="do8" class="mañana menu" rowspan="2"></td>
                         </tr>
                         <tr id="h9">
                             <th scope="row" class="p-3">8:50 - 9:40</th>
@@ -41,23 +41,23 @@
                         </tr>
                         <tr id="h11">
                             <th scope="row" class="p-3">10:00 - 10:50</th>
-                            <td id="lu11" rowspan=""></td>
-                            <td id="ma11" rowspan=""></td>
-                            <td id="mi11" rowspan=""></td>
-                            <td id="ju11" rowspan=""></td>
-                            <td id="vi11" rowspan=""></td>
-                            <td id="sa11" rowspan=""></td>
-                            <td id="do11" rowspan=""></td>
+                            <td id="lu11" class="mañana menu" rowspan=""></td>
+                            <td id="ma11" class="mañana menu" rowspan=""></td>
+                            <td id="mi11" class="mañana menu" rowspan=""></td>
+                            <td id="ju11" class="mañana menu" rowspan=""></td>
+                            <td id="vi11" class="mañana menu" rowspan=""></td>
+                            <td id="sa11" class="mañana menu" rowspan=""></td>
+                            <td id="do11" class="mañana menu" rowspan=""></td>
                         </tr>
                         <tr id="h12">
                             <th scope="row" class="p-3">10:50 - 11:40</th>
-                            <td id="lu12" rowspan=""></td>
-                            <td id="ma12" rowspan=""></td>
-                            <td id="mi12" rowspan=""></td>
-                            <td id="ju12" rowspan=""></td>
-                            <td id="vi12" rowspan=""></td>
-                            <td id="sa12" rowspan=""></td>
-                            <td id="do12" rowspan=""></td>
+                            <td id="lu12" class="mañana menu" rowspan=""></td>
+                            <td id="ma12" class="mañana menu" rowspan=""></td>
+                            <td id="mi12" class="mañana menu" rowspan=""></td>
+                            <td id="ju12" class="mañana menu" rowspan=""></td>
+                            <td id="vi12" class="mañana menu" rowspan=""></td>
+                            <td id="sa12" class="mañana menu" rowspan=""></td>
+                            <td id="do12" class="mañana menu" rowspan=""></td>
                         </tr>
                         <tr id="h13">
                             <th scope="row" class="p-3">11:40 - 12:00</th>
@@ -65,13 +65,13 @@
                         </tr>
                         <tr id="h14">
                             <th scope="row" class="p-3">12:00 - 12:50</th>
-                            <td id="lu14" rowspan="2"></td>
-                            <td id="ma14" rowspan="2"></td>
-                            <td id="mi14" rowspan="2"></td>
-                            <td id="ju14" rowspan="2"></td>
-                            <td id="vi14" rowspan="2"></td>
-                            <td id="sa14" rowspan="2"></td>
-                            <td id="do14" rowspan="2"></td>
+                            <td id="lu14" class="mañana menu" rowspan="2"></td>
+                            <td id="ma14" class="mañana menu" rowspan="2"></td>
+                            <td id="mi14" class="mañana menu" rowspan="2"></td>
+                            <td id="ju14" class="mañana menu" rowspan="2"></td>
+                            <td id="vi14" class="mañana menu" rowspan="2"></td>
+                            <td id="sa14" class="mañana menu" rowspan="2"></td>
+                            <td id="do14" class="mañana menu" rowspan="2"></td>
                         </tr >
                         <tr id="h15">
                             <th scope="row" class="p-3">12:50 - 01:30</th>

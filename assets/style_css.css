@@ -225,6 +225,13 @@ body {
     color: #4CAF50; /* Color del texto */
 }
 
+.menu:hover{ 
+    /* EFECTO DE AGRANDAR ICONO */
+    transform: scale(1.1);
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
 .modal-body input,
 .modal-body select {
     background-color: #333; /* Fondo oscuro */
