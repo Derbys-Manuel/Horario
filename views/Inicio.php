@@ -23,9 +23,11 @@
     <!-- Incluir el modal desde un archivo separado -->
     <?php include "../views/modal.php" ?>
     <?php include "../views/modal_h.php" ?>
+    <?php include "../views/modal_h2.php" ?>
+    
     
     <div class="container mt-5">
-        <h1 id="titulo">Horarios de la academia Elite</h1>
+        <h1 id="titulo">Horario Inteligente</h1>
         
         <!-- Barra de herramientas con iconos -->
         <div class="toolbar">
@@ -51,7 +53,7 @@
                 </div>
             </div>
         </div>
-        
+       
         <!-- Opciones de filtro -->
         <div class="row justify-content-center mt-5">
             <div class="col-12">
@@ -67,8 +69,8 @@
                                 <label class="form-check-label" for="inlineRadio2">2</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" disabled>
-                                <label class="form-check-label" for="inlineRadio3">3 (deshabilitado)</label>
+                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" >
+                                <label class="form-check-label" for="inlineRadio3">3 </label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
@@ -97,7 +99,6 @@
                         </table>
                     </div>
                 </div>
-                
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
                     <button class="btn btn-secondary" onclick="history.back()">Volver</button>
