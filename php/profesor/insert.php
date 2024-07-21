@@ -1,5 +1,5 @@
 <?php
-include "../database/conexion.php"; // Asegúrate de que la ruta a conexion.php sea correcta
+include "../../database/conexion.php"; // Asegúrate de que la ruta a conexion.php sea correcta
 
 $nombre_p = $_POST['nombre'];
 $curso = $_POST['curso'];

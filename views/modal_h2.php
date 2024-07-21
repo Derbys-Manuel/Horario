@@ -3,7 +3,7 @@
   <div class="modal-dialog ">
     <div class="modal-content">
       <div class="modal-header ">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">HORARIO</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">HORARIO</h1><span id="nombre-horario-pm"></span></h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -25,13 +25,13 @@
                     <tbody>
                         <tr id="h17">
                             <th scope="row" class="p-3">5:00 - 5:50</th>
-                            <td id="lu17" class="tarde menu"  rowspan="2"></td>
-                            <td id="ma17" class="tarde menu" rowspan="2"></td>
-                            <td id="mi17" class="tarde menu" rowspan="2"></td>
-                            <td id="ju17" class="tarde menu" rowspan="2"></td>
-                            <td id="vi17" class="tarde menu" rowspan="2"></td>
-                            <td id="sa17" class="tarde menu" rowspan="2"></td>
-                            <td id="do17" class="tarde menu" rowspan="2"></td>
+                            <td id="lu17-PM" value="05:00-06:40" class="tarde menu"  rowspan="2"></td>
+                            <td id="ma17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                            <td id="mi17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                            <td id="ju17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                            <td id="vi17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                            <td id="sa17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                            <td id="do17-PM" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
                         </tr>
                         <tr id="h18">
                             <th scope="row" class="p-3">5:50 - 6:40</th>
@@ -42,13 +42,13 @@
                         </tr>
                         <tr id="h20">
                             <th scope="row" class="p-3">7:00 - 7:50</th>
-                            <td id="lu20" class="tarde menu" rowspan="2"></td>
-                            <td id="ma20" class="tarde menu" rowspan="2"></td>
-                            <td id="mi20" class="tarde menu" rowspan="2"></td>
-                            <td id="ju20" class="tarde menu" rowspan="2"></td>
-                            <td id="vi20" class="tarde menu" rowspan="2"></td>
-                            <td id="sa20" class="tarde menu" rowspan="2"></td>
-                            <td id="do20" class="tarde menu" rowspan="2"></td>
+                            <td id="lu20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="ma20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="mi20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="ju20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="vi20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="sa20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                            <td id="do20-PM" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
                         </tr>
                         <tr id="h12">
                             <th scope="row" class="p-3">7:50 - 8:40</th>
@@ -62,7 +62,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="guardar_h">Guardar</button>
       </div>
     </div>
   </div>

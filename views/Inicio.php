@@ -26,7 +26,7 @@
     <?php include "../views/modal_h2.php" ?>
     
     <div class="container mt-5">
-        <h1 id="titulo">Horarios de la academia Elite</h1>
+        <h1 id="titulo">Horario Inteligente</h1>
         
         <!-- Barra de herramientas con iconos -->
         <div class="toolbar">
@@ -50,6 +50,11 @@
                     <i class="bi bi-x-circle"></i>
                     <span class="tooltiptext">Cancelar</span>
                 </div>
+                <!-- Nuevo botón Enviar a -->
+                <div class="btn-icon" id="btnEnviar">
+                    <i class="bi bi-envelope"></i>
+                    <span class="tooltiptext">Enviar a</span>
+                </div>
             </div>
         </div>
        
@@ -59,18 +64,6 @@
                 <div class="card">
                     <div class="row">
                         <div class="col-12 d-flex mt-4 ms-4">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
-                                <label class="form-check-label" for="inlineRadio1">1</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
-                                <label class="form-check-label" for="inlineRadio2">2</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3" >
-                                <label class="form-check-label" for="inlineRadio3">3 </label>
-                            </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
                                 <label class="form-check-label" for="inlineCheckbox1">AM</label>
@@ -101,6 +94,30 @@
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
                     <button class="btn btn-secondary" onclick="history.back()">Volver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para enviar a horario -->
+    <div class="modal fade" id="enviarHorarioModal" tabindex="-1" aria-labelledby="enviarHorarioLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="enviarHorarioLabel">Enviar a Horario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="enviarHorarioForm">
+                        <div class="mb-3">
+                            <label for="selectHorario" class="form-label">Seleccionar Horario</label>
+                            <select id="selectHorario" class="form-select" required>
+                                <!-- Opciones cargadas dinámicamente -->
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </form>
                 </div>
             </div>
         </div>

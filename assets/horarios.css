@@ -1,0 +1,28 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 50px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.list-group-item {
+    font-size: 1.2rem;
+}
+
+.btn {
+    font-size: 1.1rem;
+}
+
+.modal-header, .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+}

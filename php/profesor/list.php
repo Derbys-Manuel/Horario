@@ -1,5 +1,5 @@
 <?php
-include ("../database/conexion.php");
+include ("../../database/conexion.php");
 $query = "select * from profesor";
 $result = $conn->query($query);
 if(!$result){

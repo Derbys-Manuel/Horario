@@ -57,6 +57,7 @@ img:hover {
 .botones-container {
     display: flex; /* Flexbox para alinear botones */
     justify-content: center; /* Centrar botones */
+    flex-wrap: wrap; /* Permitir que los botones se envuelvan en varias líneas si es necesario */
 }
 
 .boton-wrapper {
@@ -125,6 +126,30 @@ img:hover {
     }
 
     .botones-container {
-        margin-top: 40px; /* Aumento de la separación entre la imagen y los botones en pantallas pequeñas */
+        flex-direction: column; /* Botones en columna para pantallas pequeñas */
+        align-items: center; /* Centrar botones */
+    }
+
+    .boton-wrapper {
+        width: 100%; /* Ancho del 100% para cada botón */
+        display: flex; /* Flexbox para alinear botones */
+        justify-content: center; /* Centrar botones */
+        margin-bottom: 10px; /* Espaciado entre botones */
+    }
+
+    .boton-wrapper:nth-child(2) {
+        order: 1; /* Segundo botón en el orden */
+    }
+
+    .boton-wrapper:nth-child(3) {
+        order: 2; /* Tercer botón en el orden */
+    }
+
+    .boton-wrapper:nth-child(1) {
+        order: 3; /* Primer botón en el orden */
+    }
+
+    .button {
+        width: 60%; /* Ancho del 60% para cada botón */
     }
 }
