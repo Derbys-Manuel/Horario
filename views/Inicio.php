@@ -22,8 +22,6 @@
 <body>
     <!-- Incluir el modal desde un archivo separado -->
     <?php include "../views/modal.php" ?>
-    <?php include "../views/modal_h.php" ?>
-    <?php include "../views/modal_h2.php" ?>
     
     <div class="container mt-5">
         <h1 id="titulo">Horario Inteligente</h1>
@@ -35,7 +33,7 @@
             </div>
             <div id="toolbarContent" class="toolbar-content">
                 <div class="btn-icon" id="btn2">
-                    <i class="bi bi-plus-circle "></i>
+                    <i class="bi bi-plus-circle"></i>
                     <span class="tooltiptext">Añadir</span>
                 </div>
                 <div class="btn-icon" id="btnEdit">
@@ -45,15 +43,16 @@
                 <div class="btn-icon" id="btn3">
                     <i class="bi bi-trash"></i>
                     <span class="tooltiptext">Eliminar</span>
-                </div>
-                <div class="btn-icon" id="btnCancel" style="display:none;">
-                    <i class="bi bi-x-circle"></i>
-                    <span class="tooltiptext">Cancelar</span>
-                </div>
+                </div>               
                 <!-- Nuevo botón Enviar a -->
                 <div class="btn-icon" id="btnEnviar">
                     <i class="bi bi-envelope"></i>
                     <span class="tooltiptext">Enviar a</span>
+                </div>
+                <!-- Botón Cancelar oculto por defecto -->
+                <div class="btn-icon" id="btnCancel" style="display:none;">
+                    <i class="bi bi-x-circle"></i>
+                    <span class="tooltiptext">Cancelar</span>
                 </div>
             </div>
         </div>
@@ -63,21 +62,24 @@
             <div class="col-12">
                 <div class="card">
                     <div class="row">
-                        <div class="col-12 d-flex mt-4 ms-4">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                <label class="form-check-label" for="inlineCheckbox1">AM</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-                                <label class="form-check-label" for="inlineCheckbox2">PM</label>
-                            </div>
+                    <div class="col-12 d-flex justify-content-center mt-4 ms-4">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                            <label class="form-check-label" for="inlineCheckbox1">AM</label>
                         </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                            <label class="form-check-label" for="inlineCheckbox2">PM</label>
+                        </div>
+                        <!-- Agregar un span para mostrar el horario seleccionado -->
+                        <span id="selectedHorarioText" class="ms-3" style="color: #4CAF50; font-weight: bold;"></span>
+                        </div>
+
                     </div>
 
                     <!-- Tabla para mostrar los registros -->
                     <div class="card-body">
-                        <table class="table table-bordered text-center">
+                        <table id="example" class="table table-bordered text-center">
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
@@ -118,6 +120,43 @@
                         <button type="submit" class="btn btn-primary">Aceptar</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de alerta -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Alerta</h5>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                    <!-- Mensaje de alerta se colocará aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                </div>
+                <div class="modal-body" id="confirmDeleteModalBody">
+                    ¿Estás seguro de que quieres eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn" id="confirmDeleteBtn" style="background-color: #4CAF50; color: white;">Eliminar</button>
+
+
                 </div>
             </div>
         </div>

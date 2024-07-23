@@ -1,28 +1,214 @@
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding-top: 50px;
-    text-align: center;
-}
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Aeromatic+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cambria&display=swap');
 
-h1 {
+/* Estilo para el título */
+#titulo {
+    font-family: 'Aeromatic SC', sans-serif;
+    font-size: 2.5em;
     margin-bottom: 20px;
+    color: #FFD700;
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.5), 
+        0 0 3px #4CAF50, 
+        0 0 6px #4CAF50;
+    text-align: center;
+    margin-top: 20px;
 }
 
-.list-group-item {
-    font-size: 1.2rem;
+/* Estilo para el texto de la tabla */
+.table tbody tr td {
+    font-family: 'Cambria', serif;
+    border: 1px solid #4CAF50;
 }
 
-.btn {
-    font-size: 1.1rem;
+/* Ajustar el tamaño del cuadro */
+.container {
+    max-width: 900px;
 }
 
-.modal-header, .modal-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Fondo negro y texto blanco */
+body {
+    background-color: black;
+    color: white;
+}
+
+/* Estilos para las tablas */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f0f0f0;
+    color: #000000;
+    margin-bottom: 10px;
+    border: 2px solid yellow;
+}
+
+/* Estilo para botones dentro de las celdas */
+.table .btn {
+    padding: 6px 12px;
+}
+
+/* Estilo para las celdas del encabezado */
+.table thead th {
+    background-color: #4CAF50;
+    color: #fff;
+    border: 1px solid #4CAF50;
+}
+
+/* Estilo para las tarjetas */
+.card {
+    border: none;
+    background-color: #333;
+    color: #f0f0f0;
+    box-shadow: 
+        0 0 5px rgba(255, 215, 0, 0.8),
+        0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Estilo para el borde de la tabla */
+.table-bordered {
+    border: 2px solid #4CAF50;
+}
+
+/* Estilo para el botón Volver */
+.btn-secondary {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+}
+
+/* Estilo para el botón Volver al pasar el ratón */
+.btn-secondary:hover {
+    background-color: #388E3C;
+    border-color: #388E3C;
+}
+
+/* Estilo para iconos de herramientas */
+.tools-icon {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.tools-dropdown {
+    display: none;
+    position: absolute;
+    background-color: transparent;
+    z-index: 1;
+    padding: 5px;
+}
+
+.tools-dropdown .btn-icon {
+    display: inline-block;
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.tools-dropdown i {
+    color: white;
+}
+
+.btn-icon .tooltiptext {
+    visibility: hidden;
+    width: 80px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -40px;
+}
+
+.btn-icon .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4CAF50 transparent transparent transparent;
+}
+
+.btn-icon:hover .tooltiptext {
+    visibility: visible;
+}
+
+
+
+.btn-primary {
+    background-color: #4CAF50;
+    border: none;
+}
+
+/* Estilo para el modal */
+.modal-content {
+    position: relative;
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    border: 1px solid #4CAF50;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 1px solid #4CAF50;
 }
 
 .modal-title {
-    font-size: 1.5rem;
+    color: #4CAF50;
+}
+
+.menu:hover { 
+    transform: scale(1.1);
+    transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.modal-body input,
+.modal-body select {
+    background-color: #333;
+    color: #f0f0f0;
+    border: 1px solid #4CAF50;
+    border-radius: 5px;
+}
+
+.modal-body input:focus,
+.modal-body select:focus {
+    background-color: #333;
+    color: #f0f0f0;
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.modal-footer {
+    border-top: 1px solid #4CAF50;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #555;
+    border: none;
+    color: #f0f0f0;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #666;
+}
+
+.modal-footer .btn-primary {
+    background-color: #4CAF50;
+    border: none;
+    color: #1a1a1a;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #45a049;
 }

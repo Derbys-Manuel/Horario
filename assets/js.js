@@ -1,10 +1,18 @@
 $(document).ready(function() {
     let selectedCourse = "";
     let selectedTeacher = "";
-    let selectedHorarioText = "";
-    let selectedHorarioId = "";
+    let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
+    let selectedHorarioId = localStorage.getItem('selectedHorarioId') || ""; // Obtener el ID del horario del localStorage
     let selectedPeriod = "";
     let selectedId = "";
+    let selectedIdRegistro = "";
+    let deleteId = null; // Variable para almacenar el ID del elemento a eliminar
+
+    // Mostrar el horario almacenado al cargar la página
+    if (selectedHorarioText) {
+        $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
+        $("#btnCancel").show(); // Mostrar el botón Cancelar si hay un horario seleccionado
+    }
 
     listar();
 
@@ -18,14 +26,21 @@ $(document).ready(function() {
         e.preventDefault();
         const data = {
             nombre: $("#nombre").val(),
-            curso: $("#curso").val()
+            curso: $("#curso").val(),
+            id_h: selectedHorarioId
+        
         };
+        const id = $("#btnUpdate").val();
+        const url = id ? "../php/profesor/editar.php" : "../php/profesor/insert.php";
+        if (id) {
+            data.id = id;
+        }
         $.ajax({
-            url: "../php/profesor/insert.php",
+            url: url,
             data: data,
             type: "POST",
             success: function(response) {
-                alert(response);
+                showAlert(response); // Reemplaza alert(response) con showAlert(response)
                 listar();
                 $('#staticBackdrop').modal('hide');
                 resetForm();
@@ -35,49 +50,70 @@ $(document).ready(function() {
 
     // Función para listar los profesores
     function listar() {
+        dato = {
+            id_h: selectedHorarioId
+        }
         $.ajax({
             url: '../php/profesor/list.php',
-            type: 'GET',
+            type: 'POST',
+            data: dato,
             success: function(r) {
                 const profesor = JSON.parse(r);
+                calculo = profesor.length;
                 let template = "";
-                profesor.forEach(element => {
-                    template += `
-                    <tr id="${element.id}">
-                        <td>${element.nombre_p}</td>
-                        <td>${element.curso}</td>
-                        <td>
-                            <button value="${element.id}" class="btn btn-primary tool-action default-action" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}">
-                                <i class="bi bi-calendar2-week"></i>
-                            </button>
-                        </td>
+                if (calculo === 0)
+                {
+                    enfoque = `
+                    <tr>
+                        <td colspan="3"> No hay profesores en este horario </td>
                     </tr>
                     `;
-                });
-                $('#lista').html(template);
-                attachEvents();
+                $('#lista').html(enfoque);          
+                }
+                else
+                {
+                    profesor.forEach(element => {
+                        template += `
+                        <tr id="${element.id}">
+                            <td>${element.nombre_p}</td>
+                            <td>${element.curso}</td>
+                            <td>
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}">
+                                    <i class="bi bi-calendar2-week"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                    $('#lista').html(template);
+                    attachEvents();
+                }
+   
             }
         });
     }
 
-    // Función para establecer el modo de edición o eliminación
+    // Función para establecer el modo de edición, eliminación o envío
     function setMode(mode) {
         resetButtons();
-        if (mode === 'editar') {
-            $("#toolsHeader").text("Editar");
-            $(".tool-action").each(function() {
-                $(this).html('<i class="bi bi-pencil"></i>');
-                $(this).removeClass("default-action").addClass("edit-action");
-            });
-        } else if (mode === 'eliminar') {
-            $("#toolsHeader").text("Eliminar");
-            $(".tool-action").each(function() {
-                $(this).html('<i class="bi bi-trash"></i>');
-                $(this).removeClass("default-action").addClass("delete-action");
-            });
+        if (mode === 'editar' || mode === 'eliminar' || mode === 'enviar') {
+            if (mode === 'editar') {
+                $("#toolsHeader").text("Editar");
+                $(".tool-action").each(function() {
+                    $(this).html('<i class="bi bi-pencil"></i>');
+                    $(this).removeClass("default-action").addClass("edit-action");
+                });
+            } else if (mode === 'eliminar') {
+                $("#toolsHeader").text("Eliminar");
+                $(".tool-action").each(function() {
+                    $(this).html('<i class="bi bi-trash"></i>');
+                    $(this).removeClass("default-action").addClass("delete-action");
+                });
+            } else if (mode === 'enviar') {
+                // No cambiamos el header ni los iconos
+            }
+            $("#btnCancel").show();
         }
-        $("#btnCancel").show();
-        $("#toolbarContent").show();
     }
 
     // Función para restablecer los botones
@@ -88,7 +124,6 @@ $(document).ready(function() {
             $(this).removeClass("edit-action delete-action").addClass("default-action");
         });
         $("#btnCancel").hide();
-        $("#toolbarContent").hide();
     }
 
     // Función para restablecer el formulario
@@ -96,8 +131,9 @@ $(document).ready(function() {
         $("#nombre").val("");
         $("#curso").val("");
         $("#btn1").show();
-        $("#btnUpdate").hide();
+        $("#btnUpdate").hide().val("");
         $("#btnCancelEdit").hide();
+        $("#staticBackdropLabel").text("Ingresar Registro"); // Restablecer el título del modal
     }
 
     // Eventos de botones para cambiar modos
@@ -109,8 +145,17 @@ $(document).ready(function() {
         setMode('editar');
     });
 
+    $(document).on('click', '#btnEnviar', function() {
+        setMode('enviar');
+    });
+
     $(document).on('click', '#btnCancel', function() {
         resetButtons();
+        localStorage.removeItem('selectedHorarioText'); // Eliminar el horario del localStorage
+        localStorage.removeItem('selectedHorarioId'); // Eliminar el ID del horario del localStorage
+        $('#selectedHorarioText').text(""); // Limpiar el texto en el HTML
+        selectedHorarioText = "";
+        selectedHorarioId = "";
     });
 
     $(document).on('click', '#btn2', function() {
@@ -140,37 +185,16 @@ $(document).ready(function() {
     function attachEvents() {
         $(document).off('click', '.tool-action');
         $(document).on('click', '.tool-action', function() {
-            if (!selectedHorarioId) {
-                alert("Seleccione destino de horario");
+            const isEditOrDelete = $(this).hasClass('edit-action') || $(this).hasClass('delete-action');
+            if (!isEditOrDelete && !selectedHorarioId) {
+                showAlert("Seleccione destino de horario"); // Reemplaza alert("Seleccione destino de horario") con showAlert("Seleccione destino de horario")
                 return;
             }
-            if ($(this).hasClass('default-action')) {
-                if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
-                    alert("Seleccione AM o PM");
-                    return false;
-                }
-                selectedCourse = $(this).data('curso');
-                selectedTeacher = $(this).data('nombre');
-                selectedId = $(this).val();
-                console.log(selectedId);
-                selectedHorarioId = $('#selectHorario').val(); // Obtener el ID del horario seleccionado
-                selectedHorarioText = $('#selectHorario option:selected').text(); // Obtener el nombre del horario seleccionado
-
-                if ($('#inlineCheckbox1').is(':checked')) {
-                    $('#calendario2').modal('hide');
-                    $('#calendario').modal('show');
-                    $('#nombre-horario-am').text(selectedHorarioText); // Actualizar el nombre del horario en el modal AM
-                } else if ($('#inlineCheckbox2').is(':checked')) {
-                    $('#calendario').modal('hide');
-                    $('#calendario2').modal('show');
-                    $('#nombre-horario-pm').text(selectedHorarioText); // Actualizar el nombre del horario en el modal PM
-                }
-                limpiarCeldas(); // Limpiar celdas antes de cargar nuevos horarios
-                cargarHorarios(); // Cargar horarios correspondientes al abrir el modal
-                $('.calendar-cell').off('click').on('click', function() {
-                    $(this).toggleClass('selected');
-                });
-            } else if ($(this).hasClass('edit-action')) {
+            if (!isEditOrDelete && !$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
+                showAlert("Seleccione AM o PM"); // Reemplaza alert("Seleccione AM o PM") con showAlert("Seleccione AM o PM")
+                return false;
+            }
+            if ($(this).hasClass('edit-action')) {
                 const id = $(this).val();
                 $.ajax({
                     url: '../php/profesor/get.php',
@@ -182,22 +206,44 @@ $(document).ready(function() {
                         $("#curso").val(data.curso);
                         $("#btn1").hide();
                         $("#btnUpdate").show().val(id);
+                        $("#staticBackdropLabel").text("Editar Registro"); // Cambiar el título del modal a "Editar Registro"
                         $("#btnCancelEdit").show();
                         $('#staticBackdrop').modal('show');
                     }
                 });
             } else if ($(this).hasClass('delete-action')) {
-                const id = $(this).val();
-                $.ajax({
-                    url: "../php/profesor/delete.php",
-                    data: { id: id },
-                    type: "POST",
-                    success: function(response) {
-                        alert(response);
-                        listar();
-                        resetButtons();
-                        resetForm();
-                    }
+                deleteId = $(this).val(); // Almacena el ID del elemento a eliminar
+                $('#confirmDeleteModal').modal('show'); // Muestra el modal de confirmación
+            } else if ($(this).hasClass('default-action')) {
+                selectedCourse = $(this).data('curso');
+                selectedTeacher = $(this).data('nombre');
+                selectedId = $(this).val();
+                selectedHorarioId = $('#selectHorario').val(); // Obtener el ID del horario seleccionado
+     
+                selectedHorarioText = $('#selectHorario option:selected').text(); // Obtener el nombre del horario seleccionado
+
+                // Actualizar el nombre del horario en la tabla principal
+                $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
+                // Guardar el nombre y el ID del horario en el localStorage
+                localStorage.setItem('selectedHorarioText', selectedHorarioText);
+                localStorage.setItem('selectedHorarioId', selectedHorarioId);
+
+                if ($('#inlineCheckbox1').is(':checked')) {
+                    $('#calendario2').modal('hide');
+                    $('#calendario').modal('show');
+                    listar_registros(); //LISTA LOS REGISTRO DE CADA PROFESOR EN EL HORARIO
+                    
+                    $('#nombre-horario-am').text(selectedHorarioText); // Actualizar el nombre del horario en el modal AM
+                } else if ($('#inlineCheckbox2').is(':checked')) {
+                    $('#calendario').modal('hide');
+                    $('#calendario2').modal('show');
+                    listar_registros(); //LISTA LOS REGISTRO DE CADA PROFESOR EN EL HORARIO
+                    
+                    $('#nombre-horario-pm').text(selectedHorarioText); // Actualizar el nombre del horario en el modal PM
+                }
+                limpiarCeldas(); // Limpiar celdas antes de cargar nuevos horarios
+                $('.calendar-cell').off('click').on('click', function() {
+                    $(this).toggleClass('selected');
                 });
             }
         });
@@ -214,7 +260,7 @@ $(document).ready(function() {
                 data: data,
                 type: "POST",
                 success: function(response) {
-                    alert(response);
+                    showAlert(response); // Reemplaza alert(response) con showAlert(response)
                     listar();
                     resetButtons();
                     $('#staticBackdrop').modal('hide');
@@ -230,35 +276,8 @@ $(document).ready(function() {
         $('.calendar-cell').html('');
     }
 
-    // Función para cargar los horarios
-    function cargarHorarios() {
-        if (!selectedHorarioId || !selectedPeriod) {
-            return; // No cargar horarios si no hay horario y periodo seleccionados
-        }
-        $.ajax({
-            url: '../php/horario/cargar_horarios.php',
-            type: 'GET',
-            data: { horario_id: selectedHorarioId, periodo: selectedPeriod }, // Enviar los parámetros
-            success: function(response) {
-                const horarios = JSON.parse(response);
-                limpiarCeldas(); // Limpiar las celdas antes de cargar los nuevos datos
-                horarios.forEach(horario => {
-                    const id = horario.dia.substring(0, 2) + horario.disponibilidad_i.replace(':', '');
-                    $(`#${id}`).html(`<div class="text-success ${id}" bg-secondary>
-                        <div>${horario.curso}</div>
-                        <div>(${horario.nombre_p})</div>
-                    </div>`);
-                });
-            }
-        });
-    }
-
     // Evento para enviar a horario
     $(document).on('click', '#btnEnviar', function() {
-        if (!selectedPeriod) {
-            alert("Seleccione AM o PM");
-            return;
-        }
         $.ajax({
             url: '../php/horario/listar_horarios.php',
             type: 'GET',
@@ -272,6 +291,7 @@ $(document).ready(function() {
                 $('#enviarHorarioModal').modal('show');
             }
         });
+        setMode('enviar');
     });
 
     // Evento para el formulario de enviar a horario
@@ -280,24 +300,78 @@ $(document).ready(function() {
         selectedHorarioText = $('#selectHorario option:selected').text(); // Actualizar el nombre del horario seleccionado
         selectedHorarioId = $('#selectHorario').val(); // Actualizar el ID del horario seleccionado
         $('#enviarHorarioModal').modal('hide');
+        // Actualizar el nombre del horario en la tabla principal
+        $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
+        // Guardar el nombre y el ID del horario en el localStorage
+        localStorage.setItem('selectedHorarioText', selectedHorarioText);
+        localStorage.setItem('selectedHorarioId', selectedHorarioId);
+        $("#btnCancel").show(); // Mostrar el botón Cancelar al enviar a un horario
+        listar(); //LISTAR PROFESORES DEPENDIENDO DEL HORARIO SELECCIONADO
     });
 
-   //LLENAR CUADRO  E INSERTAR DATOS
+    // Función para mostrar alertas
+    function showAlert(message) {
+        $('#alertModalBody').text(message);
+        $('#alertModal').modal('show');
+    }
 
-   $(document).on('click', '.mañana, .tarde', function(e) {
+    // Manejar el evento de clic del botón de confirmación de eliminación
+    $('#confirmDeleteBtn').click(function() {
+        if (deleteId) {
+            $.ajax({
+                url: "../php/profesor/delete.php",
+                data: { id: deleteId },
+                type: "POST",
+                success: function(response) {
+                    showAlert(response); // Reemplaza alert(response) con showAlert(response)
+                    listar();
+                    resetButtons();
+                    resetForm();
+                    $('#confirmDeleteModal').modal('hide'); // Oculta el modal de confirmación
+                }
+            });
+        }
+    });
+
+    // Evento para el botón de cerrar en el modal de alerta
+    $('#alertModal .btn-primary').click(function() {
+        $('#alertModal').modal('hide');
+    });
+
+   //CUADROS DE HORARIOS  ( INSERTAR DATOS, ELIMINAR DATOS)
+
+   $(document).on('click', '.mañana, .tarde', function() {
     const element = $(this).attr('id');
+    console.log(element);
     const tiempo = element.split('-')[1];
+    console.log(selectedId);
+
+    //SI EXITE UN REGISTRO EN ESE HORARIO, ELIMINAR DEL HORARIO Y DE LA BASE DE DATOS
+
     if ($(`.${element}`).length) {
         $(`.${element}`).remove();
 
-    
-    } else {
-        $(`#${element}`).html(`<div class="text-success ${element}" bg-secondary>
-            <div>${selectedCourse}</div>
-            <div>(${selectedTeacher})</div>
-        </div>`);
-
+        dato = {
+            direccion: element,
+            id_p: selectedId
         }
+        $.ajax({
+            url:"../php/register/delete.php",
+            type:"POST",
+            data:dato,
+            success: function(result){
+                showAlert(result); // Reemplaza alert(result) con showAlert(result)
+            }
+        })
+
+    
+    // SINO INSERTAR EN LA TABLA REGISTRO
+
+    } else {
+
+    listar_registros()
+    
+    //CONDICIONALES PARA UBICAR DIA Y COMPLETAR EL RESTO DE LA ORACION
 
     const dia = element.substring(0, 2);
     if (dia == 'lu'){
@@ -327,7 +401,6 @@ $(document).ready(function() {
         {
              parte = dia + 'mingo';
         }
-    console.log(parte);
 
     const hora = $(this).attr('value');
     if (hora.length>15)
@@ -344,16 +417,19 @@ $(document).ready(function() {
             disponibilidad_f: cuadro_largo_f2,
             dia: parte,
             tiempo: tiempo,
-            id_p: selectedId
+            id_p: selectedId,
+            direccion: element
         }
-        console.log(selectedId);
-    
+        
+        //INSERTANDO DATOS EN LA TABLA REGISTRO (DEL TURNO AM)
+
         $.ajax ({
             url: "../php/register/insert_r.php",
            data: datas,
            type: "POST",
           success: function(response){
-            alert(response);
+            showAlert(response); // Reemplaza alert(response) con showAlert(response)
+            listar_registros()
           }
 
         })
@@ -368,19 +444,73 @@ $(document).ready(function() {
             disponibilidad_f: hora_inicial2_f,
             dia: parte,
             tiempo: tiempo,
-            id_p: selectedId
+            id_p: selectedId,
+            direccion: element
         }
+
+        //INSERTANDO DATOS EN LA TABLA REGISTROS (DEL TURNO PM)
         
         $.ajax ({
             url: "../php/register/insert_r.php",
            data: datas,
            type: "POST",
           success: function(response){
-            alert(response);
+            showAlert(response); // Reemplaza alert(response) con showAlert(response)
+            listar_registros()
           }
         })
-    } 
-    
+    }
+}    
 });
+
+//LLAMADA A LA FUNCION LIMPIAR, REALIZANDO CLICK EN LOS BOTONES DE CLOSE, DE LOS MODALES DEL HORARIO
+
+$('#closeBtn1').click(function(){
+    limpiar();
+})
+$('#closeBtn2').click(function(){
+    limpiar();
+})
+
+//FUNCION PARA LISTAR REGISTROS EN EL CUADRO CON EL CAMPO DIRECCION (QUE CONTIENE EL ID DE LA UBICACION EN EL MODAL DEL HORARIO)
+
+function listar_registros(){
+    dato = {
+        id_p: selectedId
+    }
+    $.ajax({
+        url: "../php/register/listar.php",
+        type: "POST",
+        data: dato,
+        success: function(respo){
+            re = JSON.parse(respo);
+            re.forEach(res =>{
+                $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                    <div>${selectedCourse}</div>
+                    <div>(${selectedTeacher})</div>
+                </div>`);
+            })
+        }
+    })
+}
+
+//FUNCION PARA LIMPIAR HORARIO CON EL BOTON DE CLOSE
+
+function limpiar(){
+    dato = {
+        id_p: selectedId
+    }
+    $.ajax({
+        url: "../php/register/listar.php",
+        type: "POST",
+        data: dato,
+        success: function(respo){
+            re = JSON.parse(respo);
+            re.forEach(res =>{
+                $(`#${res.direccion}`).text("");
+            })
+        }
+    })
+}
 
 });
