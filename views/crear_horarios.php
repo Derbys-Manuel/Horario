@@ -1,3 +1,6 @@
+<?php 
+$date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA DEL NAVEGADOR
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -27,8 +30,9 @@
                 </tbody>
             </table>
         </div>
-        <button onclick="history.back()" class="btn btn-secondary mt-3">Volver</button>
-
+        <div>
+            <a href='../index.php?v=<?php echo $date['seconds'] ?>' class="btn btn-success">Volver</a>
+        </div>
         <!-- Modal para crear/editar horario -->
         <div class="modal fade" id="crearHorarioModal" tabindex="-1" role="dialog" aria-labelledby="crearHorarioLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">

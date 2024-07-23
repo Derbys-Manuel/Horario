@@ -156,6 +156,7 @@ $(document).ready(function() {
         $('#selectedHorarioText').text(""); // Limpiar el texto en el HTML
         selectedHorarioText = "";
         selectedHorarioId = "";
+        listar();
     });
 
     $(document).on('click', '#btn2', function() {

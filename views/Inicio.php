@@ -1,3 +1,6 @@
+<?php 
+$date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA DEL NAVEGADOR
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +22,7 @@
     <!-- DataTables JS para funcionalidad de tablas -->
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 </head>
+
 <body>
     <!-- Incluir el modal desde un archivo separado -->
     <?php include "../views/modal.php" ?>
@@ -95,7 +99,7 @@
                 </div>
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
-                    <button class="btn btn-secondary" onclick="history.back()">Volver</button>
+                    <a href='../index.php?v=<?php echo $date['seconds'] ?>' class="btn btn-success">Volver</a>
                 </div>
             </div>
         </div>
