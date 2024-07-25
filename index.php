@@ -7,8 +7,8 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horarios de la academia Elite</title>
-    <link rel="stylesheet" href="assets/index.css">
-    <link rel="stylesheet" href="assets/style_css.css">
+    <link rel="stylesheet" href="assets/index.css?v=<?php $date['seconds'] ?>">
+    <link rel="stylesheet" href="assets/style_css.css?v=<?php $date['seconds'] ?>">
 </head>
 <body>
     <div class="container">

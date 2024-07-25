@@ -8,19 +8,19 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horario Inteligente</title>
     <!-- Bootstrap CSS para estilos y diseño responsive -->
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css?v=<?php echo $date['seconds'] ?>">
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../assets/style_css.css">
+    <link rel="stylesheet" href="../assets/style_css.css?v=<?php echo $date['seconds'] ?>">
     <!-- Bootstrap Icons para íconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css?v=<?php echo $date['seconds'] ?>">
     <!-- DataTables CSS para tablas interactivas -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css?v=<?php echo $date['seconds'] ?>">
     <!-- Fuente Orbitron para estilos de texto -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap?v=<?php echo $date['seconds'] ?>">
     <!-- jQuery para manipulación del DOM y AJAX -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js?v=<?php echo $date['seconds'] ?>" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <!-- DataTables JS para funcionalidad de tablas -->
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js?v=<?php echo $date['seconds'] ?>"></script>
 </head>
 
 <body>
@@ -99,7 +99,11 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
                 </div>
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
-                    <a href='../index.php?v=<?php echo $date['seconds'] ?>' class="btn btn-success">Volver</a>
+                    <a href='../index.php?v=<?php echo $date['seconds'] ?>' class="btn btn-success" style="background-color: #4CAF50; border-color: #4CAF50;">Volver</a>
+                </div>
+
+                <div>
+                    <button class="btn btn-primary" id="btn_prueba" type="button"> horario</button>
                 </div>
             </div>
         </div>
@@ -167,7 +171,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
     </div>
 
     <!-- Incluir archivos JavaScript de Bootstrap y el archivo js.js -->
-    <script src="../assets/js/bootstrap.min.js"></script>
-    <script src="../assets/js.js"></script>
+    <script src="../assets/js/bootstrap.min.js?v=<?php echo $date['seconds'] ?>"></script>
+    <script src="../assets/js.js?v=<?php echo $date['seconds'] ?>"></script>
 </body>
 </html>

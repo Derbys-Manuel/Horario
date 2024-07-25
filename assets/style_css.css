@@ -1,10 +1,9 @@
 /* Importar fuentes */
-@import url('https://fonts.googleapis.com/css2?family=Aeromatic+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cambria&display=swap');
 
 /* Estilo para el título */
 #titulo {
-    font-family: 'Aeromatic SC', sans-serif;
+    font-family:'Courier New', Courier, monospace;
     font-size: 2.5em; /* Tamaño de fuente */
     margin-bottom: 20px; /* Margen inferior */
     color: #FFD700; /* Color del texto amarillo */

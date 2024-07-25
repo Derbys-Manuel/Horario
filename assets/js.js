@@ -65,7 +65,7 @@ $(document).ready(function() {
                 {
                     enfoque = `
                     <tr>
-                        <td colspan="3"> No hay profesores en este horario </td>
+                        <td colspan="3"> No hay horario seleccionado </td>
                     </tr>
                     `;
                 $('#lista').html(enfoque);          
@@ -136,6 +136,8 @@ $(document).ready(function() {
         $("#staticBackdropLabel").text("Ingresar Registro"); // Restablecer el título del modal
     }
 
+
+
     // Eventos de botones para cambiar modos
     $(document).on('click', '#btn3', function() {
         setMode('eliminar');
@@ -159,10 +161,16 @@ $(document).ready(function() {
         listar();
     });
 
+    // Evento para el botón de añadir
     $(document).on('click', '#btn2', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            return; // Salir de la función si no hay un horario seleccionado
+        }
         resetForm();
         $('#staticBackdrop').modal('show');
     });
+
 
     $(document).on('change', '#inlineCheckbox1', function() {
         if ($(this).is(':checked')) {
@@ -343,10 +351,7 @@ $(document).ready(function() {
 
    $(document).on('click', '.mañana, .tarde', function() {
     const element = $(this).attr('id');
-    console.log(element);
     const tiempo = element.split('-')[1];
-    console.log(selectedId);
-
     //SI EXITE UN REGISTRO EN ESE HORARIO, ELIMINAR DEL HORARIO Y DE LA BASE DE DATOS
 
     if ($(`.${element}`).length) {
@@ -361,7 +366,7 @@ $(document).ready(function() {
             type:"POST",
             data:dato,
             success: function(result){
-                showAlert(result); // Reemplaza alert(result) con showAlert(result)
+     
             }
         })
 
@@ -429,7 +434,6 @@ $(document).ready(function() {
            data: datas,
            type: "POST",
           success: function(response){
-            showAlert(response); // Reemplaza alert(response) con showAlert(response)
             listar_registros()
           }
 
@@ -456,7 +460,6 @@ $(document).ready(function() {
            data: datas,
            type: "POST",
           success: function(response){
-            showAlert(response); // Reemplaza alert(response) con showAlert(response)
             listar_registros()
           }
         })
@@ -485,6 +488,7 @@ function listar_registros(){
         data: dato,
         success: function(respo){
             re = JSON.parse(respo);
+            console.log(re);
             re.forEach(res =>{
                 $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                     <div>${selectedCourse}</div>
@@ -513,5 +517,36 @@ function limpiar(){
         }
     })
 }
+
+$(document).on('click','#btn_prueba',function(){
+    
+    const dato = {
+        id_h: selectedHorarioId
+    }
+
+    $.ajax({
+        url: "../php/generar_h/generar_horario.php",
+        type: "POST",   
+        data: dato,
+        success: function(response)
+        {
+            re = JSON.parse(response);
+            console.log(re);
+            console.log (re.length);
+            
+           for (i = 0 ; i < re.length; i++)
+           {    
+            console.log (re[i].nombre_p);
+            if (i === 1)
+                {
+                   console.log( re[i-1].nombre_p);
+                }
+            
+           }
+     
+        }
+    })
+})
+
 
 });
