@@ -648,12 +648,31 @@ $(document).on('click','#btn_prueba',function(){
                     console.log ('Se repite mas veces a => ', resultado[elementos_repetidos_a[i].id], ' | id = ',elementos_repetidos_a[i].id);
                     prioridad.push(elementos_repetidos_b[i]);
                     no_prioridad.push(elementos_repetidos_a[i]);
+
+                    //Esta variable sirve para almacenar el indice de la lista => resultados. para poder capturar el total de los elementos repetidos
+                    index = elementos_repetidos_a[i].id;
+
+                    //es el total de los elementos repetidos
+                    num_restar = resultado[elementos_repetidos_a[i].id];
+
+                    //aqui se efectua a restarle 1 por cada iteracion
+                    resultado[index] = num_restar -1;
+                    
+                    //verificar resultados en la consola
+                    console.log(resultado);
+                   
+                    
                 }
+                //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
                 else if (resultado[elementos_repetidos_a[i].id] < resultado[elementos_repetidos_b[i].id])
                 {
                     console.log ('Se repite mas veces b => ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
                     prioridad.push(elementos_repetidos_a[i]);
                     no_prioridad.push(elementos_repetidos_b[i]);
+                    index = elementos_repetidos_b[i].id;
+                    num_restar = resultado[elementos_repetidos_b[i].id];
+                    resultado[index] = num_restar -1;
+                    console.log(resultado);
                 }
             }
 
