@@ -589,23 +589,20 @@ $(document).on('click','#btn_prueba',function(){
                     //del valor repetido se almacena el index
                     array_index_b.push(i);
                     
-                    console.log('Se repite', re[i].direccion);                
+                 
 
                 }
                 else 
                 {
                     //este array almacena solo los datos repetidos, para poder saber mas facilmente cuales son
                     array.push(re[i].direccion);  
-                    console.log(array);
+              
                     
                 } 
             }
 
             //aqui verifico los datos en la consola
-            console.log('Array completo de elementos sin los repetidos',array);
-            console.log('dia',array_direccion);
-            console.log('index_a',array_index_a);
-            console.log('index_b',array_index_b);
+
 
             //elementos_repetidos_a => sirve para almacenar el registro completo, el cual obtendremos utilizando el array_index_a
             elementos_repetidos_a = [];
@@ -622,8 +619,7 @@ $(document).on('click','#btn_prueba',function(){
             }
 
             //se verifican los datos en la consola
-            console.log('Elementos repetidos a: ', elementos_repetidos_a);
-            console.log('Elementos repetidos b: ', elementos_repetidos_b);
+
 
             //prioridad => se almacenan todos los registros que han aprobado el algoritmo de PRIORIDADES
             prioridad = [];
@@ -666,13 +662,26 @@ $(document).on('click','#btn_prueba',function(){
                 //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
                 else if (resultado[elementos_repetidos_a[i].id] < resultado[elementos_repetidos_b[i].id])
                 {
+
+                    index = elementos_repetidos_b[i].id;
+                    num_restar = resultado[elementos_repetidos_b[i].id];
+                    resultado[index] = num_restar - 1;
+                    console.log(resultado);
+
                     console.log ('Se repite mas veces b => ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
                     prioridad.push(elementos_repetidos_a[i]);
                     no_prioridad.push(elementos_repetidos_b[i]);
+  
+                }
+                else
+                {
                     index = elementos_repetidos_b[i].id;
                     num_restar = resultado[elementos_repetidos_b[i].id];
-                    resultado[index] = num_restar -1;
+                    resultado[index] = num_restar - 1;
                     console.log(resultado);
+                    console.log ('=> ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
+                    prioridad.push(elementos_repetidos_a[i]);
+                    no_prioridad.push(elementos_repetidos_b[i]);
                 }
             }
 
@@ -682,8 +691,7 @@ $(document).on('click','#btn_prueba',function(){
 
             //se elimina del array => re , el cual contiene todos los datos, los datos => no_prioridad
             for (i=0; i < no_prioridad.length; i++)
-            {
-                console.log(no_prioridad[i].id_r);          
+            {         
                 const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
 
                 if (index !== -1) {
