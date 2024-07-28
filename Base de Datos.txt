@@ -1,5 +1,3 @@
-create database horario;
-
 use horario;
 
 
@@ -25,5 +23,6 @@ disponibilidad_f varchar(45),
 dia varchar (45),
 tiempo varchar(45),
 direccion varchar(45),
+turno varchar(45),
 foreign key (id_p) references profesor (id) ON DELETE CASCADE
 );

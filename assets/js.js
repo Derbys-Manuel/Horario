@@ -548,16 +548,8 @@ $(document).on('click','#btn_prueba',function(){
         id_h: selectedHorarioId,
         turno: selectedPeriod
     }
-    $.ajax({
-        url: "../php/generar_h/direccion.php",
-        type: 'POST',
-        data: dato,
-        success: function (resp)
-        {
-           datas = JSON.parse(resp);
-            console.log (datas);
-        }
-    })
+
+    //SE REALIZA LA COLSULTA A LA BASE DE DATOS
 
     $.ajax({
         url: "../php/generar_h/generar_horario.php",
@@ -567,33 +559,124 @@ $(document).on('click','#btn_prueba',function(){
         {
             re = JSON.parse(response);
             console.log(re);
+            
+            //array  => ALMACENA LOS REGISTROS SIN REPETIDOS, pero no cumple ninguna funcion sino solo la de distribuir los datos
             array = [];
-            array_id = [];
-            array_first = [];
 
+            //array_index_a => almacena el valor que repetido, pero el que ya ha estado en el array... si un array tiene [1] y ingresas otro [1]
+            //serian dos 1... En este array se almacena el primero [^1^,1].
+            array_index_a = [];
+
+            //array_index_b => almacena el segundo valor repetido [1,^1^]
+            array_index_b = [];
+
+            //array_direccion => almacena el valor direccion de los valores traidos de la base de datos
+            array_direccion = [];
+
+            
+            //Este for iteractua con los valores del array re
             for (i=0; i < re.length; i++)
             {
+                //se usa includes para detectar los valores repetidos
                 if(array.includes(re[i].direccion))
-                {
-                    console.log('Se repite', re[i].direccion);
-                    array_first.push(re[i-1].id);
-                    array_id.push(re[i].id);
-                    console.log(array_id);
-                    console.log(array_first);
+                {              
+                    //del valor repetido se almacena su direccion   
+                    array_direccion.push(re[i].direccion);
+
+                    //del valor repetido se almacena el index 
+                    array_index_a.push(array.indexOf(re[i].direccion));
+
+                    //del valor repetido se almacena el index
+                    array_index_b.push(i);
                     
+                    console.log('Se repite', re[i].direccion);                
 
                 }
                 else 
                 {
-                    array.push(re[i].direccion); 
-                    
+                    //este array almacena solo los datos repetidos, para poder saber mas facilmente cuales son
+                    array.push(re[i].direccion);  
                     console.log(array);
                     
                 } 
             }
-            console.log(array);
-            
 
+            //aqui verifico los datos en la consola
+            console.log('Array completo de elementos sin los repetidos',array);
+            console.log('dia',array_direccion);
+            console.log('index_a',array_index_a);
+            console.log('index_b',array_index_b);
+
+            //elementos_repetidos_a => sirve para almacenar el registro completo, el cual obtendremos utilizando el array_index_a
+            elementos_repetidos_a = [];
+
+            //elementos_repetidos_b => sirve para almacenar el registro completo, el cual obtendremos utilizando el array_index_b
+            elementos_repetidos_b = [];
+
+            //con este for recorremos la cantidad de indices
+            for (i=0; i < array_index_a.length;i++)
+            {
+                //aqui se almacenan los todos los datos de cada registro
+                elementos_repetidos_a.push(re[array_index_a[i]]);
+                elementos_repetidos_b.push(re[array_index_b[i]]);
+            }
+
+            //se verifican los datos en la consola
+            console.log('Elementos repetidos a: ', elementos_repetidos_a);
+            console.log('Elementos repetidos b: ', elementos_repetidos_b);
+
+            //prioridad => se almacenan todos los registros que han aprobado el algoritmo de PRIORIDADES
+            prioridad = [];
+
+            //no_prioridad => se almacenan todos los registros que seran eliminados por el algoritmo de PRIORIDADES
+            no_prioridad = [];
+
+            //resultado => esta lista almacena cuantos registros en el caledanario tiene cada profesor, utilizando el id del profesor y sumando
+            //el id del registro
+            const resultado = {}
+            console.log(resultado);
+
+            //aqui se almacen los datos en => resultado
+            re.forEach(el => (resultado[el.id] = resultado[el.id] + 1 || 1));
+            
+            //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
+            for (i=0; i < elementos_repetidos_a.length; i++)
+            {
+                //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
+                if (resultado[elementos_repetidos_a[i].id] > resultado[elementos_repetidos_b[i].id])
+                {
+                    console.log ('Se repite mas veces a => ', resultado[elementos_repetidos_a[i].id], ' | id = ',elementos_repetidos_a[i].id);
+                    prioridad.push(elementos_repetidos_b[i]);
+                    no_prioridad.push(elementos_repetidos_a[i]);
+                }
+                else if (resultado[elementos_repetidos_a[i].id] < resultado[elementos_repetidos_b[i].id])
+                {
+                    console.log ('Se repite mas veces b => ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
+                    prioridad.push(elementos_repetidos_a[i]);
+                    no_prioridad.push(elementos_repetidos_b[i]);
+                }
+            }
+
+            //se verifica en la consola los datos
+            console.log('prioridad: ',prioridad);
+            console.log('no prioridad: ',no_prioridad);
+
+            //se elimina del array => re , el cual contiene todos los datos, los datos => no_prioridad
+            for (i=0; i < no_prioridad.length; i++)
+            {
+                console.log(no_prioridad[i].id_r);          
+                const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
+
+                if (index !== -1) {
+                  re.splice(index, 1);         
+                }
+
+            }
+
+            //se verifican los datos en la consola 
+            console.log(re); 
+
+            //se imprimen los datos ya pasados por el algoritmo de PRIORIDAD
             re.forEach(res =>{
                 $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                     <div>${res.curso}</div>
