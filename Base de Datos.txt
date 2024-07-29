@@ -1,3 +1,4 @@
+create database horario;
 use horario;
 
 
@@ -25,4 +26,12 @@ tiempo varchar(45),
 direccion varchar(45),
 turno varchar(45),
 foreign key (id_p) references profesor (id) ON DELETE CASCADE
+
 );
+CREATE TABLE `examenes` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `direccion` VARCHAR(255) NOT NULL,
+    `id_p` INT NOT NULL,
+    `turno` VARCHAR(50) NOT NULL
+);
+

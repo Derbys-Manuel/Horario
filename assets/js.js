@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    borrar_localstorage()
+
+
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -8,10 +11,19 @@ $(document).ready(function() {
     let selectedIdRegistro = "";
     let deleteId = null; // Variable para almacenar el ID del elemento a eliminar
 
+    let modoExamen = false; // Variable para controlar el modo examen
+
     // Mostrar el horario almacenado al cargar la página
     if (selectedHorarioText) {
         $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
         $("#btnCancel").show(); // Mostrar el botón Cancelar si hay un horario seleccionado
+    }
+
+    // Mantener la selección de AM o PM después de refrescar la página
+    if (selectedPeriod === 'Mañana') {
+        $('#inlineCheckbox1').prop('checked', true);
+    } else if (selectedPeriod === 'Tarde') {
+        $('#inlineCheckbox2').prop('checked', true);
     }
 
     listar();
@@ -49,7 +61,7 @@ $(document).ready(function() {
 
     // Función para listar los profesores
     function listar() {
-        dato = {
+        const dato = {
             id_h: selectedHorarioId
         }
         $.ajax({
@@ -58,19 +70,16 @@ $(document).ready(function() {
             data: dato,
             success: function(r) {
                 const profesor = JSON.parse(r);
-                calculo = profesor.length;
+                const calculo = profesor.length;
                 let template = "";
-                if (calculo === 0)
-                {
-                    enfoque = `
+                if (calculo === 0) {
+                    const enfoque = `
                     <tr>
                         <td colspan="3"> No hay horario seleccionado </td>
                     </tr>
                     `;
-                $('#lista').html(enfoque);          
-                }
-                else
-                {
+                    $('#lista').html(enfoque);          
+                } else {
                     profesor.forEach(element => {
                         template += `
                         <tr id="${element.id}">
@@ -87,7 +96,6 @@ $(document).ready(function() {
                     $('#lista').html(template);
                     attachEvents();
                 }
-   
             }
         });
     }
@@ -135,8 +143,6 @@ $(document).ready(function() {
         $("#staticBackdropLabel").text("Ingresar Registro"); // Restablecer el título del modal
     }
 
-
-
     // Eventos de botones para cambiar modos
     $(document).on('click', '#btn3', function() {
         setMode('eliminar');
@@ -157,6 +163,10 @@ $(document).ready(function() {
         $('#selectedHorarioText').text(""); // Limpiar el texto en el HTML
         selectedHorarioText = "";
         selectedHorarioId = "";
+        selectedPeriod = ""; // Limpiar el periodo seleccionado
+        localStorage.removeItem('selectedPeriod'); // Eliminar el periodo del localStorage
+        $('#inlineCheckbox1').prop('checked', false);
+        $('#inlineCheckbox2').prop('checked', false);
         listar();
     });
 
@@ -170,13 +180,16 @@ $(document).ready(function() {
         $('#staticBackdrop').modal('show');
     });
 
-
     $(document).on('change', '#inlineCheckbox1', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox1').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
-            localStorage.setItem('selectedPeriod',selectedPeriod);
-
+            localStorage.setItem('selectedPeriod', selectedPeriod);
         } else {
             selectedPeriod = "";
             localStorage.removeItem('selectedPeriod');
@@ -184,10 +197,15 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox2').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
-            localStorage.setItem('selectedPeriod',selectedPeriod);
+            localStorage.setItem('selectedPeriod', selectedPeriod);
         } else {
             selectedPeriod = "";
             localStorage.removeItem('selectedPeriod');
@@ -232,7 +250,7 @@ $(document).ready(function() {
                 selectedTeacher = $(this).data('nombre');
                 selectedId = $(this).val();
                 selectedHorarioId = $('#selectHorario').val(); // Obtener el ID del horario seleccionado
-     
+
                 selectedHorarioText = $('#selectHorario option:selected').text(); // Obtener el nombre del horario seleccionado
 
                 // Actualizar el nombre del horario en la tabla principal
@@ -245,13 +263,13 @@ $(document).ready(function() {
                     $('#calendario2').modal('hide');
                     $('#calendario').modal('show');
                     listar_registros(); //LISTA LOS REGISTRO DE CADA PROFESOR EN EL HORARIO
-                    
+
                     $('#nombre-horario-am').text(selectedHorarioText); // Actualizar el nombre del horario en el modal AM
                 } else if ($('#inlineCheckbox2').is(':checked')) {
                     $('#calendario').modal('hide');
                     $('#calendario2').modal('show');
                     listar_registros(); //LISTA LOS REGISTRO DE CADA PROFESOR EN EL HORARIO
-                    
+
                     $('#nombre-horario-pm').text(selectedHorarioText); // Actualizar el nombre del horario en el modal PM
                 }
                 limpiarCeldas(); // Limpiar celdas antes de cargar nuevos horarios
@@ -351,381 +369,324 @@ $(document).ready(function() {
         $('#alertModal').modal('hide');
     });
 
-   //CUADROS DE HORARIOS  ( INSERTAR DATOS, ELIMINAR DATOS)
+    //CUADROS DE HORARIOS  ( INSERTAR DATOS, ELIMINAR DATOS)
 
-   $(document).on('click', '.mañana, .tarde', function() {
-    const element = $(this).attr('id');
-    console.log(element);
-    const tiempo = element.split('-')[1];
-    console.log(selectedId);
+    $(document).on('click', '.mañana, .tarde', function() {
+        const element = $(this).attr('id');
+        const tiempo = element.split('-')[1];
 
-    //SI EXITE UN REGISTRO EN ESE HORARIO, ELIMINAR DEL HORARIO Y DE LA BASE DE DATOS
+        if (modoExamen) {
+            // Modo Examen activado, insertar o eliminar exámenes
+            if ($(`.${element}`).hasClass('examen')) {
+                $(`.${element}`).removeClass('examen').empty();
 
-    if ($(`.${element}`).length) {
-        $(`.${element}`).remove();
+                const dato = {
+                    direccion: element,
+                    id_p: selectedId
+                };
+                $.ajax({
+                    url: "../php/examen/delete.php",
+                    type: "POST",
+                    data: dato,
+                    success: function(result) {
+                        console.log("Examen eliminado:", result);
+                    }
+                });
+            } else {
+                const examenHTML = `<div class="text-danger examen ${element}">
+                    <div>Examen</div>
+                </div>`;
+                $(`#${element}`).html(examenHTML);
 
-        dato = {
-            direccion: element,
+                const datosExamen = {
+                    direccion: element,
+                    id_p: selectedId,
+                    turno: selectedPeriod
+                };
+
+                $.ajax({
+                    url: "../php/examen/insert.php",
+                    type: "POST",
+                    data: datosExamen,
+                    success: function(result) {
+                        console.log("Examen insertado:", result);
+                    }
+                });
+            }
+        } else {
+            // Modo normal, insertar o eliminar clases
+            if ($(`.${element}`).length) {
+                $(`.${element}`).remove();
+
+                const dato = {
+                    direccion: element,
+                    id_p: selectedId
+                };
+                $.ajax({
+                    url: "../php/register/delete.php",
+                    type: "POST",
+                    data: dato,
+                    success: function(result) {
+                        console.log("Registro eliminado:", result);
+                    }
+                });
+            } else {
+                listar_registros();
+
+                const dia = element.substring(0, 2);
+                let parte = '';
+                switch (dia) {
+                    case 'lu': parte = 'lunes'; break;
+                    case 'ma': parte = 'martes'; break;
+                    case 'mi': parte = 'miércoles'; break;
+                    case 'ju': parte = 'jueves'; break;
+                    case 'vi': parte = 'viernes'; break;
+                    case 'sa': parte = 'sábado'; break;
+                    case 'do': parte = 'domingo'; break;
+                    default: parte = '';
+                }
+
+                const hora = $(this).attr('value');
+                let datas = {};
+
+                if (hora.length > 15) {
+                    const [hora_inicial, hora_final] = hora.split('|');
+                    const [cuadro_largo_i1, cuadro_largo_f1] = hora_inicial.split('-');
+                    const [cuadro_largo_i2, cuadro_largo_f2] = hora_final.split('-');
+
+                    datas = {
+                        disponibilidad_i: cuadro_largo_i1,
+                        disponibilidad_f: cuadro_largo_f2,
+                        dia: parte,
+                        tiempo: tiempo,
+                        id_p: selectedId,
+                        direccion: element,
+                        turno: selectedPeriod
+                    };
+                } else {
+                    const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
+
+                    datas = {
+                        disponibilidad_i: hora_inicial2_i,
+                        disponibilidad_f: hora_inicial2_f,
+                        dia: parte,
+                        tiempo: tiempo,
+                        id_p: selectedId,
+                        direccion: element,
+                        turno: selectedPeriod
+                    };
+                }
+
+                $.ajax({
+                    url: "../php/register/insert_r.php",
+                    data: datas,
+                    type: "POST",
+                    success: function(response) {
+                        listar_registros();
+                        console.log(response)
+                    }
+                });
+            }
+        }
+    });
+
+    // Evento para cambiar el estado del modo examen
+    $(document).on('change', '#modoExamen', function() {
+        modoExamen = $(this).is(':checked');
+    });
+
+    //LLAMADA A LA FUNCION LIMPIAR, REALIZANDO CLICK EN LOS BOTONES DE CLOSE, DE LOS MODALES DEL HORARIO
+
+    $('#closeBtn1').click(function() {
+        limpiar();
+        limpiarTodo();
+    });
+    $('#closeBtn2').click(function() {
+        limpiar();
+        limpiarTodo();
+    });
+
+    //FUNCION PARA LISTAR REGISTROS EN EL CUADRO CON EL CAMPO DIRECCION (QUE CONTIENE EL ID DE LA UBICACION EN EL MODAL DEL HORARIO)
+
+    function listar_registros() {
+        const dato = {
             id_p: selectedId
-        }
+        };
         $.ajax({
-            url:"../php/register/delete.php",
-            type:"POST",
-            data:dato,
-            success: function(result){
-
+            url: "../php/register/listar.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                        <div>${selectedCourse}</div>
+                        <div>(${selectedTeacher})</div>
+                    </div>`);
+                });
+                listar_examenes(); // Llamar a listar_examenes después de listar registros normales
             }
-        })
-
-    
-    // SINO INSERTAR EN LA TABLA REGISTRO
-
-    } else {
-
-    listar_registros()
-    
-    //CONDICIONALES PARA UBICAR DIA Y COMPLETAR EL RESTO DE LA ORACION
-
-    const dia = element.substring(0, 2);
-    if (dia == 'lu'){
-         parte = dia + 'nes';
+        });
     }
-    else if (dia == 'ma')
-    {
-         parte = dia + 'rtes';
-    }
-    else if (dia == 'mi')
-    {
-         parte = dia + 'ercoles';
-    }
-    else if (dia == 'ju')
-    {
-         parte = dia + 'eves';
-    }
-    else if (dia == 'vi')
-    {
-         parte = dia + 'ernes';
-    }
-    else if (dia == 'sa')
-    {
-         parte = dia + 'bado';
-    }
-    else if (dia == 'do')
-        {
-             parte = dia + 'mingo';
-        }
 
-    const hora = $(this).attr('value');
-    if (hora.length>15)
-    {
-        hora_inicial = hora.split('|')[0];
-        hora_final = hora.split('|')[1];
-        cuadro_largo_i1 = hora_inicial.split('-')[0];
-        cuadro_largo_f1 = hora_inicial.split('-')[1];
-        cuadro_largo_i2 = hora_final.split('-')[0];
-        cuadro_largo_f2 = hora_final.split('-')[1];
+    //FUNCION PARA LISTAR EXAMENES EN EL HORARIO
+    function listar_examenes() {
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/examen/listar.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).html(`<div class="text-danger examen ${res.direccion}" value="${res.id_r}">
+                        <div>Examen</div>
+                    </div>`);
+                });
+            }
+        });
+    }
 
-        const datas = {
-            disponibilidad_i: cuadro_largo_i1,
-            disponibilidad_f: cuadro_largo_f2,
-            dia: parte,
-            tiempo: tiempo,
-            id_p: selectedId,
-            direccion: element,
+    //FUNCION PARA LIMPIAR HORARIO CON EL BOTON DE CLOSE
+
+    function limpiar() {
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/register/listar.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).text("");
+                });
+            }
+        });
+    }
+
+    function limpiarTodo() {
+        $.ajax({
+            url: "../php/generar_h/limpiar.php",
+            type: "GET",
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).text("");
+                });
+            }
+        });
+    }
+
+    //GENERAR HORARIO INTELIGENTE
+
+    $(document).on('click', '#btn_prueba', function() {
+
+        const dato = {
+            id_h: selectedHorarioId,
             turno: selectedPeriod
-        }
-        
-        //INSERTANDO DATOS EN LA TABLA REGISTRO (DEL TURNO AM)
+        };
 
-        $.ajax ({
-            url: "../php/register/insert_r.php",
-           data: datas,
-           type: "POST",
-          success: function(response){
-            listar_registros()
-          }
+        //SE REALIZA LA COLSULTA A LA BASE DE DATOS
 
-        })
-    }
-    else if (hora.length<15)
+        $.ajax({
+            url: "../php/generar_h/generar_horario.php",
+            type: "POST",   
+            data: dato,
+            success: function(response) {
+                const re = JSON.parse(response);    
+                const array = [];
+                const array_index_a = [];
+                const array_index_b = [];
+                const array_direccion = [];
+                for (let i = 0; i < re.length; i++) {
+                    if (array.includes(re[i].direccion)) {                
+                        array_direccion.push(re[i].direccion);
+                        array_index_a.push(array.indexOf(re[i].direccion));
+                        array_index_b.push(i);
+                    } else {
+                        array.push(re[i].direccion);  
+                    } 
+                }
+                const elementos_repetidos_a = [];
+                const elementos_repetidos_b = [];
+                for (let i = 0; i < array_index_a.length; i++) {
+                    elementos_repetidos_a.push(re[array_index_a[i]]);
+                    elementos_repetidos_b.push(re[array_index_b[i]]);
+                }
+                const prioridad = [];
+                const no_prioridad = [];
+                const resultado = {};
+                //aqui se almacen los datos en => resultado
+                re.forEach(el => (resultado[el.id] = resultado[el.id] + 1 || 1));  
+                //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
+                for (let i = 0; i < elementos_repetidos_a.length; i++) {
+                    //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
+                    if (resultado[elementos_repetidos_a[i].id] > resultado[elementos_repetidos_b[i].id]) {
+                        prioridad.push(elementos_repetidos_b[i]);
+                        no_prioridad.push(elementos_repetidos_a[i]);
+                        const index = elementos_repetidos_a[i].id;
+                        const num_restar = resultado[elementos_repetidos_a[i].id];
+                        resultado[index] = num_restar -1;  
+                    }
+                    //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
+                    else if (resultado[elementos_repetidos_a[i].id] < resultado[elementos_repetidos_b[i].id]) {
+                        const index = elementos_repetidos_b[i].id;
+                        const num_restar = resultado[elementos_repetidos_b[i].id];
+                        resultado[index] = num_restar - 1;
+                        console.log(resultado);
+
+                        console.log ('Se repite mas veces b => ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
+                        prioridad.push(elementos_repetidos_a[i]);
+                        no_prioridad.push(elementos_repetidos_b[i]);
+                    } else {
+                        const index = elementos_repetidos_b[i].id;
+                        const num_restar = resultado[elementos_repetidos_b[i].id];
+                        resultado[index] = num_restar - 1;
+                        console.log(resultado);
+                        console.log ('=> ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
+                        prioridad.push(elementos_repetidos_a[i]);
+                        no_prioridad.push(elementos_repetidos_b[i]);
+                    }
+                }
+                for (let i = 0; i < no_prioridad.length; i++) {         
+                    const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
+
+                    if (index !== -1) {
+                        re.splice(index, 1);         
+                    }
+                }
+                //se imprimen los datos ya pasados por el algoritmo de PRIORIDAD
+                re.forEach(res => {
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                        <div>${res.curso}</div>
+                        <div>(${res.nombre_p})</div>
+                    </div>`);
+                });
+                listar_examenes(); // Llamar a listar_examenes después de listar registros normales
+                if (selectedPeriod === 'Mañana') {
+                    $('#calendario').modal('show');
+                } else if (selectedPeriod === 'Tarde') {
+                    $('#calendario2').modal('show');
+                } else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
+                    showAlert("Seleccione AM o PM"); 
+                    return false;
+                }
+            }
+        });
+    });
+    $('#btnVolver').click(function(){
+        borrar_localstorage()
+    })
+
+    function borrar_localstorage()
     {
-        hora_inicial2_i = hora.split('-')[0];
-        hora_inicial2_f= hora.split('-')[1];
-
-        const datas = {
-            disponibilidad_i: hora_inicial2_i,
-            disponibilidad_f: hora_inicial2_f,
-            dia: parte,
-            tiempo: tiempo,
-            id_p: selectedId,
-            direccion: element,
-            turno: selectedPeriod
-        }
-
-        //INSERTANDO DATOS EN LA TABLA REGISTROS (DEL TURNO PM)
-        
-        $.ajax ({
-            url: "../php/register/insert_r.php",
-           data: datas,
-           type: "POST",
-          success: function(response){
-            listar_registros()
-          }
-        })
+        localStorage.removeItem('selectedHorarioText');
+        localStorage.removeItem('horariosGenerados');
+        localStorage.removeItem('selectedHorarioId');
+        localStorage.removeItem('selectedPeriod');
     }
-}    
-});
-
-//LLAMADA A LA FUNCION LIMPIAR, REALIZANDO CLICK EN LOS BOTONES DE CLOSE, DE LOS MODALES DEL HORARIO
-
-$('#closeBtn1').click(function(){
-    limpiar();
-    limpiarTodo();
-})
-$('#closeBtn2').click(function(){
-    limpiar();
-    limpiarTodo();
-})
-
-//FUNCION PARA LISTAR REGISTROS EN EL CUADRO CON EL CAMPO DIRECCION (QUE CONTIENE EL ID DE LA UBICACION EN EL MODAL DEL HORARIO)
-
-function listar_registros(){
-    dato = {
-        id_p: selectedId
-    }
-    $.ajax({
-        url: "../php/register/listar.php",
-        type: "POST",
-        data: dato,
-        success: function(respo){
-            re = JSON.parse(respo);
-            re.forEach(res =>{
-                $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
-                    <div>${selectedCourse}</div>
-                    <div>(${selectedTeacher})</div>
-                </div>`);
-            })
-        }
-    })
-}
-
-//FUNCION PARA LIMPIAR HORARIO CON EL BOTON DE CLOSE
-
-function limpiar(){
-    dato = {
-        id_p: selectedId
-    }
-    $.ajax({
-        url: "../php/register/listar.php",
-        type: "POST",
-        data: dato,
-        success: function(respo){
-            re = JSON.parse(respo);
-            re.forEach(res =>{
-                $(`#${res.direccion}`).text("");
-            })
-        }
-    })
-}
-
-function limpiarTodo(){
-    $.ajax({
-        url: "../php/generar_h/limpiar.php",
-        type: "GET",
-        success: function(respo){
-            re = JSON.parse(respo);
-            re.forEach(res =>{
-                $(`#${res.direccion}`).text("");
-            })
-        }
-    })
-}
-
-//GENERAR HORARIO INTELIGENTE
-
-$(document).on('click','#btn_prueba',function(){
-    const dato = {
-        id_h: selectedHorarioId,
-        turno: selectedPeriod
-    }
-
-    //SE REALIZA LA COLSULTA A LA BASE DE DATOS
-
-    $.ajax({
-        url: "../php/generar_h/generar_horario.php",
-        type: "POST",   
-        data: dato,
-        success: function(response)
-        {
-            re = JSON.parse(response);
-            console.log(re);
-            
-            //array  => ALMACENA LOS REGISTROS SIN REPETIDOS, pero no cumple ninguna funcion sino solo la de distribuir los datos
-            array = [];
-
-            //array_index_a => almacena el valor que repetido, pero el que ya ha estado en el array... si un array tiene [1] y ingresas otro [1]
-            //serian dos 1... En este array se almacena el primero [^1^,1].
-            array_index_a = [];
-
-            //array_index_b => almacena el segundo valor repetido [1,^1^]
-            array_index_b = [];
-
-            //array_direccion => almacena el valor direccion de los valores traidos de la base de datos
-            array_direccion = [];
-
-            
-            //Este for iteractua con los valores del array re
-            for (i=0; i < re.length; i++)
-            {
-                //se usa includes para detectar los valores repetidos
-                if(array.includes(re[i].direccion))
-                {              
-                    //del valor repetido se almacena su direccion   
-                    array_direccion.push(re[i].direccion);
-
-                    //del valor repetido se almacena el index 
-                    array_index_a.push(array.indexOf(re[i].direccion));
-
-                    //del valor repetido se almacena el index
-                    array_index_b.push(i);
-                    
-                 
-
-                }
-                else 
-                {
-                    //este array almacena solo los datos repetidos, para poder saber mas facilmente cuales son
-                    array.push(re[i].direccion);  
-              
-                    
-                } 
-            }
-
-            //aqui verifico los datos en la consola
-
-
-            //elementos_repetidos_a => sirve para almacenar el registro completo, el cual obtendremos utilizando el array_index_a
-            elementos_repetidos_a = [];
-
-            //elementos_repetidos_b => sirve para almacenar el registro completo, el cual obtendremos utilizando el array_index_b
-            elementos_repetidos_b = [];
-
-            //con este for recorremos la cantidad de indices
-            for (i=0; i < array_index_a.length;i++)
-            {
-                //aqui se almacenan los todos los datos de cada registro
-                elementos_repetidos_a.push(re[array_index_a[i]]);
-                elementos_repetidos_b.push(re[array_index_b[i]]);
-            }
-
-            //se verifican los datos en la consola
-
-
-            //prioridad => se almacenan todos los registros que han aprobado el algoritmo de PRIORIDADES
-            prioridad = [];
-
-            //no_prioridad => se almacenan todos los registros que seran eliminados por el algoritmo de PRIORIDADES
-            no_prioridad = [];
-
-            //resultado => esta lista almacena cuantos registros en el caledanario tiene cada profesor, utilizando el id del profesor y sumando
-            //el id del registro
-            const resultado = {}
-            console.log(resultado);
-
-            //aqui se almacen los datos en => resultado
-            re.forEach(el => (resultado[el.id] = resultado[el.id] + 1 || 1));
-            
-            //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
-            for (i=0; i < elementos_repetidos_a.length; i++)
-            {
-                //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
-                if (resultado[elementos_repetidos_a[i].id] > resultado[elementos_repetidos_b[i].id])
-                {
-                    console.log ('Se repite mas veces a => ', resultado[elementos_repetidos_a[i].id], ' | id = ',elementos_repetidos_a[i].id);
-                    prioridad.push(elementos_repetidos_b[i]);
-                    no_prioridad.push(elementos_repetidos_a[i]);
-
-                    //Esta variable sirve para almacenar el indice de la lista => resultados. para poder capturar el total de los elementos repetidos
-                    index = elementos_repetidos_a[i].id;
-
-                    //es el total de los elementos repetidos
-                    num_restar = resultado[elementos_repetidos_a[i].id];
-
-                    //aqui se efectua a restarle 1 por cada iteracion
-                    resultado[index] = num_restar -1;
-                    
-                    //verificar resultados en la consola
-                    console.log(resultado);
-                   
-                    
-                }
-                //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
-                else if (resultado[elementos_repetidos_a[i].id] < resultado[elementos_repetidos_b[i].id])
-                {
-
-                    index = elementos_repetidos_b[i].id;
-                    num_restar = resultado[elementos_repetidos_b[i].id];
-                    resultado[index] = num_restar - 1;
-                    console.log(resultado);
-
-                    console.log ('Se repite mas veces b => ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
-                    prioridad.push(elementos_repetidos_a[i]);
-                    no_prioridad.push(elementos_repetidos_b[i]);
-  
-                }
-                else
-                {
-                    index = elementos_repetidos_b[i].id;
-                    num_restar = resultado[elementos_repetidos_b[i].id];
-                    resultado[index] = num_restar - 1;
-                    console.log(resultado);
-                    console.log ('=> ', resultado[elementos_repetidos_b[i].id], ' | id = ',elementos_repetidos_b[i].id)
-                    prioridad.push(elementos_repetidos_a[i]);
-                    no_prioridad.push(elementos_repetidos_b[i]);
-                }
-            }
-
-            //se verifica en la consola los datos
-            console.log('prioridad: ',prioridad);
-            console.log('no prioridad: ',no_prioridad);
-
-            //se elimina del array => re , el cual contiene todos los datos, los datos => no_prioridad
-            for (i=0; i < no_prioridad.length; i++)
-            {         
-                const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
-
-                if (index !== -1) {
-                  re.splice(index, 1);         
-                }
-
-            }
-
-            //se verifican los datos en la consola 
-            console.log(re); 
-
-            //se imprimen los datos ya pasados por el algoritmo de PRIORIDAD
-            re.forEach(res =>{
-                $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
-                    <div>${res.curso}</div>
-                    <div>(${res.nombre_p})</div>
-                </div>`);
-            });
-            if (selectedPeriod=== 'Mañana')
-            {
-                $('#calendario').modal('show');
-            }
-            else if (selectedPeriod=== 'Tarde') 
-            {
-                $('#calendario2').modal('show');
-            }
-            else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
-                showAlert("Seleccione AM o PM"); 
-                return false;
-            } 
-                 
-        }
-    })
-
-})
-
 });

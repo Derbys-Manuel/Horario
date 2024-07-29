@@ -7,6 +7,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horario Inteligente</title>
+    <link rel="stylesheet" href="../assets/examen.css?v=<?php echo $date['seconds'] ?>">
     <!-- Bootstrap CSS para estilos y diseño responsive -->
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css?v=<?php echo $date['seconds'] ?>">
     <!-- Estilos personalizados -->
@@ -99,7 +100,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
                 </div>
                 <!-- Botón Volver -->
                 <div class="text-center mt-4">
-                    <a href='../index.php?v=<?php echo $date['seconds'] ?>' class="btn btn-success" style="background-color: #4CAF50; border-color: #4CAF50;">Volver</a>
+                    <a href='../index.php?v=<?php echo $date['seconds'] ?>' id="btnVolver" class="btn btn-success" style="background-color: #4CAF50; border-color: #4CAF50;">Volver</a>
                 </div>
                <div class="text-center mt-4">
                 <button class="btn btn-success" id="btn_prueba">Horario</button>
