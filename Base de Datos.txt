@@ -1,0 +1,38 @@
+create database horario;
+use horario;
+
+
+CREATE TABLE horarios_creados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+
+create table profesor 
+(id int primary key auto_increment,
+id_h int ,
+nombre_p varchar (45),
+curso varchar (45),
+foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
+);
+
+create table registro
+(id_r int primary key auto_increment,
+id_p int not null,
+disponibilidad_i varchar(45),
+disponibilidad_f varchar(45),
+dia varchar (45),
+tiempo varchar(45),
+direccion varchar(45),
+turno varchar(45),
+foreign key (id_p) references profesor (id) ON DELETE CASCADE
+
+);
+CREATE TABLE `examenes` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `direccion` VARCHAR(255) NOT NULL,
+    `id_h` INT NOT NULL,
+    `turno` VARCHAR(50) NOT NULL,
+    foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
+);
+

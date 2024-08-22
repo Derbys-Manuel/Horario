@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario</title>
+    <!-- Incluir bibliotecas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-style/0.8.16/xlsx-style.full.min.js"></script>
+    <!-- Agregar estilos para Receso -->
+    <style>
+        /* Cambiar el diseño de la letra de "Receso" */
+        #receso1, #receso2 {
+            font-family: 'Courier New', Courier, monospace; /* Fuente tipo monoespaciada */
+            font-size: 24px; /* Tamaño de letra grande */
+            font-weight: bold; /* Negrita */
+            color: #000000; /* Color negro */
+            text-align: center; /* Centrado horizontal */
+            padding: 20px 0; /* Espaciado arriba y abajo */
+        }
+    </style>
+</head>
+<body>
+    <!-- MODAL DE INSERTAR/EDITAR PROFESOR -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Ingresar Registro</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="modal1">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control " id="nombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="curso" class="form-label">Curso</label>
+                            <input type="text" class="form-control" id="curso" name="curso" required>
+                        </div>
+                        <!-- Bloque Selector -->
+                        <div class="mb-3">
+                            <label for="bloques" class="form-label">Bloques</label>
+                            <div class="input-group">
+                                <button class="btn btn-outline-secondary" type="button" id="decrease">-</button>
+                                <input type="text" class="form-control text-center" id="bloques" name="bloques" value="1 Bloque" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="increase">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                    // Variables para mantener el estado de los bloques
+                    let bloque = 1;
+                    const bloqueInput = document.getElementById('bloques');
+        
+                    // Función para actualizar el valor del input
+                    function updateBloqueInput() {
+                        bloqueInput.value = bloque;
+                    }
+                    
+                    // Evento para incrementar el bloque
+        document.getElementById('increase').addEventListener('click', function() {
+            bloque += 1;
+            updateBloqueInput();
+        });
+
+        // Evento para decrementar el bloque
+        document.getElementById('decrease').addEventListener('click', function() {
+            if (bloque > 1) {
+                bloque -= 1;
+                updateBloqueInput();
+            }
+        });
+
+        // Reiniciar el valor del bloque cuando se cierra el modal
+        const modalElement = document.querySelector('.modal'); // Selecciona tu modal aquí
+        modalElement.addEventListener('hidden.bs.modal', function () {
+            bloque = 1; // Reiniciar el bloque a 1
+            updateBloqueInput(); // Actualizar el input
+        });
+
+        // Inicializar el valor del input
+        updateBloqueInput();
+    </script>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="btn1" class="btn btn-primary">Añadir</button>
+                        <button type="button" id="btnUpdate" class="btn btn-primary" style="display: none;">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HORARIO MAÑANA -->
+    <div class="modal fade modal-xl" id="calendario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header horario-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                    <label id="modoExamenLabel" class="switch" style="display: none;">
+                        <input type="checkbox" id="modoExamen">
+                        <span class="slider round">Modo Examen</span>
+                    </label>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="table-responsive">
+                            <table class="table text-center align-middle " id="table-horario-am">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Hora</th>
+                                        <th scope="col" id="lunes">Lunes</th>
+                                        <th scope="col" id="martes">Martes</th>
+                                        <th scope="col" id="miercoles">Miércoles</th>
+                                        <th scope="col" id="jueves">Jueves</th>
+                                        <th scope="col" id="viernes">Viernes</th>
+                                        <th scope="col" id="sabado">Sábado</th>
+                                        <th scope="col" id="domingo">Domingo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="h8" value="AM">
+                                        <th scope="row" class="p-3">8:00 - 8:50</th>
+                                        <td id="lu8-AM" data-dia="Lunes" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="ma8-AM" data-dia="Martes" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="mi8-AM" data-dia="Miércoles" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="ju8-AM" data-dia="Jueves" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="vi8-AM" data-dia="Viernes" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="sa8-AM" data-dia="Sábado" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                        <td id="do8-AM" data-dia="Domingo" value="08:00-09:40" class="mañana menu" rowspan="2"></td>
+                                    </tr>
+                                    <tr id="h9">
+                                        <th scope="row" class="p-3">8:50 - 9:40</th>
+                                    </tr>
+                                    <tr id="h10">
+                                        <th scope="row" class="p-2">9:40 - 10:00</th>
+                                        <td id="receso1" colspan="7"><h2>Receso</h2></td>
+                                    </tr>
+                                    <tr id="h11">
+                                        <th scope="row" class="p-3">10:00 - 10:50</th>
+                                        <td id="lu10-AM" data-dia="Lunes" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="ma10-AM" data-dia="Martes" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="mi10-AM" data-dia="Miércoles" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="ju10-AM" data-dia="Jueves" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="vi10-AM" data-dia="Viernes" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="sa10-AM" data-dia="Sábado" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                        <td id="do10-AM" data-dia="Domingo" value="10:00-10:50" class="mañana menu" rowspan=""></td>
+                                    </tr>
+                                    <tr id="h12">
+                                        <th scope="row" class="p-3">10:50 - 11:40</th>
+                                        <td id="lu11-AM" data-dia="Lunes" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="ma11-AM" data-dia="Martes" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="mi11-AM" data-dia="Miércoles" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="ju11-AM" data-dia="Jueves" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="vi11-AM" data-dia="Viernes" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="sa11-AM" data-dia="Sábado" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                        <td id="do11-AM" data-dia="Domingo" value="10:50-11:40" class="mañana menu" rowspan=""></td>
+                                    </tr>
+                                    <tr id="h13">
+                                        <th scope="row" class="p-3">11:40 - 12:00</th>
+                                        <td id="receso2" colspan="7"><h2>Receso</h2></td>
+                                    </tr>
+                                    <tr id="h14">
+                                        <th scope="row" class="p-3">12:00 - 12:50</th>
+                                        <td id="lu12-PM" data-dia="Lunes" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="ma12-PM" data-dia="Martes" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="mi12-PM" data-dia="Miércoles" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="ju12-PM" data-dia="Jueves" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="vi12-PM" data-dia="Viernes" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="sa12-PM" data-dia="Sábado" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                        <td id="do12-PM" data-dia="Domingo" value="12:00-01:30" class="mañana menu" rowspan="2"></td>
+                                    </tr>
+                                    <tr id="h15">
+                                        <th scope="row" class="p-3">12:50 - 01:30</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="guardarPDF" style="display:none;">Exporta PDF</button>
+                    <button type="button" class="btn btn-primary" id="exportarExcel" style="display:none;">Exportar a Excel</button>
+                    <button type="button" id="closeBtn1" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HORARIO TARDE -->
+    <div class="modal fade modal-xl" id="calendario2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header horario-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                    <label id="modoExamenLabel2" class="switch" style="display: none;">
+                        <input type="checkbox" id="modoExamen2">
+                        <span class="slider round">Modo Examen</span>
+                    </label>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="table-responsive">
+                            <table class="table text-center align-middle" id="table-horario-pm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Hora</th>
+                                        <th scope="col" id="lunes">Lunes</th>
+                                        <th scope="col" id="martes">Martes</th>
+                                        <th scope="col" id="miercoles">Miércoles</th>
+                                        <th scope="col" id="jueves">Jueves</th>
+                                        <th scope="col" id="viernes">Viernes</th>
+                                        <th scope="col" id="sabado">Sábado</th>
+                                        <th scope="col" id="domingo">Domingo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="h17">
+                                        <th scope="row" class="p-3">5:00 - 5:50</th>
+                                        <td id="lu17-PM" data-dia="Lunes" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="ma17-PM" data-dia="Martes" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="mi17-PM" data-dia="Miércoles" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="ju17-PM" data-dia="Jueves" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="vi17-PM" data-dia="Viernes" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="sa17-PM" data-dia="Sábado" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                        <td id="do17-PM" data-dia="Domingo" value="05:00-06:40" class="tarde menu" rowspan="2"></td>
+                                    </tr>
+                                    <tr id="h18">
+                                        <th scope="row" class="p-3">5:50 - 6:40</th>
+                                    </tr>
+                                    <tr id="h19">
+                                        <th scope="row" class="p-3">6:40 - 7:00</th>
+                                        <td id="receso3" colspan="7"><h2>Receso</h2></td>
+                                    </tr>
+                                    <tr id="h20">
+                                        <th scope="row" class="p-3">7:00 - 7:50</th>
+                                        <td id="lu20-PM" data-dia="Lunes" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="ma20-PM" data-dia="Martes" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="mi20-PM" data-dia="Miércoles" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="ju20-PM" data-dia="Jueves" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="vi20-PM" data-dia="Viernes" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="sa20-PM" data-dia="Sábado" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                        <td id="do20-PM" data-dia="Domingo" value="07:00-07:50" class="tarde menu" rowspan="2"></td>
+                                    </tr>
+                                    <tr id="h21">
+                                        <th scope="row" class="p-3">7:50 - 8:40</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="guardarPDF2" style="display:none;">Descargar como PDF</button>
+                    <button type="button" class="btn btn-primary" id="exportarExcel2" style="display:none;">Exportar a Excel</button>
+                    <button type="button" id="closeBtn2" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('guardarPDF').addEventListener('click', function() {
+            var horario = document.getElementById('table-horario-am');
+            var opt = {
+                margin: [20, 10, 20, 10], // Ajusta los márgenes para espaciar mejor
+                filename: 'horario.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2canvas(horario, { scale: 2 }).then(function(canvas) {
+                var imgData = canvas.toDataURL('image/jpeg', 1.0);
+                var pdf = new jspdf.jsPDF(opt.jsPDF);
+
+                var pageWidth = pdf.internal.pageSize.getWidth();
+                var pageHeight = pdf.internal.pageSize.getHeight();
+                var imgWidth = canvas.width;
+                var imgHeight = canvas.height;
+                var ratio = Math.min((pageWidth - 20) / imgWidth, (pageHeight - 40) / imgHeight); // Ajuste del ratio
+                var imgX = (pageWidth - imgWidth * ratio) / 2;
+                var imgY = 30; // Ajusta la posición Y de la tabla para que no esté demasiado abajo
+
+                pdf.text('HORARIO: ' + document.getElementById('nombre-horario-am').innerText, pageWidth / 2, 20, { align: 'center' });
+                pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                var pdfBlob = pdf.output('bloburl');
+                window.open(pdfBlob);
+            });
+        });
+
+        document.getElementById('guardarPDF2').addEventListener('click', function() {
+            var horario = document.getElementById('table-horario-pm');
+            var opt = {
+                margin: [20, 10, 20, 10], // Ajusta los márgenes para espaciar mejor
+                filename: 'horario.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2canvas(horario, { scale: 2 }).then(function(canvas) {
+                var imgData = canvas.toDataURL('image/jpeg', 1.0);
+                var pdf = new jspdf.jsPDF(opt.jsPDF);
+
+                var pageWidth = pdf.internal.pageSize.getWidth();
+                var pageHeight = pdf.internal.pageSize.getHeight();
+                var imgWidth = canvas.width;
+                var imgHeight = canvas.height;
+                var ratio = Math.min((pageWidth - 20) / imgWidth, (pageHeight - 40) / imgHeight); // Ajuste del ratio
+                var imgX = (pageWidth - imgWidth * ratio) / 2;
+                var imgY = 30; // Ajusta la posición Y de la tabla para que no esté demasiado abajo
+
+                pdf.text('HORARIO: ' + document.getElementById('nombre-horario-pm').innerText, pageWidth / 2, 20, { align: 'center' });
+                pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                var pdfBlob = pdf.output('bloburl');
+                window.open(pdfBlob);
+            });
+        });
+
+        document.getElementById('exportarExcel').addEventListener('click', function() {
+            exportToExcel('table-horario-am');
+        });
+
+        document.getElementById('exportarExcel2').addEventListener('click', function() {
+            exportToExcel('table-horario-pm');
+        });
+
+        function exportToExcel(tableId) {
+            var table = document.getElementById(tableId);
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Horario" });
+
+            // Obtener la hoja de trabajo
+            var ws = wb.Sheets["Horario"];
+
+            // Ajustar el ancho de las columnas
+            ws['!cols'] = [
+                { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
+                { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }
+            ];
+
+            // Ajustar la altura de las filas
+            ws['!rows'] = [
+                { hpt: 30 }, { hpt: 30 }, { hpt: 30 }, { hpt: 30 },
+                { hpt: 30 }, { hpt: 30 }, { hpt: 30 }
+            ];
+
+            // Aplicar estilos a las celdas
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cell_address = { c: C, r: R };
+                    const cell_ref = XLSX.utils.encode_cell(cell_address);
+                    if (!ws[cell_ref]) continue;
+                    if (!ws[cell_ref].s) ws[cell_ref].s = {};
+
+                    // Aplicar bordes y centrado
+                    ws[cell_ref].s.alignment = { horizontal: 'center', vertical: 'center' };
+                    ws[cell_ref].s.border = {
+                        top: { style: 'thin', color: { rgb: '000000' } },
+                        bottom: { style: 'thin', color: { rgb: '000000' } },
+                        left: { style: 'thin', color: { rgb: '000000' } },
+                        right: { style: 'thin', color: { rgb: '000000' } }
+                    };
+                }
+            }
+
+            // Aplicar estilos a los encabezados
+            const headerRow = 0;
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const cell_address = { c: C, r: headerRow };
+                const cell_ref = XLSX.utils.encode_cell(cell_address);
+                if (!ws[cell_ref]) continue;
+                if (!ws[cell_ref].s) ws[cell_ref].s = {};
+
+                // Estilo para encabezados
+                ws[cell_ref].s.font = { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FFFFFF' } };
+                ws[cell_ref].s.fill = { fgColor: { rgb: '000000' } };
+                ws[cell_ref].s.alignment = { horizontal: 'center', vertical: 'center' };
+                ws[cell_ref].s.border = {
+                    top: { style: 'thin', color: { rgb: '000000' } },
+                    bottom: { style: 'thin', color: { rgb: '000000' } },
+                    left: { style: 'thin', color: { rgb: '000000' } },
+                    right: { style: 'thin', color: { rgb: '000000' } }
+                };
+            }
+
+            XLSX.writeFile(wb, 'horario.xlsx');
+        }
+    </script>
+</body>
+</html>
