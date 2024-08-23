@@ -643,32 +643,47 @@ $(document).ready(function() {
                     }
                 }
 
- 
+                // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
+                const conteo = {};
 
+                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
+                const resultadoFinal = [];
 
-                for (i = 0; i < re.length; i++)
-                {
-                    if (!prioridad.includes(re.id_r))
-                    {
-                        prioridad.push(re[i]);
+                re.forEach(item => {
+                    const key = `${item.id}-${item.id_r}`;
+                    
+                    // Obtener el máximo de bloques para este 'id'
+                    const maxBloques = parseInt(item.bloques, 10);
+
+                    // Incrementar el contador de ocurrencias para este 'id'
+                    if (!conteo[item.id]) {
+                        conteo[item.id] = 0;
                     }
-                }
-                console.log(prioridad);
+                    
+                    // Verificar si el item está en prioridad
+                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r);
+                    
+                    // Agregar solo si no excede el límite de bloques
+                    if (conteo[item.id] < maxBloques) {
+                        resultadoFinal.push(item);
+                        conteo[item.id]++;
+                    } else if (enPrioridad) {
+                        // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
+                        const indexNoPrioridad = resultadoFinal.findIndex(
+                            resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
+                        );
+                        
+                        if (indexNoPrioridad !== -1) {
+                            // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
+                            resultadoFinal.splice(indexNoPrioridad, 1, item);
+                        }
+                    }
+                });
 
-                const idCounts = prioridad.reduce((acc, item) => {
-                    acc[item.id] = (acc[item.id] || 0) + 1;
-                    return acc;
-                }, {});
-                
-                const resulta = Object.entries(idCounts).map(([id, count]) => ({ id: Number(id), count }));
-                
-                console.log(resulta);
+                console.log("Resultado final:", resultadoFinal);
 
 
-
-
-
-                re.forEach(res => {
+                resultadoFinal.forEach(res => {
                     $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                         <div>${res.curso}</div>
                         <div>(${res.nombre_p})</div>
@@ -698,4 +713,6 @@ $(document).ready(function() {
         localStorage.removeItem('selectedHorarioId');
         localStorage.removeItem('selectedPeriod');
     }
+
+
 });

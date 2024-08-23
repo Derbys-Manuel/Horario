@@ -2,6 +2,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Aeromatic+SC&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cambria&display=swap');
 
+
+
+
+
+
+
+
+/* Asegúrate de que el modal que quieres mostrar esté en el frente */
+#alert2Modal {
+    z-index: 1051; /* Asegúrate de que esté por encima de otros modales */
+}
+
 /* Estilo para el título */
 #titulo {
     font-family: 'Aeromatic SC', sans-serif;

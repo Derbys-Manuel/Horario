@@ -81,21 +81,22 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
         </div>
     </div>
     <!-- Modal de alerta -->
-<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="alertModalLabel">Alerta</h5>
-            </div>
-            <div class="modal-body" id="alertModalBody">
-                <!-- Mensaje de alerta se colocará aquí -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Alerta</h5>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                    <!-- Mensaje de alerta se colocará aquí -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Aceptar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
 
     <script>
         $(document).ready(function() {
