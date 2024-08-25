@@ -86,8 +86,8 @@ $(document).ready(function() {
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                             <td>
-                                <button value="${element.id}" class="btn btn-primary tool-action default-action" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}">
-                                    <i class="bi bi-calendar2-week"></i>
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
+                                    <i class="bi bi-calendar2-week "></i>
                                 </button>
                             </td>
                         </tr>
@@ -373,6 +373,7 @@ $(document).ready(function() {
     $(document).on('click', '.mañana, .tarde', function() {
         const element = $(this).attr('id');
         const tiempo = element.split('-')[1];
+        localStorage.setItem('direccion',element);
 
         if (modoExamen) {
             // Modo Examen activado, insertar o eliminar exámenes
@@ -416,6 +417,7 @@ $(document).ready(function() {
             // Modo normal, insertar o eliminar clases
             if ($(`.${element}`).length) {  
                 $(`.${element}`).remove();
+                $(`#${element}`).removeClass('bg-dark');
 
                 const dato = {
                     direccion: element,
@@ -427,16 +429,19 @@ $(document).ready(function() {
                     data: dato,
                     success: function(result) {
                         console.log("Registro eliminado:", result);
+                        ubicarColor();
+                        
                     }
                 });
+                
             } else {
                 //RESUMIR LA LATENCIA DEL INSERTAR
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
+                const valor = $(this).data('valor');
                 let datas = {};
 
                 const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
-
                 datas = {
                     disponibilidad_i: hora_inicial2_i,
                     disponibilidad_f: hora_inicial2_f,
@@ -444,8 +449,13 @@ $(document).ready(function() {
                     tiempo: tiempo,
                     id_p: selectedId,
                     direccion: element,
-                    turno: selectedPeriod
-                };
+                    turno: selectedPeriod,
+                    valor: valor
+                }
+                dato = {
+                    id_p: selectedId
+                }
+
                 $.ajax({
                     url: "../php/register/insert_r.php",
                     data: datas,
@@ -455,10 +465,44 @@ $(document).ready(function() {
                         listar_registros();
                     }
                 });
+                
             }
         }
     });
+    //FUNCION COLOR
+    function ubicarColor() {
+        let id = localStorage.getItem('selectedID');
+        let dato = {
+            id_p: id
+        };
+        let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
+        $.ajax({
+            url: "../php/register/ubicarColor.php",
+            type: "POST",
+            data: dato,
+            success: function(respuest) {
+                const respuesta = JSON.parse(respuest);
+                console.log(respuesta);
+
+                for (let i = 0; i < respuesta.length; i++) {
+                    if (i < selectedBloque) {
+                        const element = $(`#${respuesta[i].direccion}`);
+                        if (element.length) {  // Verifica si el elemento existe
+                            element.addClass('bg-dark');
+                        } else {
+                            console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
+                        }
+                    }
+                }
+            },
+            error: function(error) {
+                console.error("Error en la petición AJAX", error);
+            }
+        });
+    }
+
+   
     // Evento para cambiar el estado del modo examen
     $(document).on('change', '#modoExamen', function() {
         modoExamen = $(this).is(':checked');
@@ -513,6 +557,7 @@ $(document).ready(function() {
                         <div>(${selectedTeacher})</div>
                     </div>`);
                 });
+                ubicarColor();
             }
         });
     }
@@ -547,6 +592,7 @@ $(document).ready(function() {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
+                    $(`#${res.direccion}`).removeClass("bg-dark");
                 });
             }
         });
@@ -555,6 +601,7 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
 
     $(document).on('click', '#btnHorario', function() {
+        $('.h1Bloques').css('display','none');
         modoHorario = true;
         $('#modoExamenLabel').show();
         $('#modoExamenLabel2').show();
@@ -713,6 +760,12 @@ $(document).ready(function() {
         localStorage.removeItem('selectedHorarioId');
         localStorage.removeItem('selectedPeriod');
     }
-
-
+    $(document).on('click', '.calendarios' ,function(){
+        $('.h1Bloques').css('display','block');
+        selectedBloques = $(this).data('bloques');
+        $('#cantidadBloques').text(selectedBloques);
+        localStorage.setItem('selectedBloques', selectedBloques);
+        const selectedID = $(this).data('id');
+        localStorage.setItem('selectedID', selectedID);
+        })
 });
