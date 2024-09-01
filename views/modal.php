@@ -198,7 +198,7 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
-                    <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></h1>
+                    <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
                     <label id="modoExamenLabel2" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen2">
                         <span class="slider round">Modo Examen</span>

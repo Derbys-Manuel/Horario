@@ -764,6 +764,7 @@ $(document).ready(function() {
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');
         $('#cantidadBloques').text(selectedBloques);
+        $('#cantidadBloques2').text(selectedBloques);
         localStorage.setItem('selectedBloques', selectedBloques);
         const selectedID = $(this).data('id');
         localStorage.setItem('selectedID', selectedID);
