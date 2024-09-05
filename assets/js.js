@@ -425,7 +425,7 @@ $(document).ready(function() {
             // Modo normal, insertar o eliminar clases
             if ($(`.${element}`).length) {  
                 $(`.${element}`).remove();
-                $(`#${element}`).removeClass('bg-dark');
+                $(`#${element}`).removeClass('border-danger border-2');
 
                 const dato = {
                     direccion: element,
@@ -497,7 +497,7 @@ $(document).ready(function() {
                     if (i < selectedBloque) {
                         const element = $(`#${respuesta[i].direccion}`);
                         if (element.length) {  // Verifica si el elemento existe
-                            element.addClass('bg-dark');
+                            element.addClass('border-danger border-2');
                         } else {
                             console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
                         }
@@ -600,7 +600,7 @@ $(document).ready(function() {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
-                    $(`#${res.direccion}`).removeClass("bg-dark");
+                    $(`#${res.direccion}`).removeClass("border-danger border-2");
                 });
             }
         });
