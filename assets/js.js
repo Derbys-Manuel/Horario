@@ -40,7 +40,8 @@ $(document).ready(function() {
             nombre: $("#nombre").val(),
             curso: $("#curso").val(),
             id_h: selectedHorarioId,
-            bloques: $('#bloques').val()
+            bloques: $('#bloques').val(),
+            turno: selectedPeriod
         };
         const id = $("#btnUpdate").val();
         const url = id ? "../php/profesor/editar.php" : "../php/profesor/insert.php";
@@ -62,7 +63,8 @@ $(document).ready(function() {
     // Función para listar los profesores
     function listar() {
         const dato = {
-            id_h: selectedHorarioId
+            id_h: selectedHorarioId,
+            turno: selectedPeriod
         }
         $.ajax({
             url: '../php/profesor/list.php',
@@ -190,9 +192,12 @@ $(document).ready(function() {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
             localStorage.setItem('selectedPeriod', selectedPeriod);
+            listar();
+            $('#turno_profesor').val(selectedPeriod);
         } else {
             selectedPeriod = "";
             localStorage.removeItem('selectedPeriod');
+            listar();
         }
     });
 
@@ -205,9 +210,12 @@ $(document).ready(function() {
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
+            listar();
             localStorage.setItem('selectedPeriod', selectedPeriod);
+            $('#turno_profesor').val(selectedPeriod);
         } else {
             selectedPeriod = "";
+            listar();
             localStorage.removeItem('selectedPeriod');
         }
     });

@@ -41,6 +41,9 @@
                             <label for="curso" class="form-label">Curso</label>
                             <input type="text" class="form-control" id="curso" name="curso" required>
                         </div>
+                        <div class="mb-3">
+                            <input type="hidden" id="turno_profesor">
+                        </div>
                         <!-- Bloque Selector -->
                         <div class="mb-3">
                             <label for="bloques" class="form-label">Bloques</label>
