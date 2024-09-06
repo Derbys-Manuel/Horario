@@ -737,13 +737,13 @@ $(document).ready(function() {
 
                 console.log("Resultado final:", resultadoFinal);
 
-
                 resultadoFinal.forEach(res => {
                     $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                         <div>${res.curso}</div>
                         <div>(${res.nombre_p})</div>
                     </div>`);
                 });
+
                 listar_examenes(); // Llamar a listar_examenes después de listar registros normales
                 if (selectedPeriod === 'Mañana') {
                     $('#calendario').modal('show');
