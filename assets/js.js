@@ -102,6 +102,44 @@ $(document).ready(function() {
         });
     }
 
+
+    function listar2() {
+        const dato = {
+            id_h: selectedHorarioId,
+            turno: selectedPeriod
+        }
+        $.ajax({
+            url: '../php/profesor/list02.php',
+            type: 'POST',
+            data: dato,
+            success: function(r) {
+                const profesor = JSON.parse(r);
+                const calculo = profesor.length;
+                let template = "";
+                if (calculo === 0) {
+                    const enfoque = `
+                    <tr>
+                        <td colspan="3"> No hay horario seleccionado </td>
+                    </tr>
+                    `;
+                    $('#lista').html(enfoque);          
+                } else {
+                    profesor.forEach(element => {
+                        template += `
+                        <tr id="${element.id}" class="menu">
+                            <td>${element.nombre_p}</td>
+                            <td>${element.curso}</td>
+                        </tr>
+                        `;
+                    });
+                    $('#lista-002').html(template);
+                }
+            }
+        });
+    }
+
+
+
     // Función para establecer el modo de edición, eliminación o envío
     function setMode(mode) {
         resetButtons();
@@ -610,6 +648,7 @@ $(document).ready(function() {
 
     $(document).on('click', '#btnHorario', function() {
         $('.h1Bloques').css('display','none');
+        $('.btn-001').css('display','block');
         modoHorario = true;
         $('#modoExamenLabel').show();
         $('#modoExamenLabel2').show();
@@ -769,6 +808,7 @@ $(document).ready(function() {
         localStorage.removeItem('selectedPeriod');
     }
     $(document).on('click', '.calendarios' ,function(){
+        $('.btn-001').css('display','none');
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');
         $('#cantidadBloques').text(selectedBloques);
@@ -777,4 +817,8 @@ $(document).ready(function() {
         const selectedID = $(this).data('id');
         localStorage.setItem('selectedID', selectedID);
         })
+    $(document).on('click', '.btn-001', function(){
+        $('#modal-001').modal('show');
+        listar2();
+    })
 });

@@ -105,6 +105,7 @@
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></h1>
                     <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></h1>
+                    <img src="../assets/img/icons8-spyro-ios-17-glyph-96.png" alt="Imagen de la academia Elite" class="btn-001 menu" width="60px">
                     <label id="modoExamenLabel" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen">
                         <span class="slider round">Modo Examen</span>
@@ -216,6 +217,7 @@
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                     <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
+                    <button class="btn btn-success btn-001" id="btn-001">Editar</button>
                     <label id="modoExamenLabel2" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen2">
                         <span class="slider round">Modo Examen</span>
@@ -295,6 +297,55 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
+    <div class="modal fade" id="modal-001" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col"><h1 class="modal-title fs-5" id="staticBackdropLabel">Lista de Profesores</h1></div>
+                        </div> 
+                    </div>
+                </div>
+                <table id="example-002" class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Curso</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-002">
+                        <!-- Aquí se generarán dinámicamente las filas de la tabla -->
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script>
         document.getElementById('guardarPDF').addEventListener('click', function() {
             var horario = document.getElementById('table-horario-am');
