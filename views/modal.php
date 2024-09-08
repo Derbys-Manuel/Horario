@@ -104,8 +104,18 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></h1>
-                    <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></h1>
-                    <img src="../assets/img/icons8-spyro-ios-17-glyph-96.png" alt="Imagen de la academia Elite" class="btn-001 menu" width="60px">
+                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></h1>
+                    <div class="row">
+                        <div class="col-5">
+                            <button class="btn-001 btn btn-success menu">Editar</button>         
+                        </div>
+                        <div class="col-7">
+                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
+                                <i class="bi bi-x-circle"></i>
+                                <span class="tooltiptext">Cancelar</span>
+                            </div>
+                        </div>
+                    </div>
                     <label id="modoExamenLabel" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen">
                         <span class="slider round">Modo Examen</span>
@@ -204,7 +214,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="guardarPDF" style="display:none;">Exporta PDF</button>
                     <button type="button" class="btn btn-primary" id="exportarExcel" style="display:none;">Exportar a Excel</button>
-                    <button type="button" id="closeBtn1" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="closeBtn1" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -216,8 +226,18 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
-                    <h1 class="modal-title fs-5 h1Bloques" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
-                    <button class="btn btn-success btn-001" id="btn-001">Editar</button>
+                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
+                    <div class="row">
+                        <div class="col-5">
+                            <button class="btn-001 btn btn-success menu">Editar</button>         
+                        </div>
+                        <div class="col-7">
+                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel2" style="display:none;">
+                                <i class="bi bi-x-circle"></i>
+                                <span class="tooltiptext">Cancelar</span>
+                            </div>
+                        </div>
+                    </div>
                     <label id="modoExamenLabel2" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen2">
                         <span class="slider round">Modo Examen</span>
@@ -292,7 +312,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="guardarPDF2" style="display:none;">Descargar como PDF</button>
                     <button type="button" class="btn btn-primary" id="exportarExcel2" style="display:none;">Exportar a Excel</button>
-                    <button type="button" id="closeBtn2" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="closeBtn2" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -326,7 +346,7 @@
                     </tbody>
                 </table>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>

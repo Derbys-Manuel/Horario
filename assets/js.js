@@ -126,7 +126,7 @@ $(document).ready(function() {
                 } else {
                     profesor.forEach(element => {
                         template += `
-                        <tr id="${element.id}" class="menu">
+                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}">
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                         </tr>
@@ -562,11 +562,17 @@ $(document).ready(function() {
 
     $('#closeBtn1').click(function() {
         limpiarTodo();
+        $('.mañana').removeClass('modal1');
+        $('#btnCancel1').css('display', 'none');  
+        $('#btnCancel2').css('display', 'none'); 
         restaurarModoHorario();
     });
 
     $('#closeBtn2').click(function() {
         limpiarTodo();
+        $('.tarde').removeClass('modal2');
+        $('#btnCancel1').css('display', 'none'); 
+        $('#btnCancel2').css('display', 'none');
         restaurarModoHorario();
     });
 
@@ -640,6 +646,7 @@ $(document).ready(function() {
                     $(`#${res.direccion}`).text("");
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
                 });
+                limpiar_registro_editar();
             }
         });
     }
@@ -656,7 +663,6 @@ $(document).ready(function() {
         $('#exportarExcel').show();
         $('#guardarPDF2').show();
         $('#exportarExcel2').show();
-        $('.mañana, .tarde').off(); // Desactivar eventos anteriores
         $('.mañana, .tarde').removeClass('menu');
         $('.table').removeClass('table-hover');
 
@@ -775,7 +781,7 @@ $(document).ready(function() {
                 });
 
                 console.log("Resultado final:", resultadoFinal);
-
+                localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
                 resultadoFinal.forEach(res => {
                     $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                         <div>${res.curso}</div>
@@ -798,15 +804,13 @@ $(document).ready(function() {
 
     $('#btnVolver').click(function(){
         borrar_localstorage();
-    })
+    });
 
     function borrar_localstorage()
     {
-        localStorage.removeItem('selectedHorarioText');
-        localStorage.removeItem('horariosGenerados');
-        localStorage.removeItem('selectedHorarioId');
-        localStorage.removeItem('selectedPeriod');
+        localStorage.clear();
     }
+
     $(document).on('click', '.calendarios' ,function(){
         $('.btn-001').css('display','none');
         $('.h1Bloques').css('display','block');
@@ -820,5 +824,74 @@ $(document).ready(function() {
     $(document).on('click', '.btn-001', function(){
         $('#modal-001').modal('show');
         listar2();
-    })
+    });
+    $(document).on('click', '.profe', function(){
+        $('.mañana, .tarde').addClass('menu');
+        $('.mañana').addClass('modal1');
+        $('.tarde').addClass('modal2');
+        $('#modal-001').modal('hide');
+        $('#btnCancel1').css('display', 'block');
+        $('#btnCancel2').css('display', 'block');
+        nombre = $(this).data('nombre');
+        curso = $(this).data('curso');
+        localStorage.setItem('curso', curso);
+        localStorage.setItem('nombre', nombre);
+    });
+    $(document).on('click', '.modal1, .modal2', function(){
+        direccion = localStorage.getItem('direccion');
+        nombre = localStorage.getItem('nombre');
+        curso = localStorage.getItem('curso');
+        if ($(`.${direccion}`).length) {  
+            $(`.${direccion}`).remove();
+        }
+        else {
+            $(`#${direccion}`).html(`<div class="text-success ${direccion}">
+                <div>${curso}</div>
+                <div>(${nombre})</div>
+            </div>`);
+            agregarElementoAlArray(direccion);
+            // Función para agregar un nuevo elemento al array en localStorage
+            function agregarElementoAlArray(nuevoElemento) {
+                // Obtener el array existente en localStorage
+                let miArray = JSON.parse(localStorage.getItem('miArray')) || [];
+                // Agregar el nuevo elemento al array
+                miArray.push(nuevoElemento);
+                // Guardar el array actualizado en localStorage
+                localStorage.setItem('miArray', JSON.stringify(miArray));
+            }
+        }
+    });
+    function limpiar_registro_editar(){
+        const arrayGuardado = JSON.parse(localStorage.getItem('miArray'));
+        for (i = 0 ; i < arrayGuardado.length; i++)
+        {
+            $(`#${arrayGuardado[i]}`).html(``);
+        }
+    }
+    function guardar_horario_generado()
+    {
+        const horario_generado = JSON.parse(localStorage.getItem('horario_generado'));
+        for (i = 0 ; i < horario_generado.length; i++)
+        {
+            $(`#${horario_generado[i].direccion}`).html(`<div class="text-success ${horario_generado[i].direccion}" value="${horario_generado[i].id_r}">
+                <div>${horario_generado[i].curso}</div>
+                <div>(${horario_generado[i].nombre_p})</div>
+            </div>`);
+        }
+    }
+    $(document).on('click', '#btnCancel1', function(){
+        $('#btnCancel1').css('display', 'none');
+        $('.mañana').addClass('modal1');
+        $('.tarde').addClass('modal2');
+        limpiar_registro_editar();
+        guardar_horario_generado()
+    });
+    $(document).on('click', '#btnCancel2', function(){
+        $('#btnCancel2').css('display', 'none');
+        $('.mañana').addClass('modal1');
+        $('.tarde').addClass('modal2');
+        limpiar_registro_editar();
+        guardar_horario_generado()
+    });
+
 });
