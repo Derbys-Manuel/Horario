@@ -881,15 +881,17 @@ $(document).ready(function() {
     }
     $(document).on('click', '#btnCancel1', function(){
         $('#btnCancel1').css('display', 'none');
-        $('.mañana').addClass('modal1');
-        $('.tarde').addClass('modal2');
+        $('.mañana').removeClass('modal1');
+        $('.tarde').removeClass('modal2');
+        $('.mañana, .tarde').removeClass('menu');
         limpiar_registro_editar();
         guardar_horario_generado()
     });
     $(document).on('click', '#btnCancel2', function(){
         $('#btnCancel2').css('display', 'none');
-        $('.mañana').addClass('modal1');
-        $('.tarde').addClass('modal2');
+        $('.mañana').removeClass('modal1');
+        $('.tarde').removeClass('modal2');
+        $('.mañana, .tarde').removeClass('menu');
         limpiar_registro_editar();
         guardar_horario_generado()
     });

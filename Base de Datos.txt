@@ -13,6 +13,8 @@ create table profesor
 id_h int ,
 nombre_p varchar (45),
 curso varchar (45),
+bloques varchar(45),
+turno varchar(45),
 foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
 );
 
@@ -25,6 +27,7 @@ dia varchar (45),
 tiempo varchar(45),
 direccion varchar(45),
 turno varchar(45),
+valor varchar(45),
 foreign key (id_p) references profesor (id) ON DELETE CASCADE
 
 );
