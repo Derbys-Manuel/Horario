@@ -332,7 +332,8 @@ $(document).ready(function() {
             const data = {
                 id: id,
                 nombre: $("#nombre").val(),
-                curso: $("#curso").val()
+                curso: $("#curso").val(),
+                bloques: $("#bloques").val(),
             };
             $.ajax({
                 url: "../php/profesor/editar.php",
@@ -861,13 +862,18 @@ $(document).ready(function() {
             }
         }
     });
-    function limpiar_registro_editar(){
+    function limpiar_registro_editar() {
         const arrayGuardado = JSON.parse(localStorage.getItem('miArray'));
-        for (i = 0 ; i < arrayGuardado.length; i++)
-        {
-            $(`#${arrayGuardado[i]}`).html(``);
+        // Verifica si arrayGuardado es null o no es un array
+        if (!arrayGuardado || !Array.isArray(arrayGuardado) || arrayGuardado.length === 0) {
+            console.log('');
+        } else {
+            for (let i = 0; i < arrayGuardado.length; i++) {
+                $(`#${arrayGuardado[i]}`).html('');
+            }
         }
     }
+    
     function guardar_horario_generado()
     {
         const horario_generado = JSON.parse(localStorage.getItem('horario_generado'));
