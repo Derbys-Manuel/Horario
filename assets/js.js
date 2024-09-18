@@ -39,7 +39,6 @@ $(document).ready(function() {
         const data = {
             nombre: $("#nombre").val(),
             curso: $("#curso").val(),
-            id_h: selectedHorarioId,
             bloques: $('#bloques').val(),
             turno: selectedPeriod
         };
@@ -63,7 +62,6 @@ $(document).ready(function() {
     // Función para listar los profesores
     function listar() {
         const dato = {
-            id_h: selectedHorarioId,
             turno: selectedPeriod
         }
         $.ajax({
@@ -386,6 +384,7 @@ $(document).ready(function() {
         localStorage.setItem('selectedHorarioId', selectedHorarioId);
         $("#btnCancel").show(); // Mostrar el botón Cancelar al enviar a un horario
         listar(); //LISTAR PROFESORES DEPENDIENDO DEL HORARIO SELECCIONADO
+        
     });
 
     // Función para mostrar alertas
@@ -486,6 +485,7 @@ $(document).ready(function() {
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
                 const valor = $(this).data('valor');
+                id_h = localStorage.getItem('selectedHorarioId');
                 let datas = {};
 
                 const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
@@ -497,7 +497,8 @@ $(document).ready(function() {
                     id_p: selectedId,
                     direccion: element,
                     turno: selectedPeriod,
-                    valor: valor
+                    valor: valor,
+                    id_h: id_h
                 }
                 dato = {
                     id_p: selectedId
@@ -519,8 +520,10 @@ $(document).ready(function() {
     //FUNCION COLOR
     function ubicarColor() {
         let id = localStorage.getItem('selectedID');
+        let id_h = localStorage.getItem('selectedHorarioId');
         let dato = {
-            id_p: id
+            id_p: id,
+            id_h: id_h
         };
         let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
@@ -595,8 +598,10 @@ $(document).ready(function() {
     //FUNCION PARA LISTAR REGISTROS EN EL CUADRO CON EL CAMPO DIRECCION (QUE CONTIENE EL ID DE LA UBICACION EN EL MODAL DEL HORARIO)
 
     function listar_registros() {
+        id_h = localStorage.getItem('selectedHorarioId');
         const dato = {
-            id_p: selectedId
+            id_p: selectedId,
+            id_h: id_h
         };
         $.ajax({
             url: "../php/register/listar.php",
