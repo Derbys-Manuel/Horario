@@ -103,7 +103,6 @@ $(document).ready(function() {
 
     function listar2() {
         const dato = {
-            id_h: selectedHorarioId,
             turno: selectedPeriod
         }
         $.ajax({
@@ -210,8 +209,8 @@ $(document).ready(function() {
 
     // Evento para el botón de añadir
     $(document).on('click', '#btn2', function() {
-        if (!selectedHorarioId || !selectedPeriod) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+        if (!selectedPeriod) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione AM o PM"); // Mostrar alerta si no hay un horario seleccionado
             return; // Salir de la función si no hay un horario seleccionado
         }
         resetForm();
@@ -219,11 +218,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox1', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox1').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
@@ -238,11 +232,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox2').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
@@ -660,6 +649,12 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
 
     $(document).on('click', '#btnHorario', function() {
+
+        if ($('#inlineCheckbox1').is(':checked') && !selectedHorarioId || $('#inlineCheckbox2').is(':checked') && !selectedHorarioId) {
+            showAlert("Seleccione Horario"); 
+            return;
+        }
+
         $('.h1Bloques').css('display','none');
         $('.btn-001').css('display','block');
         modoHorario = true;
@@ -803,8 +798,8 @@ $(document).ready(function() {
                 } else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
                     showAlert("Seleccione AM o PM"); 
                     return false;
-                }
-            }    
+                } 
+                     }    
         });
     });
 
