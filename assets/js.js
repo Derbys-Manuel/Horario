@@ -1,6 +1,19 @@
 $(document).ready(function() {
     borrar_localstorage();
 
+    let direccionAM = [
+        
+        'lu8-AM','lu9-AM','lu10-AM','lu11-AM','lu12-AM','lu1-AM',
+        'ma8-AM','ma9-AM','ma10-AM','ma11-AM','ma12-AM','ma1-AM',
+        'mi8-AM','mi9-AM','mi10-AM','mi11-AM','mi12-AM','mi1-AM',
+        'ju8-AM','ju9-AM','ju10-AM','ju11-AM','ju12-AM','ju1-AM',
+        'vi8-AM','vi9-AM','vi10-AM','vi11-AM','vi12-AM','vi1-AM',
+        'sa8-AM','sa9-AM','sa10-AM','sa11-AM','sa12-AM','sa1-AM',
+        'do8-AM','do9-AM','do10-AM','do11-AM','do12-AM','do1-AM',
+
+    ];
+
+
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -686,6 +699,8 @@ $(document).ready(function() {
     $(document).on('click', '#btnHorario', function() {
         $('.h1Bloques').css('display','none');
         $('.btn-001').css('display','block');
+        $('.color01').css('display','block');
+        $('.color02').css('display','block');
         modoHorario = true;
         $('#modoExamenLabel').show();
         $('#modoExamenLabel2').show();
@@ -843,6 +858,8 @@ $(document).ready(function() {
 
     $(document).on('click', '.calendarios' ,function(){
         $('.btn-001').css('display','none');
+        $('.color01').css('display','none');
+        $('.color02').css('display','none');
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');
         $('#cantidadBloques').text(selectedBloques);
@@ -920,7 +937,7 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
         limpiar_registro_editar();
-        guardar_horario_generado()
+        guardar_horario_generado();
     });
     $(document).on('click', '#btnCancel2', function(){
         $('#btnCancel2').css('display', 'none');
@@ -928,7 +945,7 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
         limpiar_registro_editar();
-        guardar_horario_generado()
+        guardar_horario_generado();
+        
     });
-
 });

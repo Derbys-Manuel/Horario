@@ -109,25 +109,26 @@
                     <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
                     <!-- Añadido: Selector de color y botón para aplicar -->
                     <div class="d-flex align-items-center mt-2">
-                        <label for="colorPickerAM" class="me-1" style="font-size: 0.9rem;">color:</label>
-                    <input type="color" id="colorPickerAM" class="form-control form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
-                </div>
-                <div class="row">
-                    <div class="col-5">
-                        <button class="btn-001 btn btn-success menu">Editar</button>
-                    </div>
-                    <div class="col-7">
-                        <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
-                            <i class="bi bi-x-circle"></i>
-                            <span class="tooltiptext">Cancelar</span>
+                        <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
+                        <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
+                    </div>  
+               
+                    <div class="row">
+                        <div class="col-5">
+                            <button class="btn-001 btn btn-success menu">Editar</button>
+                        </div>
+                        <div class="col-7">
+                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
+                                <i class="bi bi-x-circle"></i>
+                                <span class="tooltiptext">Cancelar</span>
+                            </div>
                         </div>
                     </div>
+                    <label id="modoExamenLabel" class="switch" style="display: none;">
+                        <input type="checkbox" id="modoExamen">
+                        <span class="slider round">Modo Examen</span>
+                    </label>
                 </div>
-                <label id="modoExamenLabel" class="switch" style="display: none;">
-                    <input type="checkbox" id="modoExamen">
-                    <span class="slider round">Modo Examen</span>
-                </label>
-            </div>
             <div class="modal-body">
                     <div class="container-fluid">
                         <div class="table-responsive">
@@ -237,10 +238,9 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                     <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
                     <!-- Añadido: Selector de color y botón para aplicar en horario PM -->
-                    <div class="d-flex align-items-center mt-2">
-                        <label for="colorPickerPM" class="me-1" style="font-size: 0.9rem;">Color:</label>
-                        <input type="color" id="colorPickerPM" class="form-control form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
-                        
+                    <div class="d-flex align-items-center mt-2 ">
+                        <label for="colorPickerPM" class="me-1 color01" style="font-size: 0.9rem;">Color:</label>
+                        <input type="color" id="colorPickerPM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
                     </div>
 
 
@@ -365,6 +365,7 @@
             this.classList.add('selected');
         });
     });
+    
 </script>
 
 
