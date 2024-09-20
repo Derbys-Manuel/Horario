@@ -607,8 +607,9 @@ $(document).ready(function() {
         limpiarTodo();
         $('.mañana').removeClass('modal1');
         $('#btnCancel1').css('display', 'none');  
-        $('#btnCancel2').css('display', 'none'); 
+        $('#btnCancel2').css('display', 'none');
         restaurarModoHorario();
+        $('#colorPickerAM').val('#FFFFFF');
     });
 
     $('#closeBtn2').click(function() {
@@ -617,6 +618,7 @@ $(document).ready(function() {
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
         restaurarModoHorario();
+        $('#colorPickerAM').val('#FFFFFF');
     });
 
     // Función para restaurar el modo horario y examen
@@ -948,4 +950,5 @@ $(document).ready(function() {
         guardar_horario_generado();
         
     });
+
 });
