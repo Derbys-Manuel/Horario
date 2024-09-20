@@ -58,6 +58,34 @@ $(document).ready(function() {
                 resetForm();
             }
         });
+        horarios = localStorage.getItem('horarios');
+        horarios = JSON.parse(horarios);
+        console.log(horarios);
+        for (i=0; i < horarios.length; i++)
+        {
+            console.log('Comparando:', horarios[i].id, selectedHorarioId); 
+            if (parseInt(horarios[i].id) === parseInt(selectedHorarioId)) {
+                continue; // Omitir esta iteración si es igual a selectedHorarioId
+            }
+            else
+            {
+                const data = {
+                    nombre: $("#nombre").val(),
+                    curso: $("#curso").val(),
+                    id_h: horarios[i].id,
+                    bloques: $('#bloques').val(),
+                    turno: selectedPeriod
+                };
+                $.ajax({
+                    url: "../php/profesor/insert.php",
+                    data: data,
+                    type: "POST",
+                    success: function(response) {
+                        console.log('se ingreso ok', response);
+                    }
+                })
+            }
+        }
     });
 
     // Función para listar los profesores
@@ -368,6 +396,7 @@ $(document).ready(function() {
                 });
                 $('#selectHorario').html(options);
                 $('#enviarHorarioModal').modal('show');
+                localStorage.setItem('horarios', JSON.stringify(horarios));
             }
         });
         setMode('enviar');

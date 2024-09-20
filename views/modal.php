@@ -97,31 +97,38 @@
             </div>
         </div>
     </div>
+    
 
     <!-- MODAL HORARIO MAÑANA -->
     <div class="modal fade modal-xl" id="calendario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <!-- Modal Header -->
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></h1>
-                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></h1>
-                    <div class="row">
-                        <div class="col-5">
-                            <button class="btn-001 btn btn-success menu">Editar</button>         
-                        </div>
-                        <div class="col-7">
-                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
-                                <i class="bi bi-x-circle"></i>
-                                <span class="tooltiptext">Cancelar</span>
-                            </div>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
+                    <!-- Añadido: Selector de color y botón para aplicar -->
+                    <div class="d-flex align-items-center mt-2">
+                        <label for="colorPickerAM" class="me-1" style="font-size: 0.9rem;">color:</label>
+                    <input type="color" id="colorPickerAM" class="form-control form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
+                </div>
+                <div class="row">
+                    <div class="col-5">
+                        <button class="btn-001 btn btn-success menu">Editar</button>
+                    </div>
+                    <div class="col-7">
+                        <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
                         </div>
                     </div>
-                    <label id="modoExamenLabel" class="switch" style="display: none;">
-                        <input type="checkbox" id="modoExamen">
-                        <span class="slider round">Modo Examen</span>
-                    </label>
                 </div>
-                <div class="modal-body">
+                <label id="modoExamenLabel" class="switch" style="display: none;">
+                    <input type="checkbox" id="modoExamen">
+                    <span class="slider round">Modo Examen</span>
+                </label>
+            </div>
+            <div class="modal-body">
                     <div class="container-fluid">
                         <div class="table-responsive">
                             <table class="table text-center align-middle " id="table-horario-am">
@@ -220,6 +227,8 @@
         </div>
     </div>
 
+
+
     <!-- MODAL HORARIO TARDE -->
     <div class="modal fade modal-xl" id="calendario2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -227,6 +236,14 @@
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                     <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
+                    <!-- Añadido: Selector de color y botón para aplicar en horario PM -->
+                    <div class="d-flex align-items-center mt-2">
+                        <label for="colorPickerPM" class="me-1" style="font-size: 0.9rem;">Color:</label>
+                        <input type="color" id="colorPickerPM" class="form-control form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;">
+                        
+                    </div>
+
+
                     <div class="row">
                         <div class="col-5">
                             <button class="btn-001 btn btn-success menu">Editar</button>         
@@ -318,10 +335,37 @@
         </div>
     </div>
 
+    <script>
+    // Variable para almacenar el color seleccionado
+    let selectedColorAM = document.getElementById('colorPickerAM').value;
+    let selectedColorPM = document.getElementById('colorPickerPM').value;
 
+    // Evento para cambiar el color seleccionado en el color picker AM
+    document.getElementById('colorPickerAM').addEventListener('input', function() {
+        selectedColorAM = this.value;
+    });
 
+    // Evento para cambiar el color seleccionado en el color picker PM
+    document.getElementById('colorPickerPM').addEventListener('input', function() {
+        selectedColorPM = this.value;
+    });
 
+    // Evento para seleccionar una celda del horario AM
+    document.querySelectorAll('#table-horario-am td').forEach(function(td) {
+        td.addEventListener('click', function() {
+            this.style.backgroundColor = selectedColorAM;  // Aplicar color directamente
+            this.classList.add('selected');  // Añadir clase de selección visible si es necesario
+        });
+    });
 
+    // Evento para seleccionar una celda del horario PM
+    document.querySelectorAll('#table-horario-pm td').forEach(function(td) {
+        td.addEventListener('click', function() {
+            this.style.backgroundColor = selectedColorPM;  // Aplicar color directamente
+            this.classList.add('selected');
+        });
+    });
+</script>
 
 
     <div class="modal fade" id="modal-001" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -351,19 +395,6 @@
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <script>
