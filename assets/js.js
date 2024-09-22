@@ -153,7 +153,7 @@ $(document).ready(function() {
                 } else {
                     profesor.forEach(element => {
                         template += `
-                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}">
+                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}" data-activo="on">
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                         </tr>
@@ -594,6 +594,7 @@ $(document).ready(function() {
         $('.mañana').removeClass('modal1');
         $('#btnCancel1').css('display', 'none');  
         $('#btnCancel2').css('display', 'none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -604,6 +605,7 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -692,6 +694,7 @@ $(document).ready(function() {
         $('.btn-001').css('display','block');
         $('.color01').css('display','block');
         $('.color02').css('display','block');
+        $('#checkAM, #checkPM').css('display','block');
         modoHorario = true;
         $('#modoExamenLabel').show();
         $('#modoExamenLabel2').show();
@@ -745,8 +748,6 @@ $(document).ready(function() {
                 const result = {};
                 //aqui se almacen los datos en => resultado
                 re.forEach(el => (result[el.id] = result[el.id] + 1 || 1));  
-
-
                 //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
                 for (let i = 0; i < elementos_repetidos_a.length; i++) {
                     //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
@@ -778,27 +779,20 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
-
                 // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
                 const conteo = {};
-
                 // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
                 const resultadoFinal = [];
-
                 re.forEach(item => {
-                    const key = `${item.id}-${item.id_r}`;
-                    
+                    const key = `${item.id}-${item.id_r}`;         
                     // Obtener el máximo de bloques para este 'id'
                     const maxBloques = parseInt(item.bloques, 10);
-
                     // Incrementar el contador de ocurrencias para este 'id'
                     if (!conteo[item.id]) {
                         conteo[item.id] = 0;
-                    }
-                    
+                    } 
                     // Verificar si el item está en prioridad
-                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r);
-                    
+                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
                     // Agregar solo si no excede el límite de bloques
                     if (conteo[item.id] < maxBloques) {
                         resultadoFinal.push(item);
@@ -807,8 +801,7 @@ $(document).ready(function() {
                         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
                         const indexNoPrioridad = resultadoFinal.findIndex(
                             resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
-                        );
-                        
+                        );  
                         if (indexNoPrioridad !== -1) {
                             // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
                             resultadoFinal.splice(indexNoPrioridad, 1, item);
@@ -851,6 +844,7 @@ $(document).ready(function() {
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
+        $('#checkAM, #checkPM').css('display','none');
         $('.decrease2, .increase2').css('display','block');
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');
@@ -877,8 +871,19 @@ $(document).ready(function() {
         $('#btnCancel2').css('display', 'block');
         nombre = $(this).data('nombre');
         curso = $(this).data('curso');
+        activo = $(this).data('activo');
         localStorage.setItem('curso', curso);
         localStorage.setItem('nombre', nombre);
+        localStorage.setItem('activo', activo);
+        activoColor = localStorage.getItem('colorActivo');
+
+        if(activoColor === 'color')
+        {
+            $('.mañana, .tarde').removeClass('menu');
+            $('.mañana').removeClass('modal1');
+            $('.tarde').removeClass('modal2');
+        }
+
     });
     $(document).on('click', '.modal1, .modal2', function(){
         direccion = localStorage.getItem('direccion');
@@ -932,6 +937,7 @@ $(document).ready(function() {
         $('.mañana').removeClass('modal1');
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
+        localStorage.removeItem('activo');
         limpiar_registro_editar();
         guardar_horario_generado();
     });
@@ -940,6 +946,7 @@ $(document).ready(function() {
         $('.mañana').removeClass('modal1');
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
+        localStorage.removeItem('activo');
         limpiar_registro_editar();
         guardar_horario_generado();    
     });
@@ -1005,5 +1012,28 @@ $(document).ready(function() {
             }
         });
     }
+    $(document).on('click', '#checkAM, #checkPM', function(){
+        $('#btnCancel3, #btnCancel4').css('display','block');
+        colorActivo = $(this).data('color');
+        localStorage.setItem('colorActivo', colorActivo);
+        activoEditar = localStorage.getItem('activo');
 
+        if(activoEditar === 'on')
+        {
+            $('.mañana, .tarde').removeClass('menu');
+            $('.mañana').removeClass('modal1');
+            $('.tarde').removeClass('modal2');
+        }
+    });
+    $(document).on('click', '#btnCancel3, #btnCancel4', function(){
+        $('#btnCancel3, #btnCancel4').css('display','none');
+        localStorage.removeItem('colorActivo');
+        activoEditar = localStorage.getItem('activo');
+        if (activoEditar==='on')
+        {
+            $('.mañana, .tarde').addClass('menu');
+            $('.mañana').addClass('modal1');
+            $('.tarde').addClass('modal2'); 
+        }       
+    });
 });

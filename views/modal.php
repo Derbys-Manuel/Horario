@@ -105,25 +105,27 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
-         
-                        <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                            <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
-                                <h1 class="modal-title fs-5 h1Bloques m-3 " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
-                            <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
-                        </div>
-    
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1> 
+                    <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
+                        <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
+                            <h1 class="modal-title fs-5 h1Bloques m-3 " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
+                        <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                    </div>
                     <div class="d-flex align-items-center mt-2">
                         <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
                         <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
+                        <i class="bi bi-check-lg text-light bg-success rounded p-1 px-2 mx-2 menu" id="checkAM" data-color="color"></i>
+                        <div class="btn-icon2 mx-2 mt-2 menu" id="btnCancel3" style="display:none;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
+                        </div>
                     </div>  
-               
                     <div class="row">
                         <div class="col-5">
-                            <button class="btn-001 btn btn-success menu">Editar</button>
+                            <button class="btn-001 btn btn-success menu mt-1">Editar</button>
                         </div>
                         <div class="col-7">
-                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel1" style="display:none;">
+                            <div class="btn-icon2 mt-3 menu" id="btnCancel1" style="display:none;">
                                 <i class="bi bi-x-circle"></i>
                                 <span class="tooltiptext">Cancelar</span>
                             </div>
@@ -250,15 +252,18 @@
                     <div class="d-flex align-items-center mt-2 ">
                         <label for="colorPickerPM" class="me-1 color01" style="font-size: 0.9rem;">Color:</label>
                         <input type="color"  id="colorPickerPM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
+                        <i class="bi bi-check-lg text-light bg-success rounded p-1 px-2 mx-2 menu" id="checkPM" data-color="color"></i>
+                        <div class="btn-icon2 mx-2 mt-2 menu" id="btnCancel4" style="display:block;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
+                        </div>
                     </div>
-
-
                     <div class="row">
                         <div class="col-5">
-                            <button class="btn-001 btn btn-success menu">Editar</button>         
+                            <button class="btn-001 btn btn-success menu mt-1">Editar</button>         
                         </div>
                         <div class="col-7">
-                            <div class="btn-icon2 mr-3 mt-1 menu" id="btnCancel2" style="display:none;">
+                            <div class="btn-icon2 mt-3 menu" id="btnCancel2" style="display:none;">
                                 <i class="bi bi-x-circle"></i>
                                 <span class="tooltiptext">Cancelar</span>
                             </div>
@@ -345,9 +350,11 @@
     </div>
 
     <script>
- // Variable para almacenar el color seleccionado
- let selectedColorAM = document.getElementById('colorPickerAM').value;
+    // Variables para almacenar el color seleccionado y si se puede aplicar
+    let selectedColorAM = document.getElementById('colorPickerAM').value;
     let selectedColorPM = document.getElementById('colorPickerPM').value;
+    let canApplyColorAM = false;  // Control de color para AM
+    let canApplyColorPM = false;  // Control de color para PM
 
     // Evento para cambiar el color seleccionado en el color picker AM
     document.getElementById('colorPickerAM').addEventListener('input', function() {
@@ -359,41 +366,65 @@
         selectedColorPM = this.value;
     });
 
+    // Evento para habilitar la aplicación de color en el horario AM al hacer clic en el icono checkAM
+    document.getElementById('checkAM').addEventListener('click', function() {
+        canApplyColorAM = true;  // Habilita la aplicación del color en el horario AM
+    });
+
+    // Evento para habilitar la aplicación de color en el horario PM al hacer clic en el icono checkPM
+    document.getElementById('checkPM').addEventListener('click', function() {
+        canApplyColorPM = true;  // Habilita la aplicación del color en el horario PM
+    });
+
     // Evento para seleccionar una celda del horario AM
     document.querySelectorAll('#table-horario-am td').forEach(function(td) {
         td.addEventListener('click', function() {
-            this.style.backgroundColor = selectedColorAM;  // Aplicar color directamente
-            this.classList.add('selected');  // Añadir clase de selección visible
+            if (canApplyColorAM) {  // Solo aplica el color si está habilitado
+                this.style.backgroundColor = selectedColorAM;
+                this.classList.add('selected');
+            }
         });
     });
 
     // Evento para seleccionar una celda del horario PM
     document.querySelectorAll('#table-horario-pm td').forEach(function(td) {
         td.addEventListener('click', function() {
-            this.style.backgroundColor = selectedColorPM;  // Aplicar color directamente
-            this.classList.add('selected');
+            if (canApplyColorPM) {  // Solo aplica el color si está habilitado
+                this.style.backgroundColor = selectedColorPM;
+                this.classList.add('selected');
+            }
         });
     });
 
-// Evento para quitar colores
-document.getElementById('closeBtn1').addEventListener('click', function() {
-    // Para el horario AM
-    document.querySelectorAll('#table-horario-am td.selected').forEach(function(td) {
-        td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
-        td.classList.remove('selected');  // Quitar clase de selección
+    // Evento para deshabilitar la aplicación de color en el horario AM al hacer clic en el botón btnCancel3
+    document.getElementById('btnCancel3').addEventListener('click', function() {
+        canApplyColorAM = false;  // Deshabilita la aplicación del color en el horario AM
     });
-    selectedColorAM = '#FFFFFF';  // Restablecer el color seleccionado a blanco
-});
 
-document.getElementById('closeBtn2').addEventListener('click', function() {
-    // Para el horario PM
-    document.querySelectorAll('#table-horario-pm td.selected').forEach(function(td) {
-        td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
-        td.classList.remove('selected');  // Quitar clase de selección
+    // Evento para deshabilitar la aplicación de color en el horario PM al hacer clic en el botón btnCancel4
+    document.getElementById('btnCancel4').addEventListener('click', function() {
+        canApplyColorPM = false;  // Deshabilita la aplicación del color en el horario PM
     });
-    selectedColorPM = '#FFFFFF';  // Restablecer el color seleccionado a blanco
-}); 
-</script>
+
+    // Evento para quitar colores
+    document.getElementById('closeBtn1').addEventListener('click', function() {
+        // Para el horario AM
+        document.querySelectorAll('#table-horario-am td.selected').forEach(function(td) {
+            td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
+            td.classList.remove('selected');  // Quitar clase de selección
+        });
+        selectedColorAM = '#FFFFFF';  // Restablecer el color seleccionado a blanco
+    });
+
+    document.getElementById('closeBtn2').addEventListener('click', function() {
+        // Para el horario PM
+        document.querySelectorAll('#table-horario-pm td.selected').forEach(function(td) {
+            td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
+            td.classList.remove('selected');  // Quitar clase de selección
+        });
+        selectedColorPM = '#FFFFFF';  // Restablecer el color seleccionado a blanco
+    }); 
+    </script>
 
 
     <div class="modal fade" id="modal-001" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
