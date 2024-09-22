@@ -45,7 +45,7 @@
                             <input type="hidden" id="turno_profesor">
                         </div>
                         <!-- Bloque Selector -->
-                        <div class="mb-3">
+                        <div class="mb-3" style="display: none;">
                             <label for="bloques" class="form-label">Bloques</label>
                             <div class="input-group">
                                 <button class="btn btn-outline-secondary" type="button" id="decrease">-</button>
@@ -106,8 +106,13 @@
                 <!-- Modal Header -->
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
-                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
-                    <!-- Añadido: Selector de color y botón para aplicar -->
+         
+                        <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
+                            <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
+                                <h1 class="modal-title fs-5 h1Bloques m-3 " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
+                            <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                        </div>
+    
                     <div class="d-flex align-items-center mt-2">
                         <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
                         <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
@@ -236,7 +241,11 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
-                    <h1 class="modal-title fs-5 h1Bloques position-absolute top-0 end-0 m-3" id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></h1>
+                    <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
+                        <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
+                            <h1 class="modal-title fs-5 h1Bloques m-3 " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></span></h1>
+                        <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                    </div>
                     <!-- Añadido: Selector de color y botón para aplicar en horario PM -->
                     <div class="d-flex align-items-center mt-2 ">
                         <label for="colorPickerPM" class="me-1 color01" style="font-size: 0.9rem;">Color:</label>
