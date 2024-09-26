@@ -426,7 +426,6 @@ $(document).ready(function() {
                     resetButtons();
                     $('#staticBackdrop').modal('hide');
                     resetForm();
-                    alert('rererer');
                 }
             });
         });
@@ -1032,7 +1031,7 @@ $(document).ready(function() {
             curso: curso,
             bloques: bloques
         }
-        const url = "../php/profesor/editar.php";
+        const url = "../php/profesor/editarBloques.php";
         $.ajax({
             url: url,
             data: data,
