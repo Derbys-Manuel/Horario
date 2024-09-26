@@ -1,6 +1,5 @@
 $(document).ready(function() {
     borrar_localstorage();
-
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -39,8 +38,9 @@ $(document).ready(function() {
         const data = {
             nombre: $("#nombre").val(),
             curso: $("#curso").val(),
+            id_h: selectedHorarioId,
             bloques: $('#bloques').val(),
-            turno: selectedPeriod
+            turno: "Mañana"
         };
         const id = $("#btnUpdate").val();
         const url = id ? "../php/profesor/editar.php" : "../php/profesor/insert.php";
@@ -57,11 +57,68 @@ $(document).ready(function() {
                 resetForm();
             }
         });
+        let turno = ['Mañana', 'Tarde'];
+        horarios = localStorage.getItem('horarios');
+        horarios = JSON.parse(horarios);
+        console.log(horarios);
+        console.log(turno.length);
+        for(i=0; i < turno.length; i++)
+            {
+                console.log('sadsadasd')
+                if(selectedPeriod != turno[i])
+                    {
+                        for (e=0; e < horarios.length; e++)
+                            {
+                                    const data = {
+                                        nombre: $("#nombre").val(),
+                                        curso: $("#curso").val(),
+                                        id_h: horarios[e].id,
+                                        bloques: $('#bloques').val(),
+                                        turno: turno[i]
+                                    };
+                                    $.ajax({
+                                        url: "../php/profesor/insert.php",
+                                        data: data,
+                                        type: "POST",
+                                        success: function(response) {
+                                            console.log('se ingreso ok', response);
+                                        }
+                                    })
+                            }
+                    }
+    
+            }
+        for (i=0; i < horarios.length; i++)
+        {
+            if (parseInt(horarios[i].id) === parseInt(selectedHorarioId)) {
+                continue; // Omitir esta iteración si es igual a selectedHorarioId
+            }
+            else
+            {
+                const data = {
+                    nombre: $("#nombre").val(),
+                    curso: $("#curso").val(),
+                    id_h: horarios[i].id,
+                    bloques: $('#bloques').val(),
+                    turno: selectedPeriod
+                };
+                $.ajax({
+                    url: "../php/profesor/insert.php",
+                    data: data,
+                    type: "POST",
+                    success: function(response) {
+                        console.log('se ingreso ok', response);
+                    }
+                })
+            }
+        }
+
     });
 
     // Función para listar los profesores
     function listar() {
         const dato = {
+            id_h: selectedHorarioId,
             turno: selectedPeriod
         }
         $.ajax({
@@ -103,6 +160,7 @@ $(document).ready(function() {
 
     function listar2() {
         const dato = {
+            id_h: selectedHorarioId,
             turno: selectedPeriod
         }
         $.ajax({
@@ -123,7 +181,7 @@ $(document).ready(function() {
                 } else {
                     profesor.forEach(element => {
                         template += `
-                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}">
+                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}" data-activo="on">
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                         </tr>
@@ -209,8 +267,8 @@ $(document).ready(function() {
 
     // Evento para el botón de añadir
     $(document).on('click', '#btn2', function() {
-        if (!selectedPeriod) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione AM o PM"); // Mostrar alerta si no hay un horario seleccionado
+        if (!selectedHorarioId || !selectedPeriod) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
             return; // Salir de la función si no hay un horario seleccionado
         }
         resetForm();
@@ -218,6 +276,11 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox1', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox1').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
@@ -232,6 +295,11 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox2').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
@@ -355,6 +423,7 @@ $(document).ready(function() {
                 });
                 $('#selectHorario').html(options);
                 $('#enviarHorarioModal').modal('show');
+                localStorage.setItem('horarios', JSON.stringify(horarios));
             }
         });
         setMode('enviar');
@@ -373,7 +442,6 @@ $(document).ready(function() {
         localStorage.setItem('selectedHorarioId', selectedHorarioId);
         $("#btnCancel").show(); // Mostrar el botón Cancelar al enviar a un horario
         listar(); //LISTAR PROFESORES DEPENDIENDO DEL HORARIO SELECCIONADO
-        
     });
 
     // Función para mostrar alertas
@@ -474,7 +542,6 @@ $(document).ready(function() {
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
                 const valor = $(this).data('valor');
-                id_h = localStorage.getItem('selectedHorarioId');
                 let datas = {};
 
                 const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
@@ -486,8 +553,7 @@ $(document).ready(function() {
                     id_p: selectedId,
                     direccion: element,
                     turno: selectedPeriod,
-                    valor: valor,
-                    id_h: id_h
+                    valor: valor
                 }
                 dato = {
                     id_p: selectedId
@@ -509,10 +575,8 @@ $(document).ready(function() {
     //FUNCION COLOR
     function ubicarColor() {
         let id = localStorage.getItem('selectedID');
-        let id_h = localStorage.getItem('selectedHorarioId');
         let dato = {
-            id_p: id,
-            id_h: id_h
+            id_p: id
         };
         let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
@@ -557,8 +621,11 @@ $(document).ready(function() {
         limpiarTodo();
         $('.mañana').removeClass('modal1');
         $('#btnCancel1').css('display', 'none');  
-        $('#btnCancel2').css('display', 'none'); 
+        $('#btnCancel2').css('display', 'none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
+        $('#colorPickerAM').val('#FFFFFF');
+        listar();
     });
 
     $('#closeBtn2').click(function() {
@@ -566,7 +633,10 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
+        $('#colorPickerAM').val('#FFFFFF');
+        listar();
     });
 
     // Función para restaurar el modo horario y examen
@@ -587,10 +657,8 @@ $(document).ready(function() {
     //FUNCION PARA LISTAR REGISTROS EN EL CUADRO CON EL CAMPO DIRECCION (QUE CONTIENE EL ID DE LA UBICACION EN EL MODAL DEL HORARIO)
 
     function listar_registros() {
-        id_h = localStorage.getItem('selectedHorarioId');
         const dato = {
-            id_p: selectedId,
-            id_h: id_h
+            id_p: selectedId
         };
         $.ajax({
             url: "../php/register/listar.php",
@@ -649,14 +717,12 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
 
     $(document).on('click', '#btnHorario', function() {
-
-        if ($('#inlineCheckbox1').is(':checked') && !selectedHorarioId || $('#inlineCheckbox2').is(':checked') && !selectedHorarioId) {
-            showAlert("Seleccione Horario"); 
-            return;
-        }
-
         $('.h1Bloques').css('display','none');
+        $('.decrease2, .increase2').css('display','none');
         $('.btn-001').css('display','block');
+        $('.color01').css('display','block');
+        $('.color02').css('display','block');
+        $('#checkAM, #checkPM').css('display','block');
         modoHorario = true;
         $('#modoExamenLabel').show();
         $('#modoExamenLabel2').show();
@@ -710,8 +776,6 @@ $(document).ready(function() {
                 const result = {};
                 //aqui se almacen los datos en => resultado
                 re.forEach(el => (result[el.id] = result[el.id] + 1 || 1));  
-
-
                 //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
                 for (let i = 0; i < elementos_repetidos_a.length; i++) {
                     //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
@@ -743,27 +807,20 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
-
                 // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
                 const conteo = {};
-
                 // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
                 const resultadoFinal = [];
-
                 re.forEach(item => {
-                    const key = `${item.id}-${item.id_r}`;
-                    
+                    const key = `${item.id}-${item.id_r}`;         
                     // Obtener el máximo de bloques para este 'id'
                     const maxBloques = parseInt(item.bloques, 10);
-
                     // Incrementar el contador de ocurrencias para este 'id'
                     if (!conteo[item.id]) {
                         conteo[item.id] = 0;
-                    }
-                    
+                    } 
                     // Verificar si el item está en prioridad
-                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r);
-                    
+                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
                     // Agregar solo si no excede el límite de bloques
                     if (conteo[item.id] < maxBloques) {
                         resultadoFinal.push(item);
@@ -772,8 +829,7 @@ $(document).ready(function() {
                         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
                         const indexNoPrioridad = resultadoFinal.findIndex(
                             resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
-                        );
-                        
+                        );  
                         if (indexNoPrioridad !== -1) {
                             // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
                             resultadoFinal.splice(indexNoPrioridad, 1, item);
@@ -798,8 +854,8 @@ $(document).ready(function() {
                 } else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
                     showAlert("Seleccione AM o PM"); 
                     return false;
-                } 
-                     }    
+                }
+            }    
         });
     });
 
@@ -814,13 +870,21 @@ $(document).ready(function() {
 
     $(document).on('click', '.calendarios' ,function(){
         $('.btn-001').css('display','none');
+        $('.color01').css('display','none');
+        $('.color02').css('display','none');
+        $('#checkAM, #checkPM').css('display','none');
+        $('.decrease2, .increase2').css('display','block');
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');
+        selectedNombre = $(this).data('nombre');
+        selectedCurso = $(this).data('curso');
         $('#cantidadBloques').text(selectedBloques);
         $('#cantidadBloques2').text(selectedBloques);
         localStorage.setItem('selectedBloques', selectedBloques);
         const selectedID = $(this).data('id');
         localStorage.setItem('selectedID', selectedID);
+        localStorage.setItem('selectedNombre', selectedNombre);
+        localStorage.setItem('selectedCurso', selectedCurso);
         })
     $(document).on('click', '.btn-001', function(){
         $('#modal-001').modal('show');
@@ -835,8 +899,19 @@ $(document).ready(function() {
         $('#btnCancel2').css('display', 'block');
         nombre = $(this).data('nombre');
         curso = $(this).data('curso');
+        activo = $(this).data('activo');
         localStorage.setItem('curso', curso);
         localStorage.setItem('nombre', nombre);
+        localStorage.setItem('activo', activo);
+        activoColor = localStorage.getItem('colorActivo');
+
+        if(activoColor === 'color')
+        {
+            $('.mañana, .tarde').removeClass('menu');
+            $('.mañana').removeClass('modal1');
+            $('.tarde').removeClass('modal2');
+        }
+
     });
     $(document).on('click', '.modal1, .modal2', function(){
         direccion = localStorage.getItem('direccion');
@@ -890,16 +965,103 @@ $(document).ready(function() {
         $('.mañana').removeClass('modal1');
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
+        localStorage.removeItem('activo');
         limpiar_registro_editar();
-        guardar_horario_generado()
+        guardar_horario_generado();
     });
     $(document).on('click', '#btnCancel2', function(){
         $('#btnCancel2').css('display', 'none');
         $('.mañana').removeClass('modal1');
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
+        localStorage.removeItem('activo');
         limpiar_registro_editar();
-        guardar_horario_generado()
+        guardar_horario_generado();    
     });
 
+    $(document).on('click', '.decrease2, .increase2', function(){
+        nombre = localStorage.getItem('selectedNombre');
+        curso = localStorage.getItem('selectedCurso');
+        id = localStorage.getItem('selectedID');
+        id_h = localStorage.getItem('selectedHorarioId');
+        turno = localStorage.getItem('selectedPeriod');
+        blo = localStorage.getItem('selectedBloques');
+        bloques = parseInt(blo);
+        
+        num = $(this).data('num'); // Obtener el valor de num      
+        num = Number(num); // Convertir num a un número
+
+        if (num === 1) {
+            bloques += 1; // Sumar 1 a bloques
+        } else if (num === -1) {
+            bloques -= 1; // Restar 1 a bloques
+        } 
+        console.log('Resultado de bloques:', bloques);
+
+        data = {
+            id: id,
+            nombre: nombre,
+            curso: curso,
+            bloques: bloques
+        }
+        const url = "../php/profesor/editar.php";
+        $.ajax({
+            url: url,
+            data: data,
+            type: "POST",
+            success: function(response) {
+                console.log(response);
+                if (num === 1)
+                {
+                    localStorage.setItem('selectedBloques', bloques);
+                    $('#cantidadBloques').text(bloques);
+                    $('#cantidadBloques2').text(bloques);
+                    ubicarColor();
+                }
+                else if (num === -1) {
+                    localStorage.setItem('selectedBloques', bloques);
+                    $('#cantidadBloques').text(bloques);
+                    $('#cantidadBloques2').text(bloques);
+                    limpiarTodo2();
+                }            
+            }
+        }) 
+    });
+    function limpiarTodo2() {
+        $.ajax({
+            url: "../php/generar_h/limpiar.php",
+            type: "GET",
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).removeClass("border-danger border-2");
+                });
+                ubicarColor();
+            }
+        });
+    }
+    $(document).on('click', '#checkAM, #checkPM', function(){
+        $('#btnCancel3, #btnCancel4').css('display','block');
+        colorActivo = $(this).data('color');
+        localStorage.setItem('colorActivo', colorActivo);
+        activoEditar = localStorage.getItem('activo');
+
+        if(activoEditar === 'on')
+        {
+            $('.mañana, .tarde').removeClass('menu');
+            $('.mañana').removeClass('modal1');
+            $('.tarde').removeClass('modal2');
+        }
+    });
+    $(document).on('click', '#btnCancel3, #btnCancel4', function(){
+        $('#btnCancel3, #btnCancel4').css('display','none');
+        localStorage.removeItem('colorActivo');
+        activoEditar = localStorage.getItem('activo');
+        if (activoEditar==='on')
+        {
+            $('.mañana, .tarde').addClass('menu');
+            $('.mañana').addClass('modal1');
+            $('.tarde').addClass('modal2'); 
+        }       
+    });
 });

@@ -7,7 +7,7 @@ $turno = $_POST['turno'];
 
 
 try {
-    $query = 'SELECT r.id_h,p.id, r.id_r, p.nombre_p, p.curso,p.bloques,r.direccion,r.turno, r.valor from profesor p
+    $query = 'SELECT p.id_h,p.id, r.id_r, p.nombre_p, p.curso,p.bloques,r.direccion,r.turno, r.valor from profesor p
     join  registro r on p.id = r.id_p having id_h = :id_h and turno = :turno order by id';
 
     $result = $conn->prepare($query);

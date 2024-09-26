@@ -3,15 +3,17 @@ include "../../database/conexion.php"; // Asegúrate de que la ruta a conexion.p
 
 $nombre_p = $_POST['nombre'];
 $curso = $_POST['curso'];
+$id_h = $_POST['id_h'];
 $bloques = $_POST['bloques'];
 $turno = $_POST['turno'];
 
-$query = 'INSERT INTO profesor (nombre_p, curso, bloques, turno) VALUES (:nombre, :curso, :bloques, :turno)';
+$query = 'INSERT INTO profesor (nombre_p, curso, id_h, bloques, turno) VALUES (:nombre, :curso, :id_h, :bloques, :turno)';
 
 try {
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':nombre', $nombre_p, PDO::PARAM_STR);
     $stmt->bindParam(':curso', $curso, PDO::PARAM_STR);
+    $stmt->bindParam(':id_h', $id_h, PDO::PARAM_STR);
     $stmt->bindParam(':bloques', $bloques, PDO::PARAM_STR);
     $stmt->bindParam(':turno', $turno, PDO::PARAM_STR);
     

@@ -1,10 +1,12 @@
 <?php
 include ("../../database/conexion.php");
 
+$id_h = $_POST['id_h'];
 $turno = $_POST['turno'];
 
-$query = "select * from profesor where turno = :turno";
+$query = "select * from profesor where id_h = :id_h and turno = :turno";
 $result = $conn->prepare($query);
+$result->bindParam(':id_h', $id_h, PDO::PARAM_STR);
 $result->bindParam(':turno', $turno, PDO::PARAM_STR);
 if(!$result->execute()){
     die ('Hubo un error');
