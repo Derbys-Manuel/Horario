@@ -26,27 +26,46 @@ $(document).ready(function() {
     }
 
     listar();
+    listarNumerico();
 
     // Mostrar/Ocultar barra de herramientas
     $('#toolbarIcon').click(function() {
         $('#toolbarContent').toggle();
     });
 
+    function listarNumerico()
+    {
+        $.ajax({
+            url:  "../php/profesor/listNumerico.php",
+            type: "POST",
+            success: function(response) {
+                respuesta = JSON.parse(response);
+                localStorage.setItem('numerico', respuesta[0].numerico);
+            }
+        });
+    }
+
     // Evento para el formulario de agregar profesor
     $(document).on("submit", "#modal1", function(e) {
         e.preventDefault();
+        let num;
+        let url = "../php/profesor/insert.php";
+        if(!localStorage.getItem('numerico'))
+        {
+            num = 1;
+        }
+        else {
+            num = parseInt(localStorage.getItem('numerico'), 10);  
+            num += 1;
+        }
         const data = {
             nombre: $("#nombre").val(),
             curso: $("#curso").val(),
             id_h: selectedHorarioId,
             bloques: $('#bloques').val(),
-            turno: "Mañana"
+            turno: "Mañana",
+            numerico: num
         };
-        const id = $("#btnUpdate").val();
-        const url = id ? "../php/profesor/editar.php" : "../php/profesor/insert.php";
-        if (id) {
-            data.id = id;
-        }
         $.ajax({
             url: url,
             data: data,
@@ -55,6 +74,7 @@ $(document).ready(function() {
                 listar();
                 $('#staticBackdrop').modal('hide');
                 resetForm();
+                listarNumerico();
             }
         });
         let turno = ['Mañana', 'Tarde'];
@@ -64,26 +84,26 @@ $(document).ready(function() {
         console.log(turno.length);
         for(i=0; i < turno.length; i++)
             {
-                console.log('sadsadasd')
                 if(selectedPeriod != turno[i])
                     {
                         for (e=0; e < horarios.length; e++)
                             {
-                                    const data = {
-                                        nombre: $("#nombre").val(),
-                                        curso: $("#curso").val(),
-                                        id_h: horarios[e].id,
-                                        bloques: $('#bloques').val(),
-                                        turno: turno[i]
-                                    };
-                                    $.ajax({
-                                        url: "../php/profesor/insert.php",
-                                        data: data,
-                                        type: "POST",
-                                        success: function(response) {
-                                            console.log('se ingreso ok', response);
-                                        }
-                                    })
+                                const data = {
+                                    nombre: $("#nombre").val(),
+                                    curso: $("#curso").val(),
+                                    id_h: horarios[e].id,
+                                    bloques: $('#bloques').val(),
+                                    turno: turno[i],
+                                    numerico: num
+                                };
+                                $.ajax({
+                                    url: "../php/profesor/insert.php",
+                                    data: data,
+                                    type: "POST",
+                                    success: function(response) {
+                                        console.log('se ingreso ok', response);
+                                    }
+                                })
                             }
                     }
     
@@ -100,7 +120,8 @@ $(document).ready(function() {
                     curso: $("#curso").val(),
                     id_h: horarios[i].id,
                     bloques: $('#bloques').val(),
-                    turno: selectedPeriod
+                    turno: selectedPeriod,
+                    numerico: num
                 };
                 $.ajax({
                     url: "../php/profesor/insert.php",
@@ -143,7 +164,7 @@ $(document).ready(function() {
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                             <td>
-                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-numerico=${element.numerico} data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
                                     <i class="bi bi-calendar2-week "></i>
                                 </button>
                             </td>
@@ -317,6 +338,9 @@ $(document).ready(function() {
     function attachEvents() {
         $(document).off('click', '.tool-action');
         $(document).on('click', '.tool-action', function() {
+            numerico = $(this).data('numerico');
+            console.log('estoy', numerico);
+            localStorage.setItem('numero', numerico)
             const isEditOrDelete = $(this).hasClass('edit-action') || $(this).hasClass('delete-action');
             if (!isEditOrDelete && !selectedHorarioId) {
                 showAlert("Seleccione destino de horario"); // Reemplaza alert("Seleccione destino de horario") con showAlert("Seleccione destino de horario")
@@ -384,11 +408,14 @@ $(document).ready(function() {
 
         $(document).off('click', '#btnUpdate').on('click', '#btnUpdate', function() {
             const id = $(this).val();
+            numerico = localStorage.getItem('numero');
+            console.log(numerico);
             const data = {
                 id: id,
                 nombre: $("#nombre").val(),
                 curso: $("#curso").val(),
                 bloques: $("#bloques").val(),
+                numerico: numerico
             };
             $.ajax({
                 url: "../php/profesor/editar.php",
@@ -399,6 +426,7 @@ $(document).ready(function() {
                     resetButtons();
                     $('#staticBackdrop').modal('hide');
                     resetForm();
+                    alert('rererer');
                 }
             });
         });

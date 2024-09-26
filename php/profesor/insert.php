@@ -6,8 +6,9 @@ $curso = $_POST['curso'];
 $id_h = $_POST['id_h'];
 $bloques = $_POST['bloques'];
 $turno = $_POST['turno'];
+$numerico = $_POST['numerico'];
 
-$query = 'INSERT INTO profesor (nombre_p, curso, id_h, bloques, turno) VALUES (:nombre, :curso, :id_h, :bloques, :turno)';
+$query = 'INSERT INTO profesor (nombre_p, curso, id_h, bloques, turno, numerico) VALUES (:nombre, :curso, :id_h, :bloques, :turno, :numerico)';
 
 try {
     $stmt = $conn->prepare($query);
@@ -16,6 +17,7 @@ try {
     $stmt->bindParam(':id_h', $id_h, PDO::PARAM_STR);
     $stmt->bindParam(':bloques', $bloques, PDO::PARAM_STR);
     $stmt->bindParam(':turno', $turno, PDO::PARAM_STR);
+    $stmt->bindParam(':numerico', $numerico, PDO::PARAM_STR);
     
     if ($stmt->execute()) {
         echo "Ingreso exitoso";
