@@ -414,7 +414,6 @@ $(document).ready(function() {
                 id: id,
                 nombre: $("#nombre").val(),
                 curso: $("#curso").val(),
-                bloques: $("#bloques").val(),
                 numerico: numerico
             };
             $.ajax({
@@ -479,10 +478,10 @@ $(document).ready(function() {
 
     // Manejar el evento de clic del botón de confirmación de eliminación
     $('#confirmDeleteBtn').click(function() {
-        if (deleteId) {
+        numerico = localStorage.getItem('numero');
             $.ajax({
                 url: "../php/profesor/delete.php",
-                data: { id: deleteId },
+                data: { numerico: numerico},
                 type: "POST",
                 success: function(response) {
                     listar();
@@ -491,7 +490,7 @@ $(document).ready(function() {
                     $('#confirmDeleteModal').modal('hide'); // Oculta el modal de confirmación
                 }
             });
-        }
+        
     });
 
     // Evento para el botón de cerrar en el modal de alerta
