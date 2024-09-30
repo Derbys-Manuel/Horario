@@ -348,76 +348,49 @@
             </div>
         </div>
     </div>
-
     <script>
-    // Variables para almacenar el color seleccionado y si se puede aplicar
     let selectedColorAM = document.getElementById('colorPickerAM').value;
     let selectedColorPM = document.getElementById('colorPickerPM').value;
     let canApplyColorAM = false;  // Control de color para AM
     let canApplyColorPM = false;  // Control de color para PM
-
-    // Evento para cambiar el color seleccionado en el color picker AM
     document.getElementById('colorPickerAM').addEventListener('input', function() {
         selectedColorAM = this.value;
     });
-
-    // Evento para cambiar el color seleccionado en el color picker PM
     document.getElementById('colorPickerPM').addEventListener('input', function() {
         selectedColorPM = this.value;
     });
-
-    // Evento para habilitar la aplicación de color en el horario AM al hacer clic en el icono checkAM
     document.getElementById('checkAM').addEventListener('click', function() {
         canApplyColorAM = true;  // Habilita la aplicación del color en el horario AM
     });
-
-    // Evento para habilitar la aplicación de color en el horario PM al hacer clic en el icono checkPM
     document.getElementById('checkPM').addEventListener('click', function() {
         canApplyColorPM = true;  // Habilita la aplicación del color en el horario PM
     });
-
-    // Evento para seleccionar una celda del horario AM
     document.querySelectorAll('#table-horario-am td').forEach(function(td) {
         td.addEventListener('click', function() {
             if (canApplyColorAM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorAM;
-                this.classList.add('selected');
-            }
-        });
+                this.classList.add('selected');  } });
     });
-
-    // Evento para seleccionar una celda del horario PM
     document.querySelectorAll('#table-horario-pm td').forEach(function(td) {
         td.addEventListener('click', function() {
             if (canApplyColorPM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorPM;
-                this.classList.add('selected');
-            }
-        });
+                this.classList.add('selected');} });
     });
-
-    // Evento para deshabilitar la aplicación de color en el horario AM al hacer clic en el botón btnCancel3
     document.getElementById('btnCancel3').addEventListener('click', function() {
         canApplyColorAM = false;  // Deshabilita la aplicación del color en el horario AM
     });
-
-    // Evento para deshabilitar la aplicación de color en el horario PM al hacer clic en el botón btnCancel4
     document.getElementById('btnCancel4').addEventListener('click', function() {
         canApplyColorPM = false;  // Deshabilita la aplicación del color en el horario PM
     });
-
-    // Evento para quitar colores
     document.getElementById('closeBtn1').addEventListener('click', function() {
-        // Para el horario AM
         document.querySelectorAll('#table-horario-am td.selected').forEach(function(td) {
             td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
             td.classList.remove('selected');  // Quitar clase de selección
         });
         selectedColorAM = '#FFFFFF';  // Restablecer el color seleccionado a blanco
     });
-
     document.getElementById('closeBtn2').addEventListener('click', function() {
-        // Para el horario PM
         document.querySelectorAll('#table-horario-pm td.selected').forEach(function(td) {
             td.style.backgroundColor = '#FFFFFF';  // Limpiar color y volver a blanco
             td.classList.remove('selected');  // Quitar clase de selección

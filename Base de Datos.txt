@@ -15,6 +15,7 @@ nombre_p varchar (45),
 curso varchar (45),
 bloques varchar(45),
 turno varchar(45),
+numerico varchar(45),
 foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
 );
 
