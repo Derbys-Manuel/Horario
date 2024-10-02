@@ -616,9 +616,21 @@ $(document).ready(function() {
 
                 for (let i = 0; i < respuesta.length; i++) {
                     if (i < selectedBloque) {
+                        const id_r = respuesta[i].id_r;
+                        const marca = 'on';
                         const element = $(`#${respuesta[i].direccion}`);
                         if (element.length) {  // Verifica si el elemento existe
                             element.addClass('border-danger border-2');
+                            $.ajax ({
+                                url: "../php/register/editarMarca.php",
+                                type: "POST",
+                                data: { id_r , marca},
+                                success: function(res) {
+                                    console.log('esta funcionando el agg marca');
+                                    localStorage.setItem('id_r', id_r);
+                                }
+
+                            })
                         } else {
                             console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
                         }
@@ -693,7 +705,7 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}" >
                         <div>${selectedCourse}</div>
                         <div>(${selectedTeacher})</div>
                     </div>`);
@@ -833,20 +845,55 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
+                // // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
+                // const conteo = {};
+                // // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
+                // const resultadoFinal = [];
+                // re.forEach(item => {
+                //     const key = `${item.id}-${item.id_r}`;         
+                //     // Obtener el máximo de bloques para este 'id'
+                //     const maxBloques = parseInt(item.bloques, 10);
+                //     // Incrementar el contador de ocurrencias para este 'id'
+                //     if (!conteo[item.id]) {
+                //         conteo[item.id] = 0;
+                //     } 
+                //     // Verificar si el item está en prioridad
+                //     const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
+                //     // Agregar solo si no excede el límite de bloques
+                //     if (conteo[item.id] < maxBloques) {
+                //         resultadoFinal.push(item);
+                //         conteo[item.id]++;
+                //     } else if (enPrioridad) {
+                //         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
+                //         const indexNoPrioridad = resultadoFinal.findIndex(
+                //             resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
+                //         );  
+                //         if (indexNoPrioridad !== -1) {
+                //             // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
+                //             resultadoFinal.splice(enPrioridad, 1, item);
+                //         }
+                //     }
+                // });
+
                 // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
                 const conteo = {};
-                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
+
+                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que tienen marca = "on"
                 const resultadoFinal = [];
+
                 re.forEach(item => {
                     const key = `${item.id}-${item.id_r}`;         
                     // Obtener el máximo de bloques para este 'id'
                     const maxBloques = parseInt(item.bloques, 10);
-                    // Incrementar el contador de ocurrencias para este 'id'
+                    
+                    // Inicializar el conteo para este 'id' si no existe
                     if (!conteo[item.id]) {
                         conteo[item.id] = 0;
-                    } 
-                    // Verificar si el item está en prioridad
-                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
+                    }
+
+                    // Verificar si el item tiene la marca "on"
+                    const enPrioridad = item.marca === "on"; 
+
                     // Agregar solo si no excede el límite de bloques
                     if (conteo[item.id] < maxBloques) {
                         resultadoFinal.push(item);
@@ -854,10 +901,11 @@ $(document).ready(function() {
                     } else if (enPrioridad) {
                         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
                         const indexNoPrioridad = resultadoFinal.findIndex(
-                            resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
+                            resultItem => resultItem.id === item.id && resultItem.marca !== "on"
                         );  
+
                         if (indexNoPrioridad !== -1) {
-                            // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
+                            // Reemplazamos un elemento que no tiene marca "on" por uno que sí lo tiene
                             resultadoFinal.splice(indexNoPrioridad, 1, item);
                         }
                     }
@@ -930,6 +978,7 @@ $(document).ready(function() {
         localStorage.setItem('nombre', nombre);
         localStorage.setItem('activo', activo);
         activoColor = localStorage.getItem('colorActivo');
+        
 
         if(activoColor === 'color')
         {
@@ -1048,9 +1097,21 @@ $(document).ready(function() {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
+                        id_r = localStorage.getItem('id_r');
+                        const marca = 'off';
+                            $.ajax ({
+                                url: "../php/register/editarMarca.php",
+                                type: "POST",
+                                data: { id_r , marca},
+                                success: function(res) {
+                                    console.log('esta funcionando el off marca');
+                                }
+
+                            })
+                        }
                     limpiarTodo2();
                 }            
-            }
+            
         }) 
     });
     function limpiarTodo2() {
