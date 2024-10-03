@@ -1254,8 +1254,8 @@ $(document).ready(function() {
 
         if (num === 1) {
             bloques += 1; // Sumar 1 a bloques
-        } else if (num === -1) {
-            bloques -= 1; // Restar 1 a bloques
+        } else if (num === -1 && bloques >= 1) {
+            bloques -= 1; // Restar 1 a bloques 
         } 
         console.log('Resultado de bloques:', bloques);
 
@@ -1279,7 +1279,7 @@ $(document).ready(function() {
                     $('#cantidadBloques2').text(bloques);
                     ubicarColor();
                 }
-                else if (num === -1) {
+                else if (num === -1 && bloques >= 1) {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
