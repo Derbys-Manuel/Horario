@@ -1147,6 +1147,7 @@ $(document).ready(function() {
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
+        $('.horario_am').removeClass('horario__am menu')
         $('.decrease2, .increase2').css('display','block');
         $('.h1Bloques').css('display','block');
         selectedBloques = $(this).data('bloques');

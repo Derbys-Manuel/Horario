@@ -105,7 +105,7 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5 horario_am" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                    <h1 class="modal-title fs-5 h horario_am" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
          
                         <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
                             <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
@@ -240,7 +240,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                    <h1 class="modal-title fs-5 h horario_am" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
                         <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
                             <h1 class="modal-title fs-5 h1Bloques m-3 " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></span></h1>
