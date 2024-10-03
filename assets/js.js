@@ -115,7 +115,7 @@ $(document).ready(function() {
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                             <td>
-                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios horari" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
                                     <i class="bi bi-calendar2-week "></i>
                                 </button>
                             </td>
@@ -683,10 +683,168 @@ $(document).ready(function() {
             }
         });
     }
+    $(document).on('click', '.horari', function(){
+        $('#modal-003').modal('hide');
+        nombre = $(this).data('nombre');
+        $('#nombre-horario-am').html(nombre);
+        id = $(this).data('id');
+        const dato = {
+            id_h: id,
+            turno: selectedPeriod
+        };
+
+        //SE REALIZA LA COLSULTA A LA BASE DE DATOS // algoritmo prioridad
+        $.ajax({
+            url: "../php/generar_h/generar_horario.php",
+            type: "POST",   
+            data: dato,
+            success: function(response) {
+                const re = JSON.parse(response);   
+                function capturarIndicesDeRepetidos(re) {
+                    let elementosVistos = {};
+                    let indices1 = [];
+                    let indices2 = [];         
+                    for (let i = 0; i < re.length; i++) {
+                        let elemento = re[i].direccion;
+                        if (elementosVistos[elemento] !== undefined) {
+                            // Si el elemento ya ha sido visto, capturamos los índices
+                            indices1.push(elementosVistos[elemento]);
+                            indices2.push(i);
+                        } else {
+                            // Si es la primera vez que vemos el elemento, lo almacenamos
+                            elementosVistos[elemento] = i;
+                        }
+                    }    
+                    return { indices1, indices2 };
+                }
+                let resultado = capturarIndicesDeRepetidos(re);
+                const elementos_repetidos_a = [];
+                const elementos_repetidos_b = [];
+                for (let i = 0; i < resultado.indices1.length; i++) {
+                    elementos_repetidos_a.push(re[resultado.indices1[i]]);
+                    elementos_repetidos_b.push(re[resultado.indices2[i]]);
+                }
+                console.log(elementos_repetidos_a ,"Elementos repetidos A" );
+                console.log(elementos_repetidos_b ,"Elementos repetidos B");
+                const prioridad = [];
+                const no_prioridad = [];
+                const result = {};
+                //aqui se almacen los datos en => resultado
+                re.forEach(el => (result[el.id] = result[el.id] + 1 || 1));  
+
+
+                //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
+                for (let i = 0; i < elementos_repetidos_a.length; i++) {
+                    //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
+                    if (result[elementos_repetidos_a[i].id] > result[elementos_repetidos_b[i].id]) {
+                        prioridad.push(elementos_repetidos_b[i]);
+                        no_prioridad.push(elementos_repetidos_a[i]);
+                        const index = elementos_repetidos_a[i].id;
+                        const num_restar = result[elementos_repetidos_a[i].id];
+                        result[index] = num_restar -1;  
+                    }
+                    //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
+                    else if (result[elementos_repetidos_a[i].id] < result[elementos_repetidos_b[i].id]) {
+                        prioridad.push(elementos_repetidos_a[i]);
+                        no_prioridad.push(elementos_repetidos_b[i]);
+                        const index = elementos_repetidos_b[i].id;
+                        const num_restar = result[elementos_repetidos_b[i].id];
+                        result[index] = num_restar - 1;
+                    } else {
+                        prioridad.push(elementos_repetidos_a[i]);
+                        no_prioridad.push(elementos_repetidos_b[i]);
+                        const index = elementos_repetidos_b[i].id;
+                        const num_restar = result[elementos_repetidos_b[i].id];
+                        result[index] = num_restar - 1;
+                    }
+                }
+                for (let i = 0; i < no_prioridad.length; i++) {         
+                    const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
+                    if (index !== -1) {
+                        re.splice(index, 1);         
+                    }
+                }
+
+                // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
+                const conteo = {};
+
+                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
+                const resultadoFinal = [];
+
+                re.forEach(item => {
+                    const key = `${item.id}-${item.id_r}`;
+                    
+                    // Obtener el máximo de bloques para este 'id'
+                    const maxBloques = parseInt(item.bloques, 10);
+
+                    // Incrementar el contador de ocurrencias para este 'id'
+                    if (!conteo[item.id]) {
+                        conteo[item.id] = 0;
+                    }
+                    
+                    // Verificar si el item está en prioridad
+                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r);
+                    
+                    // Agregar solo si no excede el límite de bloques
+                    if (conteo[item.id] < maxBloques) {
+                        resultadoFinal.push(item);
+                        conteo[item.id]++;
+                    } else if (enPrioridad) {
+                        // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
+                        const indexNoPrioridad = resultadoFinal.findIndex(
+                            resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
+                        );
+                        
+                        if (indexNoPrioridad !== -1) {
+                            // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
+                            resultadoFinal.splice(indexNoPrioridad, 1, item);
+                        }
+                    }
+                });
+
+                console.log("Resultado final:", resultadoFinal);
+                localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
+                resultadoFinal.forEach(res => {
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                        <div>${res.curso}</div>
+                        <div>(${res.nombre_p})</div>
+                    </div>`);
+                });
+
+                listar_examenes(); // Llamar a listar_examenes después de listar registros normales
+            }    
+        });
+
+      });
 
     //GENERAR HORARIO INTELIGENTE
+    $(document).on('click', '.horario__am', function(){
+      $('#modal-003').modal('show');
+      limpiarTodo();
+      $.ajax({
+        url: "../php/horario/listar_horarios.php",
+        type: "GET",
+        success: function(re) {
+            const res = JSON.parse(re);
+            tem= "";
+            res.forEach(element => {
+                tem += `
+                <tr id="${element.id}" class="menu horari" data-nombre="${element.nombre}" data-id="${element.id}">
+                    <td>${element.nombre}</td>
+                </tr>
+                `;
+            });
+            $('#lista-003').html(tem);
+        }
+    });
+    });
+
 
     $(document).on('click', '#btnHorario', function() {
+        selectedHorarioText = localStorage.getItem('selectedHorarioText');
+        $('#nombre-horario-am').html(selectedHorarioText);
+        $('.horario_am').addClass('menu horario__am');
+
         $('.h1Bloques').css('display','none');
         $('.decrease2, .increase2').css('display','none');
         $('.btn-001').css('display','block');

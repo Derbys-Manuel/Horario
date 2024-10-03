@@ -105,7 +105,7 @@
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                    <h1 class="modal-title fs-5 horario_am" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
          
                         <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
                             <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
@@ -424,6 +424,32 @@ document.getElementById('closeBtn2').addEventListener('click', function() {
         </div>
     </div>
 
+    <div class="modal fade" id="modal-003" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col"><h1 class="modal-title fs-5" id="staticBackdropLabel">Lista de Horarios</h1></div>
+                        </div> 
+                    </div>
+                </div>
+                <table id="example-003" class="table table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-003">
+                        <!-- Aquí se generarán dinámicamente las filas de la tabla -->
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.getElementById('guardarPDF').addEventListener('click', function() {
