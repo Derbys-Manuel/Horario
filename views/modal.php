@@ -445,7 +445,7 @@ document.getElementById('closeBtn2').addEventListener('click', function() {
                     </tbody>
                 </table>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cerrar1">Cerrar</button>
                 </div>
             </div>
         </div>
