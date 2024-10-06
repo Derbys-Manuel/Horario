@@ -26,8 +26,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
 
 <body>
     <!-- Incluir el modal desde un archivo separado -->
-    <?php include "../views/modal.php" ?>
-    
+    <?php include "../views/modal.php" ?>    
     <div class="container"> 
         <div class="row justify-content-center position-relative">
             <div class="col col-4">
@@ -54,7 +53,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
                             <span class="tooltiptext">Enviar a</span>
                         </div>
                         <!-- Botón Horario -->
-                        <div class="btn-icon" id="btnHorario" class="btnHorario">
+                        <div class="btn-icon" id="btnHorario">
                             <i class="bi bi-calendar"></i>
                             <span class="tooltiptext">Horario</span>
                         </div>
@@ -72,26 +71,24 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
                 </div>
             </div>
         </div>
-       
-       
+             
         <!-- Opciones de filtro -->
         <div class="row justify-content-center">
             <div class="col-12">
                 <div class="card">
                     <div class="row">
                     <div class="col-12 d-flex justify-content-center mt-4 ms-4">
-                        <div class="form-check form-check-inline">
+                        <div class="form-check form-check-inline ">
                             <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
                             <label class="form-check-label" for="inlineCheckbox1">AM</label>
                         </div>
-                        <div class="form-check form-check-inline">
+                        <div class="form-check form-check-inline me-5">
                             <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
                             <label class="form-check-label" for="inlineCheckbox2">PM</label>
                         </div>
                         <!-- Agregar un span para mostrar el horario seleccionado -->
                         <span id="selectedHorarioText" class="ms-3" style="color: #4CAF50; font-weight: bold;"></span>
                         </div>
-
                     </div>
 
                     <!-- Tabla para mostrar los registros -->
@@ -117,7 +114,6 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
             </div>
         </div>
     </div>
-
 
     <!-- Modal para enviar a horario -->
     <div class="modal fade" id="enviarHorarioModal" tabindex="-1" aria-labelledby="enviarHorarioLabel" aria-hidden="true">
