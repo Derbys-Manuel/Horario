@@ -1,6 +1,8 @@
 $(document).ready(function() {
     borrar_localstorage();
     listarHorari();
+    $('#inlineCheckbox1').prop('checked', true);
+    localStorage.setItem('selectedPeriod', 'Mañana');
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -152,8 +154,6 @@ $(document).ready(function() {
                 }         
                 $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
                 localStorage.setItem('horarios', JSON.stringify(horarios));
-                $('#inlineCheckbox1').prop('checked', true);
-                localStorage.setItem('selectedPeriod', 'Mañana')
                 listar();
             }
         });
@@ -200,7 +200,7 @@ $(document).ready(function() {
                     $('#lista').html(template);
                     attachEvents();
                     selectedHorarioText = localStorage.getItem('selectedHorarioText');
-                    $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
+                    $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);        
                 }
             }
         });
@@ -302,7 +302,6 @@ $(document).ready(function() {
 
     $(document).on('click', '#btnCancel', function() {
         resetButtons();
-        $('#selectedHorarioText').text(""); // Limpiar el texto en el HTML
         listarHorari();
         listar();
     });
@@ -319,7 +318,8 @@ $(document).ready(function() {
 
     $(document).on('change', '#inlineCheckbox1', function() {
         if ($(this).is(':checked')) {
-            $('#inlineCheckbox2').prop('checked', false);
+            // Desmarca el otro checkbox y asegúrate de que la acción se complete antes de continuar
+            $('#inlineCheckbox2').prop('checked', false); 
             selectedPeriod = 'Mañana';
             localStorage.setItem('selectedPeriod', selectedPeriod);
             listar();
@@ -330,20 +330,22 @@ $(document).ready(function() {
             listar();
         }
     });
-
+    
     $(document).on('change', '#inlineCheckbox2', function() {
         if ($(this).is(':checked')) {
+            // Desmarca el otro checkbox y asegúrate de que la acción se complete antes de continuar
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
-            listar();
             localStorage.setItem('selectedPeriod', selectedPeriod);
+            listar();
             $('#turno_profesor').val(selectedPeriod);
         } else {
             selectedPeriod = "";
-            listar();
             localStorage.removeItem('selectedPeriod');
+            listar();
         }
     });
+    
 
     // Función para adjuntar eventos a los botones
     function attachEvents() {
@@ -674,6 +676,7 @@ $(document).ready(function() {
         $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
+        listarHorari();
         listar();
     });
 
@@ -685,6 +688,7 @@ $(document).ready(function() {
         $('#btnCancel3, #btnCancel4').css('display','none');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
+        listarHorari();
         listar();
     });
 
@@ -767,6 +771,7 @@ $(document).ready(function() {
 
     $(document).on('click', '#btnHorario', function() {
         $('.h1Bloques').css('display','none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('.decrease2, .increase2').css('display','none');
         $('.btn-001').css('display','block');
         $('.color01').css('display','block');
@@ -920,6 +925,7 @@ $(document).ready(function() {
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('#checkAM, #checkPM').css('display','none');
         $('.decrease2, .increase2').css('display','block');
         $('.h1Bloques').css('display','block');
