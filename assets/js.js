@@ -943,6 +943,7 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
