@@ -1,5 +1,6 @@
 $(document).ready(function() {
     borrar_localstorage();
+    listarHorari();
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -135,9 +136,31 @@ $(document).ready(function() {
         }
 
     });
+    function listarHorari()
+    {
+        $.ajax({
+            url: '../php/horario/listar_horarios.php',
+            type: 'GET',
+            success: function(response) {
+                const horarios = JSON.parse(response);
+                let options = "";
+                for (i=0;i<horarios.length;i++)
+                {
+                    localStorage.setItem('selectedHorarioId', horarios[0].id);
+                    localStorage.setItem('selectedHorarioText', horarios[0].nombre);
+                    options = horarios[0].nombre
+                }         
+                $('#selectHorario').html(options);
+                localStorage.setItem('horarios', JSON.stringify(horarios));
+            }
+        });
+    }
+
 
     // Función para listar los profesores
     function listar() {
+        selectedHorarioId = localStorage.getItem('selectedHorarioId');
+        selectedPeriod = localStorage.getItem('selectedPeriod');
         const dato = {
             id_h: selectedHorarioId,
             turno: selectedPeriod
@@ -153,7 +176,7 @@ $(document).ready(function() {
                 if (calculo === 0) {
                     const enfoque = `
                     <tr>
-                        <td colspan="3"> No hay horario seleccionado </td>
+                        <td colspan="3"> No hay profesor registrado </td>
                     </tr>
                     `;
                     $('#lista').html(enfoque);          
@@ -164,7 +187,7 @@ $(document).ready(function() {
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                             <td>
-                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-numerico=${element.numerico} data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-numerico="${element.numerico}" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
                                     <i class="bi bi-calendar2-week "></i>
                                 </button>
                             </td>
@@ -297,11 +320,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox1', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox1').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
@@ -316,11 +334,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox2').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
@@ -845,55 +858,20 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
-                // // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
-                // const conteo = {};
-                // // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
-                // const resultadoFinal = [];
-                // re.forEach(item => {
-                //     const key = `${item.id}-${item.id_r}`;         
-                //     // Obtener el máximo de bloques para este 'id'
-                //     const maxBloques = parseInt(item.bloques, 10);
-                //     // Incrementar el contador de ocurrencias para este 'id'
-                //     if (!conteo[item.id]) {
-                //         conteo[item.id] = 0;
-                //     } 
-                //     // Verificar si el item está en prioridad
-                //     const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
-                //     // Agregar solo si no excede el límite de bloques
-                //     if (conteo[item.id] < maxBloques) {
-                //         resultadoFinal.push(item);
-                //         conteo[item.id]++;
-                //     } else if (enPrioridad) {
-                //         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
-                //         const indexNoPrioridad = resultadoFinal.findIndex(
-                //             resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
-                //         );  
-                //         if (indexNoPrioridad !== -1) {
-                //             // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
-                //             resultadoFinal.splice(enPrioridad, 1, item);
-                //         }
-                //     }
-                // });
-
                 // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
                 const conteo = {};
-
-                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que tienen marca = "on"
+                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
                 const resultadoFinal = [];
-
                 re.forEach(item => {
                     const key = `${item.id}-${item.id_r}`;         
                     // Obtener el máximo de bloques para este 'id'
                     const maxBloques = parseInt(item.bloques, 10);
-                    
-                    // Inicializar el conteo para este 'id' si no existe
+                    // Incrementar el contador de ocurrencias para este 'id'
                     if (!conteo[item.id]) {
                         conteo[item.id] = 0;
-                    }
-
-                    // Verificar si el item tiene la marca "on"
-                    const enPrioridad = item.marca === "on"; 
-
+                    } 
+                    // Verificar si el item está en prioridad
+                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
                     // Agregar solo si no excede el límite de bloques
                     if (conteo[item.id] < maxBloques) {
                         resultadoFinal.push(item);
@@ -901,16 +879,14 @@ $(document).ready(function() {
                     } else if (enPrioridad) {
                         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
                         const indexNoPrioridad = resultadoFinal.findIndex(
-                            resultItem => resultItem.id === item.id && resultItem.marca !== "on"
+                            resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
                         );  
-
                         if (indexNoPrioridad !== -1) {
-                            // Reemplazamos un elemento que no tiene marca "on" por uno que sí lo tiene
-                            resultadoFinal.splice(indexNoPrioridad, 1, item);
+                            // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
+                            resultadoFinal.splice(enPrioridad, 1, item);
                         }
                     }
                 });
-
                 console.log("Resultado final:", resultadoFinal);
                 localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
                 resultadoFinal.forEach(res => {
