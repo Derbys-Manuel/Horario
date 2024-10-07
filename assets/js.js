@@ -755,7 +755,11 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
 
     $(document).on('click', '#btnHorario', function() {
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
+        nomb = selectedHorarioText;
+        $('#nombre-horario-pm').text(nomb);
+        $('#nombre-horario-am').text(nomb);
         $('.decrease2, .increase2').css('display','none');
         $('.btn-001').css('display','block');
         $('.color01').css('display','block');
@@ -772,7 +776,6 @@ $(document).ready(function() {
         $('.table').removeClass('table-hover');
 
         const dato = {
-            id_h: selectedHorarioId,
             turno: selectedPeriod
         };
 
@@ -914,10 +917,14 @@ $(document).ready(function() {
                 console.log("Resultado final:", resultadoFinal);
                 localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
                 resultadoFinal.forEach(res => {
-                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
-                        <div>${res.curso}</div>
-                        <div>(${res.nombre_p})</div>
-                    </div>`);
+                    if (res.id_h === selectedHorarioId)
+                    {
+                        $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                            <div>${res.curso}</div>
+                            <div>(${res.nombre_p})</div>
+                        </div>`);
+                    }
+              
                 });
 
                 listar_examenes(); // Llamar a listar_examenes después de listar registros normales
