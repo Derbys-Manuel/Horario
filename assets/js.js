@@ -150,8 +150,11 @@ $(document).ready(function() {
                     localStorage.setItem('selectedHorarioText', horarios[0].nombre);
                     options = horarios[0].nombre
                 }         
-                $('#selectHorario').html(options);
+                $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
                 localStorage.setItem('horarios', JSON.stringify(horarios));
+                $('#inlineCheckbox1').prop('checked', true);
+                localStorage.setItem('selectedPeriod', 'Mañana')
+                listar();
             }
         });
     }
@@ -196,6 +199,8 @@ $(document).ready(function() {
                     });
                     $('#lista').html(template);
                     attachEvents();
+                    selectedHorarioText = localStorage.getItem('selectedHorarioText');
+                    $('#selectedHorarioText').text(`Horario: ${selectedHorarioText}`);
                 }
             }
         });
@@ -297,15 +302,8 @@ $(document).ready(function() {
 
     $(document).on('click', '#btnCancel', function() {
         resetButtons();
-        localStorage.removeItem('selectedHorarioText'); // Eliminar el horario del localStorage
-        localStorage.removeItem('selectedHorarioId'); // Eliminar el ID del horario del localStorage
         $('#selectedHorarioText').text(""); // Limpiar el texto en el HTML
-        selectedHorarioText = "";
-        selectedHorarioId = "";
-        selectedPeriod = ""; // Limpiar el periodo seleccionado
-        localStorage.removeItem('selectedPeriod'); // Eliminar el periodo del localStorage
-        $('#inlineCheckbox1').prop('checked', false);
-        $('#inlineCheckbox2').prop('checked', false);
+        listarHorari();
         listar();
     });
 
