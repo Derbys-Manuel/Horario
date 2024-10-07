@@ -1,5 +1,6 @@
 $(document).ready(function() {
     borrar_localstorage();
+    listarHorari();
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -89,6 +90,8 @@ $(document).ready(function() {
 
     // Función para listar los profesores
     function listar() {
+        selectedHorarioId = localStorage.getItem('selectedHorarioId');
+        selectedPeriod = localStorage.getItem('selectedPeriod');
         const dato = {
             id_h: selectedHorarioId,
             turno: selectedPeriod
@@ -104,7 +107,7 @@ $(document).ready(function() {
                 if (calculo === 0) {
                     const enfoque = `
                     <tr>
-                        <td colspan="3"> No hay horario seleccionado </td>
+                        <td colspan="3"> No hay profesores registrados </td>
                     </tr>
                     `;
                     $('#lista').html(enfoque);          
@@ -248,11 +251,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox1', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox1').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
@@ -267,11 +265,6 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
-        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
-            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
-            $('#inlineCheckbox2').prop('checked', false);
-            return;
-        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
@@ -380,6 +373,24 @@ $(document).ready(function() {
     function limpiarCeldas() {
         $('td').removeClass('selected');
         $('.calendar-cell').html('');
+    }
+
+    function listarHorari() {
+        $.ajax({
+            url: '../php/horario/listar_horarios.php',
+            type: 'GET',
+            success: function(response) {
+                const horarios = JSON.parse(response);
+                for (i=0; i<horarios.length; i++)
+                {
+                    localStorage.setItem('selectedHorarioId', horarios[0].id);
+                    localStorage.setItem('selectedHorarioText', horarios[0].nombre);
+                    nombre = localStorage.getItem('selectedHorarioText');
+                    $('#nombre-horario-am').html(nombre);
+                    $('#nombre-horario-pm').html(nombre);
+                }
+            }
+        });
     }
 
     // Evento para enviar a horario
@@ -844,6 +855,7 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
+        listarHorari();
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
