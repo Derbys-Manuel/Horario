@@ -26,7 +26,7 @@ $(document).ready(function() {
     }
 
     listar();
-    listarNumerico();
+    
 
     // Mostrar/Ocultar barra de herramientas
     $('#toolbarIcon').click(function() {
@@ -35,14 +35,34 @@ $(document).ready(function() {
 
     function listarNumerico()
     {
-        $.ajax({
-            url:  "../php/profesor/listNumerico.php",
-            type: "POST",
-            success: function(response) {
-                respuesta = JSON.parse(response);
-                localStorage.setItem('numerico', respuesta[0].numerico);
+        if (!selectedPeriod)          
+            {
+                console.log('esperando por elegir turno');
             }
-        });
+        else {
+            const data = {
+                turno: selectedPeriod
+            };
+            $.ajax({
+                url:  "../php/profesor/listNumerico.php",
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    respuesta = JSON.parse(response);
+                    if(respuesta.length === 0)
+                    {
+                        console.log('Sin registros de profesores en listar numerico');
+                    }
+                    else
+                    {
+                        localStorage.setItem('numerico', respuesta[0].numerico);    
+                        localStorage.setItem('numerosArray', JSON.stringify(respuesta));
+                    }
+
+                }
+            });
+        }
+        
     }
 
     // Evento para el formulario de agregar profesor
@@ -153,7 +173,7 @@ $(document).ready(function() {
                 if (calculo === 0) {
                     const enfoque = `
                     <tr>
-                        <td colspan="3"> No hay horario seleccionado </td>
+                        <td colspan="3"> No hay Profesores Registrados</td>
                     </tr>
                     `;
                     $('#lista').html(enfoque);          
@@ -307,6 +327,7 @@ $(document).ready(function() {
             selectedPeriod = 'Mañana';
             localStorage.setItem('selectedPeriod', selectedPeriod);
             listar();
+            listarNumerico();
             $('#turno_profesor').val(selectedPeriod);
         } else {
             selectedPeriod = "";
@@ -324,6 +345,7 @@ $(document).ready(function() {
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
+            listarNumerico();
             listar();
             localStorage.setItem('selectedPeriod', selectedPeriod);
             $('#turno_profesor').val(selectedPeriod);
@@ -338,9 +360,6 @@ $(document).ready(function() {
     function attachEvents() {
         $(document).off('click', '.tool-action');
         $(document).on('click', '.tool-action', function() {
-            numerico = $(this).data('numerico');
-            console.log('estoy', numerico);
-            localStorage.setItem('numero', numerico)
             const isEditOrDelete = $(this).hasClass('edit-action') || $(this).hasClass('delete-action');
             if (!isEditOrDelete && !selectedHorarioId) {
                 showAlert("Seleccione destino de horario"); // Reemplaza alert("Seleccione destino de horario") con showAlert("Seleccione destino de horario")
@@ -568,41 +587,91 @@ $(document).ready(function() {
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
                 const valor = $(this).data('valor');
+                const numerico = localStorage.getItem('numero');
+
+                let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
+
+                // Invertir el orden de los elementos
+                numerosArray.reverse();
+
+                // Si quieres almacenarlo nuevamente en el localStorage después de invertir
+                localStorage.setItem('numerosArray', JSON.stringify(numerosArray));
+
+                // Imprimir el array invertido
+                console.log(numerosArray, "Inserte , parte Numerico");
+
                 let datas = {};
 
-                const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
-                datas = {
-                    disponibilidad_i: hora_inicial2_i,
-                    disponibilidad_f: hora_inicial2_f,
-                    dia: parte,
-                    tiempo: tiempo,
-                    id_p: selectedId,
-                    direccion: element,
-                    turno: selectedPeriod,
-                    valor: valor
-                }
-                dato = {
-                    id_p: selectedId
+                for (i=0; i<numerosArray.length; i++)
+                {
+                    if(numerosArray[i].id_h === selectedHorarioId )
+                    {
+                        const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
+                        datas = {
+                            disponibilidad_i: hora_inicial2_i,
+                            disponibilidad_f: hora_inicial2_f,
+                            dia: parte,
+                            tiempo: tiempo,
+                            id_p: selectedId,
+                            direccion: element,
+                            turno: selectedPeriod,
+                            valor: valor
+                        }
+                        dato = {
+                            id_p: selectedId
+                        }
+    
+                        $.ajax({
+                            url: "../php/register/insert_r.php",
+                            data: datas,
+                            type: "POST",
+                            success: function(response) {
+                                console.log(response);
+                                listar_registros();
+                            }
+                        });
+                    }
+                    else 
+                    {
+                        const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
+                        datas = {
+                            disponibilidad_i: hora_inicial2_i,
+                            disponibilidad_f: hora_inicial2_f,
+                            dia: parte,
+                            tiempo: tiempo,
+                            id_p: numerosArray[i].id,
+                            direccion: element,
+                            turno: selectedPeriod,
+                            valor: valor
+                        }
+                        dato = {
+                            id_p: selectedId
+                        }
+    
+                        $.ajax({
+                            url: "../php/register/insert_r.php",
+                            data: datas,
+                            type: "POST",
+                            success: function(response) {
+                                console.log(response);
+                                listar_registros();
+                            }
+                        });
+                    }
+                    
+
                 }
 
-                $.ajax({
-                    url: "../php/register/insert_r.php",
-                    data: datas,
-                    type: "POST",
-                    success: function(response) {
-                        console.log(response);
-                        listar_registros();
-                    }
-                });
+                
                 
             }
         }
     });
     //FUNCION COLOR
     function ubicarColor() {
-        let id = localStorage.getItem('selectedID');
+        let numero = localStorage.getItem('numero');
         let dato = {
-            id_p: id
+            numerico: numero 
         };
         let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
@@ -613,24 +682,31 @@ $(document).ready(function() {
             success: function(respuest) {
                 const respuesta = JSON.parse(respuest);
                 console.log(respuesta);
-
+                id_h = localStorage.getItem('selectedHorarioId');
                 for (let i = 0; i < respuesta.length; i++) {
                     if (i < selectedBloque) {
                         const id_r = respuesta[i].id_r;
                         const marca = 'on';
                         const element = $(`#${respuesta[i].direccion}`);
                         if (element.length) {  // Verifica si el elemento existe
-                            element.addClass('border-danger border-2');
-                            $.ajax ({
-                                url: "../php/register/editarMarca.php",
-                                type: "POST",
-                                data: { id_r , marca},
-                                success: function(res) {
-                                    console.log('esta funcionando el agg marca');
-                                    localStorage.setItem('id_r', id_r);
-                                }
-
-                            })
+                            if (respuesta[i].id_h != id_h)
+                            {
+                                element.addClass('bg-dark');
+                            }
+                            else
+                            {
+                                element.addClass('border-danger border-2');
+                                $.ajax ({
+                                    url: "../php/register/editarMarca.php",
+                                    type: "POST",
+                                    data: { id_r , marca},
+                                    success: function(res) {
+                                        console.log('esta funcionando el agg marca');
+                                        localStorage.setItem('id_r', id_r);
+                                    }
+                                })
+                            }
+               
                         } else {
                             console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
                         }
@@ -746,6 +822,7 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
+                    $(`#${res.direccion}`).removeClass("bg-dark");
                 });
                 limpiar_registro_editar();
             }
@@ -967,6 +1044,10 @@ $(document).ready(function() {
         localStorage.setItem('selectedID', selectedID);
         localStorage.setItem('selectedNombre', selectedNombre);
         localStorage.setItem('selectedCurso', selectedCurso);
+
+        numerico = $(this).data('numerico');
+        console.log('estoy', numerico);
+        localStorage.setItem('numero', numerico)
         })
     $(document).on('click', '.btn-001', function(){
         $('#modal-001').modal('show');
