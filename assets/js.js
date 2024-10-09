@@ -693,15 +693,15 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.h1Bloques', function() {
-        $('#btnCancel5').css('display', 'block'); 
+        $('#btnCancel5, #btnCancel6').css('display', 'block'); 
         $('.mañana, .tarde').removeClass('menu');
         $('.AM').removeClass('mañana');
         $('.PM').removeClass('tarde');
         $('.AM, .PM').addClass('preferencias');
         });
 
-    $(document).on('click', '#btnCancel5', function() {
-        $('#btnCancel5').css('display', 'none');
+    $(document).on('click', '#btnCancel5, #btnCancel6 ', function() {
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
         $('.AM').addClass('mañana');
         $('.PM').addClass('tarde');
         $('.mañana, .tarde').addClass('menu');
@@ -843,6 +843,11 @@ $(document).ready(function() {
         $('#btnCancel1').css('display', 'none');  
         $('#btnCancel2').css('display', 'none');
         $('#btnCancel3, #btnCancel4').css('display','none');
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -854,6 +859,11 @@ $(document).ready(function() {
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
         $('#btnCancel3, #btnCancel4').css('display','none');
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -893,6 +903,23 @@ $(document).ready(function() {
                     </div>`);
                     $(`#${res.direccion}`).val(`${res.id_r}`)
                 });
+                listar_preferencias();
+            }
+        });
+    }
+    function listar_preferencias() {
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/preferencias/listarPreferen.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).addClass('border-danger border-2')
+                });
                 
             }
         });
@@ -929,7 +956,7 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
-                    $(`#${res.direccion}`).removeClass("bg-dark");
+                    $(`#${res.direccion}`).val("");
                 });
                 limpiar_registro_editar();
             }

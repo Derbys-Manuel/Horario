@@ -251,6 +251,10 @@
                         <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
                             <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></span></h1>
                         <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                        <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel6" style="display:none;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
+                        </div>
                     </div>
                     <!-- Añadido: Selector de color y botón para aplicar en horario PM -->
                     <div class="d-flex align-items-center mt-2 ">
