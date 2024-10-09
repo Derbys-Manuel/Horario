@@ -585,21 +585,46 @@ $(document).ready(function() {
             if ($(`.${element}`).length) {  
                 $(`.${element}`).remove();
                 $(`#${element}`).removeClass('border-danger border-2');
-
-                const dato = {
-                    direccion: element,
-                    id_p: selectedId
-                };
-                $.ajax({
-                    url: "../php/register/delete.php",
-                    type: "POST",
-                    data: dato,
-                    success: function(result) {
-                        console.log("Registro eliminado:", result);
-                        ubicarColor();
-                        
+                let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
+                console.log(numerosArray, "Eliminar registro , parte Numerico");
+                for (i=0; i<numerosArray.length; i++)
+                    {
+                        if(numerosArray[i].id_h === selectedHorarioId )
+                        {
+                            const dato = {
+                                direccion: element,
+                                id_p: selectedId
+                            };
+                            $.ajax({
+                                url: "../php/register/delete.php",
+                                type: "POST",
+                                data: dato,
+                                success: function(result) {
+                                    console.log("Registro eliminado:", result);
+                                    ubicarColor();                          
+                                }
+                            });
+                        }
+                        else 
+                        {
+                            const dato = {
+                                direccion: element,
+                                id_p: numerosArray[i].id
+                            };
+                            $.ajax({
+                                url: "../php/register/delete.php",
+                                type: "POST",
+                                data: dato,
+                                success: function(result) {
+                                    console.log("Registro eliminado:", result);
+                                    ubicarColor();                          
+                                }
+                            });
+                        }
                     }
-                });
+
+
+               
                 
             } else {
                 //RESUMIR LA LATENCIA DEL INSERTAR
@@ -607,14 +632,9 @@ $(document).ready(function() {
                 const hora = $(this).attr('value');
                 const valor = $(this).data('valor');
                 const numerico = localStorage.getItem('numero');
-
                 let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
-
-                // Imprimir el array invertido
                 console.log(numerosArray, "Inserte , parte Numerico");
-
                 let datas = {};
-
                 for (i=0; i<numerosArray.length; i++)
                 {
                     if(numerosArray[i].id_h === selectedHorarioId )
@@ -659,8 +679,7 @@ $(document).ready(function() {
                         }
                         dato = {
                             id_p: selectedId
-                        }
-    
+                        }   
                         $.ajax({
                             url: "../php/register/insert_r.php",
                             data: datas,
@@ -671,12 +690,7 @@ $(document).ready(function() {
                             }
                         });
                     }
-                    
-
-                }
-
-                
-                
+                }               
             }
         }
     });
