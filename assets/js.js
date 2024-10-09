@@ -33,15 +33,35 @@ $(document).ready(function() {
         $('#toolbarContent').toggle();
     });
 
+    function listarNumeroRegistro()
+    {
+        numerico = localStorage.getItem('numero')
+            const data = {
+                turno: selectedPeriod,
+                numerico: numerico
+            };
+            $.ajax({
+                url:  "../php/profesor/listNumerico.php",
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    respuesta = JSON.parse(response); 
+                        localStorage.setItem('numerosArray', JSON.stringify(respuesta));
+                }
+            });    
+    }
+
     function listarNumerico()
     {
+        numerico = ""
         if (!selectedPeriod)          
             {
                 console.log('esperando por elegir turno');
             }
         else {
             const data = {
-                turno: selectedPeriod
+                turno: selectedPeriod,
+                numerico: numerico
             };
             $.ajax({
                 url:  "../php/profesor/listNumerico.php",
@@ -56,7 +76,6 @@ $(document).ready(function() {
                     else
                     {
                         localStorage.setItem('numerico', respuesta[0].numerico);    
-                        localStorage.setItem('numerosArray', JSON.stringify(respuesta));
                     }
 
                 }
@@ -591,12 +610,6 @@ $(document).ready(function() {
 
                 let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
 
-                // Invertir el orden de los elementos
-                numerosArray.reverse();
-
-                // Si quieres almacenarlo nuevamente en el localStorage después de invertir
-                localStorage.setItem('numerosArray', JSON.stringify(numerosArray));
-
                 // Imprimir el array invertido
                 console.log(numerosArray, "Inserte , parte Numerico");
 
@@ -1027,6 +1040,7 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
+        
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
@@ -1048,6 +1062,8 @@ $(document).ready(function() {
         numerico = $(this).data('numerico');
         console.log('estoy', numerico);
         localStorage.setItem('numero', numerico)
+
+        listarNumeroRegistro();
         })
     $(document).on('click', '.btn-001', function(){
         $('#modal-001').modal('show');
