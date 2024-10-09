@@ -601,7 +601,8 @@ $(document).ready(function() {
                                 data: dato,
                                 success: function(result) {
                                     console.log("Registro eliminado:", result);
-                                    ubicarColor();                          
+                                    $(`#${element}`).val("");
+                                                              
                                 }
                             });
                         }
@@ -617,15 +618,11 @@ $(document).ready(function() {
                                 data: dato,
                                 success: function(result) {
                                     console.log("Registro eliminado:", result);
-                                    ubicarColor();                          
+                                    $(`#${element}`).val("");                                                    
                                 }
                             });
                         }
-                    }
-
-
-               
-                
+                    }             
             } else {
                 //RESUMIR LA LATENCIA DEL INSERTAR
                 const parte = $(this).data('dia');
@@ -694,57 +691,139 @@ $(document).ready(function() {
             }
         }
     });
-    //FUNCION COLOR
-    function ubicarColor() {
-        let numero = localStorage.getItem('numero');
-        let dato = {
-            numerico: numero 
-        };
-        let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
-        $.ajax({
-            url: "../php/register/ubicarColor.php",
-            type: "POST",
-            data: dato,
-            success: function(respuest) {
-                const respuesta = JSON.parse(respuest);
-                console.log(respuesta);
-                id_h = localStorage.getItem('selectedHorarioId');
-                for (let i = 0; i < respuesta.length; i++) {
-                    if (i < selectedBloque) {
-                        const id_r = respuesta[i].id_r;
-                        const marca = 'on';
-                        const element = $(`#${respuesta[i].direccion}`);
-                        if (element.length) {  // Verifica si el elemento existe
-                            if (respuesta[i].id_h != id_h)
-                            {
-                                element.addClass('bg-dark');
-                            }
-                            else
-                            {
-                                element.addClass('border-danger border-2');
-                                $.ajax ({
-                                    url: "../php/register/editarMarca.php",
-                                    type: "POST",
-                                    data: { id_r , marca},
-                                    success: function(res) {
-                                        console.log('esta funcionando el agg marca');
-                                        localStorage.setItem('id_r', id_r);
-                                    }
-                                })
-                            }
-               
-                        } else {
-                            console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
-                        }
-                    }
-                }
-            },
-            error: function(error) {
-                console.error("Error en la petición AJAX", error);
-            }
+    $(document).on('click', '.h1Bloques', function() {
+        $('#btnCancel5').css('display', 'block'); 
+        $('.mañana, .tarde').removeClass('menu');
+        $('.AM').removeClass('mañana');
+        $('.PM').removeClass('tarde');
+        $('.AM, .PM').addClass('preferencias');
         });
-    }
+
+    $(document).on('click', '#btnCancel5', function() {
+        $('#btnCancel5').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
+        });
+
+    $(document).on('click', '.preferencias', function() {
+        // Verifica si el elemento ya tiene la clase 'border-danger border-2'
+        if ($(this).hasClass('border-danger border-2')) {
+            // Si ya la tiene, la quita
+            id_r = $(this).val();
+            console.log(id_r);
+            const dato = {
+                id_r: id_r
+            }
+            $.ajax ({
+                url: "../php/preferencias/deletePreferen.php",
+                type: "POST",
+                data: dato,
+                success: function(res) {
+                    console.log('Delete de Preferencias');
+                }
+            });
+            $(this).removeClass('border-danger border-2');
+        } else {
+            // Si no la tiene, la agrega          
+            direccion = $(this).attr('id');
+            id_r = $(this).val();
+            if(!id_r)
+            {
+                showAlert('No puede seleccionar un bloque vacio');
+            }
+            else
+            {
+                $(this).addClass('border-danger border-2');
+                selectedID = localStorage.getItem('selectedID');
+                console.log(direccion);
+                console.log(id_r);
+                const dato = {
+                    id_r: id_r,
+                    id_h: selectedHorarioId,
+                    id_p: selectedID,
+                    direccion: direccion
+                }
+                $.ajax ({
+                    url: "../php/preferencias/insertPrefen.php",
+                    type: "POST",
+                    data: dato,
+                    success: function(res) {
+                        console.log('Ingreso de Preferencias');
+                        localStorage.setItem('id_r', id_r);
+                    }
+                });
+            }
+
+           
+        }
+        });
+
+
+
+
+
+
+
+
+    //FUNCION COLOR
+
+
+
+    // function ubicarColor() {
+    //     let numero = localStorage.getItem('numero');
+    //     let dato = {
+    //         numerico: numero 
+    //     };
+    //     let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
+
+    //     $.ajax({
+    //         url: "../php/register/ubicarColor.php",
+    //         type: "POST",
+    //         data: dato,
+    //         success: function(respuest) {
+    //             const respuesta = JSON.parse(respuest);
+    //             console.log(respuesta);
+    //             id_h = localStorage.getItem('selectedHorarioId');
+    //             for (let i = 0; i < respuesta.length; i++) {
+    //                 if (i < selectedBloque) {
+    //                     id_r = respuesta[i].id_r;
+    //                     id_h = selectedHorarioId;
+    //                     id_p = respuesta[i].id_p;
+    //                     direccion = respuesta[i].direccion
+
+    //                     const dato = {
+    //                         id_r: id_r,
+    //                         id_h: id_h,
+    //                         id_p: id_p,
+    //                         direccion
+    //                     }
+      
+    //                     const element = $(`#${respuesta[i].direccion}`);
+    //                     if (element.length) {  // Verifica si el elemento existe
+    //                             element.addClass('border-danger border-2');
+    //                             $.ajax ({
+    //                                 url: "../php/preferencias/insertPrefen.php",
+    //                                 type: "POST",
+    //                                 data: dato,
+    //                                 success: function(res) {
+    //                                     console.log('Ingreso de Preferencias');
+    //                                     localStorage.setItem('id_r', id_r);
+    //                                 }
+    //                             })
+    //                     } else {
+    //                         console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
+    //                     }
+    //                 }
+    //             }
+    //         },
+    //         error: function(error) {
+    //             console.error("Error en la petición AJAX", error);
+    //         }
+    //     });
+    // }
 
    
     // Evento para cambiar el estado del modo examen
@@ -808,12 +887,13 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}" >
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" data-direccion="${res.direccion}" value="${res.id_r}" >
                         <div>${selectedCourse}</div>
                         <div>(${selectedTeacher})</div>
                     </div>`);
+                    $(`#${res.direccion}`).val(`${res.id_r}`)
                 });
-                ubicarColor();
+                
             }
         });
     }
@@ -1054,7 +1134,8 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
-        
+        $('.PM').addClass('.tarde');
+        $('.AM').addClass('.mañana');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
@@ -1210,23 +1291,13 @@ $(document).ready(function() {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
-                    ubicarColor();
+                    
                 }
                 else if (num === -1) {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
                         id_r = localStorage.getItem('id_r');
-                        const marca = 'off';
-                            $.ajax ({
-                                url: "../php/register/editarMarca.php",
-                                type: "POST",
-                                data: { id_r , marca},
-                                success: function(res) {
-                                    console.log('esta funcionando el off marca');
-                                }
-
-                            })
                         }
                     limpiarTodo2();
                 }            
@@ -1242,7 +1313,7 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
                 });
-                ubicarColor();
+                
             }
         });
     }
@@ -1250,24 +1321,9 @@ $(document).ready(function() {
         $('#btnCancel3, #btnCancel4').css('display','block');
         colorActivo = $(this).data('color');
         localStorage.setItem('colorActivo', colorActivo);
-        activoEditar = localStorage.getItem('activo');
-
-        if(activoEditar === 'on')
-        {
-            $('.mañana, .tarde').removeClass('menu');
-            $('.mañana').removeClass('modal1');
-            $('.tarde').removeClass('modal2');
-        }
     });
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
         $('#btnCancel3, #btnCancel4').css('display','none');
-        localStorage.removeItem('colorActivo');
-        activoEditar = localStorage.getItem('activo');
-        if (activoEditar==='on')
-        {
-            $('.mañana, .tarde').addClass('menu');
-            $('.mañana').addClass('modal1');
-            $('.tarde').addClass('modal2'); 
-        }       
+        localStorage.removeItem('colorActivo');     
     });
 });
