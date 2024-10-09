@@ -211,6 +211,8 @@ $(document).ready(function() {
                         `;
                     });
                     $('#lista').html(template);
+                    numerico = profesor.length;
+                    localStorage.setItem('numerico', numerico);
                     attachEvents();
                 }
             }
@@ -738,13 +740,15 @@ $(document).ready(function() {
             {
                 $(this).addClass('border-danger border-2');
                 selectedID = localStorage.getItem('selectedID');
+                numerico = localStorage.getItem('numero');
                 console.log(direccion);
                 console.log(id_r);
                 const dato = {
                     id_r: id_r,
                     id_h: selectedHorarioId,
                     id_p: selectedID,
-                    direccion: direccion
+                    direccion: direccion,
+                    numerico: numerico
                 }
                 $.ajax ({
                     url: "../php/preferencias/insertPrefen.php",
@@ -755,9 +759,7 @@ $(document).ready(function() {
                         localStorage.setItem('id_r', id_r);
                     }
                 });
-            }
-
-           
+            }    
         }
         });
 
@@ -918,9 +920,30 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).addClass('border-danger border-2')
-                });
-                
+                    $(`#${res.direccion}`).addClass('border-danger border-2');
+                    listar_otras_preferencias()
+                });              
+            }
+        });
+    }
+    function listar_otras_preferencias() {
+        numerico = localStorage.getItem('numero');
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/preferencias/listarPreferen.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    if(numerico === res.numerico && selectedId != res.id_p)
+                    {
+                        $(`#${res.direccion}`).addClass('secondary');
+                    }
+                    
+                });              
             }
         });
     }
