@@ -711,56 +711,67 @@ $(document).ready(function() {
         });
 
     $(document).on('click', '.preferencias', function() {
-        // Verifica si el elemento ya tiene la clase 'border-danger border-2'
-        if ($(this).hasClass('border-danger border-2')) {
-            // Si ya la tiene, la quita
-            id_r = $(this).val();
-            console.log(id_r);
-            const dato = {
-                id_r: id_r
-            }
-            $.ajax ({
-                url: "../php/preferencias/deletePreferen.php",
-                type: "POST",
-                data: dato,
-                success: function(res) {
-                    console.log('Delete de Preferencias');
-                }
-            });
-            $(this).removeClass('border-danger border-2');
-        } else {
-            // Si no la tiene, la agrega          
-            direccion = $(this).attr('id');
-            id_r = $(this).val();
-            if(!id_r)
-            {
-                showAlert('No puede seleccionar un bloque vacio');
-            }
-            else
-            {
-                $(this).addClass('border-danger border-2');
-                selectedID = localStorage.getItem('selectedID');
-                numerico = localStorage.getItem('numero');
-                console.log(direccion);
+        if ($(this).hasClass('on')) {
+            // Si tiene la clase "on", no hace nada
+            console.log('El elemento tiene la clase "on" y no se puede modificar');
+            return; 
+        }
+        else 
+        {
+            // Verifica si el elemento ya tiene la clase 'border-danger border-2'
+            if ($(this).hasClass('border-danger border-2')) {
+                // Si ya la tiene, la quita
+                id_r = $(this).val();
                 console.log(id_r);
                 const dato = {
-                    id_r: id_r,
-                    id_h: selectedHorarioId,
-                    id_p: selectedID,
-                    direccion: direccion,
-                    numerico: numerico
+                    id_r: id_r
                 }
                 $.ajax ({
-                    url: "../php/preferencias/insertPrefen.php",
+                    url: "../php/preferencias/deletePreferen.php",
                     type: "POST",
                     data: dato,
                     success: function(res) {
-                        console.log('Ingreso de Preferencias');
-                        localStorage.setItem('id_r', id_r);
+                        console.log('Delete de Preferencias');
                     }
                 });
-            }    
+                $(this).removeClass('border-danger border-2');
+            } else {
+                // Si no la tiene, la agrega          
+                direccion = $(this).attr('id');
+                id_r = $(this).val();
+                if(!id_r)
+                {
+                    showAlert('No puede seleccionar un bloque vacio');
+                }
+                else
+                {
+                    $(this).addClass('border-danger border-2');
+                    selectedID = localStorage.getItem('selectedID');
+                    numerico = localStorage.getItem('numero');
+                    console.log(direccion);
+                    console.log(id_r);
+                    const dato = {
+                        id_r: id_r,
+                        id_h: selectedHorarioId,
+                        id_p: selectedID,
+                        direccion: direccion,
+                        numerico: numerico
+                    }
+                    $.ajax ({
+                        url: "../php/preferencias/insertPrefen.php",
+                        type: "POST",
+                        data: dato,
+                        success: function(res) {
+                            console.log('Ingreso de Preferencias');
+                            localStorage.setItem('id_r', id_r);
+                        }
+                    });
+                }    
+            }
         }
+
+
+        
         });
 
 
@@ -932,7 +943,7 @@ $(document).ready(function() {
             id_p: selectedId
         };
         $.ajax({
-            url: "../php/preferencias/listarPreferen.php",
+            url: "../php/preferencias/listarNoPreferen.php",
             type: "POST",
             data: dato,
             success: function(respo) {
@@ -940,7 +951,10 @@ $(document).ready(function() {
                 re.forEach(res => {
                     if(numerico === res.numerico && selectedId != res.id_p)
                     {
-                        $(`#${res.direccion}`).addClass('secondary');
+                        $(`#${res.direccion}`).css('opacity', '0.7');
+                        $(`#${res.direccion}`).removeClass('menu mañana tarde');
+                        $(`#${res.direccion}`).addClass('on');
+
                     }
                     
                 });              
@@ -979,6 +993,7 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
+                    $(`#${res.direccion}`).css('opacity', '1');
                     $(`#${res.direccion}`).val("");
                 });
                 limpiar_registro_editar();
