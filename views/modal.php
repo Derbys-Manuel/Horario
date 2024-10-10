@@ -107,9 +107,9 @@
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1> 
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
-                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques"></span></h1>
-                        <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button>
+                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
+                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button>
                         <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel5" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
@@ -248,9 +248,9 @@
                 <div class="modal-header horario-header">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2" data-num="-1" type="button" >-</button>
-                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">BLOQUES: <span id="cantidadBloques2"></span></h1>
-                        <button class="btn btn-outline-secondary increase2" data-num="1" type="button" >+</button>
+                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button>
+                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN<span class="d-none"id="cantidadBloques2"></span></h1>
+                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="hidden" >+</button>
                         <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel6" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>

@@ -26,7 +26,7 @@ $(document).ready(function() {
     }
 
     listar();
-    
+    listar_otras_preferencias();
 
     // Mostrar/Ocultar barra de herramientas
     $('#toolbarIcon').click(function() {
@@ -732,6 +732,7 @@ $(document).ready(function() {
                     data: dato,
                     success: function(res) {
                         console.log('Delete de Preferencias');
+                        listar_preferencias();
                     }
                 });
                 $(this).removeClass('border-danger border-2');
@@ -765,6 +766,7 @@ $(document).ready(function() {
                         data: dato,
                         success: function(res) {
                             console.log('Ingreso de Preferencias');
+                            listar_preferencias();
                             localStorage.setItem('id_r', id_r);
                         }
                     });
@@ -869,10 +871,29 @@ $(document).ready(function() {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
                     $(`#${res.direccion}`).addClass('border-danger border-2');
-     
-                });              
+                });  
+                
+                bloques = re.length;
+                data = {
+                    id: selectedId,
+                    bloques: bloques
+                }
+                url = "../php/profesor/editarBloques.php";
+                $.ajax({
+                    url: url,
+                    data: data,
+                    type: "POST",
+                    success: function(response) {
+                        console.log('esta bn el editar bloques', bloques);
+                    }
+                });
+
+
+
             }
         });
+
+
     }
     function listar_otras_preferencias() {
         numerico = localStorage.getItem('numero');
@@ -885,23 +906,23 @@ $(document).ready(function() {
             data: dato,
             success: function(respo) {
                 const re = JSON.parse(respo);
+                localStorage.setItem('horario_preferencias', JSON.stringify(re));
                 re.forEach(res => {
                     if(numerico === res.numerico && selectedId != res.id_p)
                     {
                         $(`#${res.direccion}`).css('opacity', '0.7');
                         $(`#${res.direccion}`).removeClass('menu mañana tarde');
                         $(`#${res.direccion}`).addClass('on');
-
                         $(`#${res.direccion}`).html(`<div class="text-success" data-direccion="${res.direccion}" value="${res.id_r}" >
                             <div>${res.nombre}</div>
                         </div>`);
-
-                    }
-                    
+                    }          
                 });              
             }
         });
     }
+    
+
 
     //FUNCION PARA LISTAR EXAMENES EN EL HORARIO
     function listar_examenes() {
@@ -966,7 +987,8 @@ $(document).ready(function() {
         $('.table').removeClass('table-hover');
 
         const dato = {
-            turno: selectedPeriod
+            turno: selectedPeriod,
+            id_h: selectedHorarioId
         };
 
         //SE REALIZA LA COLSULTA A LA BASE DE DATOS // algoritmo prioridad
@@ -1038,75 +1060,25 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
-                // // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
-                // const conteo = {};
-                // // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
-                // const resultadoFinal = [];
-                // re.forEach(item => {
-                //     const key = `${item.id}-${item.id_r}`;         
-                //     // Obtener el máximo de bloques para este 'id'
-                //     const maxBloques = parseInt(item.bloques, 10);
-                //     // Incrementar el contador de ocurrencias para este 'id'
-                //     if (!conteo[item.id]) {
-                //         conteo[item.id] = 0;
-                //     } 
-                //     // Verificar si el item está en prioridad
-                //     const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
-                //     // Agregar solo si no excede el límite de bloques
-                //     if (conteo[item.id] < maxBloques) {
-                //         resultadoFinal.push(item);
-                //         conteo[item.id]++;
-                //     } else if (enPrioridad) {
-                //         // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
-                //         const indexNoPrioridad = resultadoFinal.findIndex(
-                //             resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
-                //         );  
-                //         if (indexNoPrioridad !== -1) {
-                //             // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
-                //             resultadoFinal.splice(enPrioridad, 1, item);
-                //         }
-                //     }
-                // });
 
-                // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
-                const conteo = {};
-
-                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que tienen marca = "on"
-                const resultadoFinal = [];
-
-                re.forEach(item => {
-                    const key = `${item.id}-${item.id_r}`;         
-                    // Obtener el máximo de bloques para este 'id'
-                    const maxBloques = parseInt(item.bloques, 10);
-                    
-                    // Inicializar el conteo para este 'id' si no existe
-                    if (!conteo[item.id]) {
-                        conteo[item.id] = 0;
-                    }
-
-                    // Verificar si el item tiene la marca "on"
-                    const enPrioridad = item.marca === "on"; 
-
-                    // Agregar solo si no excede el límite de bloques
-                    if (conteo[item.id] < maxBloques) {
-                        resultadoFinal.push(item);
-                        conteo[item.id]++;
-                    } else if (enPrioridad) {
-                        // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
-                        const indexNoPrioridad = resultadoFinal.findIndex(
-                            resultItem => resultItem.id === item.id && resultItem.marca !== "on"
-                        );  
-
-                        if (indexNoPrioridad !== -1) {
-                            // Reemplazamos un elemento que no tiene marca "on" por uno que sí lo tiene
-                            resultadoFinal.splice(indexNoPrioridad, 1, item);
+                horarioPe = [];
+                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
+                
+                for (let i = 0; i < re.length; i++) {
+                    for (let e = 0; e < horarioPreferencia.length; e++) {
+                        if (re[i].id_h === horarioPreferencia[e].id_h) {
+                            // Agregar el objeto completo en lugar de solo re[i].id_h
+                            horarioPe.push(re[i]);
                         }
                     }
-                });
+                }
+                
+                console.log('Horario pe: ', horarioPe);
 
-                console.log("Resultado final:", resultadoFinal);
-                localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
-                resultadoFinal.forEach(res => {
+                
+                
+                localStorage.setItem('horario_generado', JSON.stringify(re));
+                re.forEach(res => {
                     if (res.id_h === selectedHorarioId)
                     {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
@@ -1140,6 +1112,7 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
+        
         $('.PM').addClass('.tarde');
         $('.AM').addClass('.mañana');
         $('#btnCancel3, #btnCancel4').css('display','none');
