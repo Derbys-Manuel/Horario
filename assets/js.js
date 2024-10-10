@@ -913,7 +913,9 @@ $(document).ready(function() {
                         $(`#${res.direccion}`).css('opacity', '0.7');
                         $(`#${res.direccion}`).removeClass('menu mañana tarde');
                         $(`#${res.direccion}`).addClass('on');
-                        $(`#${res.direccion}`).html(`<div class="text-success" data-direccion="${res.direccion}" value="${res.id_r}" >
+                        $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" data-direccion="${res.direccion}" value="${res.id_r}" >
+                            <div>${selectedCourse}</div>
+                            <div>(${selectedTeacher})</div>
                             <div>${res.nombre}</div>
                         </div>`);
                     }          
@@ -1062,23 +1064,103 @@ $(document).ready(function() {
                 }
 
                 horarioPe = [];
+                selectedHorarioId= localStorage.getItem('selectedHorarioId');
                 const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
-                
-                for (let i = 0; i < re.length; i++) {
-                    for (let e = 0; e < horarioPreferencia.length; e++) {
-                        if (re[i].id_h === horarioPreferencia[e].id_h) {
-                            // Agregar el objeto completo en lugar de solo re[i].id_h
-                            horarioPe.push(re[i]);
-                        }
-                    }
+                for (i=0; i<horarioPreferencia.length; i++)
+                {
+                    if (selectedHorarioId === horarioPreferencia[i].id_h)
+                    {
+                        horarioPe.push(horarioPreferencia[i]);
+                    }      
                 }
-                
-                console.log('Horario pe: ', horarioPe);
+                console.log('hora = ', horarioPe);
+//                 // Función para limitar el número de elementos por id en función del valor de bloques
+//                 function limitarElementosPorId(re) {
+//                     const limitePorId = {}; // Almacenará el límite de bloques por cada id
+//                     const nuevoArray = [];
+
+//                     // Recorrer el array original y aplicar la lógica del límite
+//                     re.forEach(item => {
+//                         const id = item.id;
+//                         const bloquesPermitidos = parseInt(item.bloques); // Convertir a número el valor de bloques
+
+//                         // Si aún no se ha agregado este id al límite o se puede seguir añadiendo, lo agregamos
+//                         if (!limitePorId[id]) {
+//                             limitePorId[id] = 0;
+//                         }
+
+//                         // Si el número actual de elementos es menor que el límite de bloques, se agrega el elemento
+//                         if (limitePorId[id] < bloquesPermitidos) {
+//                             nuevoArray.push(item);
+//                             limitePorId[id] += 1; // Incrementar el número de elementos para este id
+//                         }
+//                     });
+
+//                     return nuevoArray;
+//                 }
+
+// // Aplicar la función a tu array re
+// let nuevoRe = limitarElementosPorId(re);
+
+// console.log('Nuevo array re con límite de elementos por id:', nuevoRe);
+
+
+// Función para limitar el número de elementos por id en función del valor de bloques
+function limitarElementosPorId(re, horarioPe) {
+    const limitePorId = {}; // Almacena el límite de bloques por cada id
+    const nuevoArray = [];
+
+    // Primero recorremos el array re y limitamos por id y bloques
+    re.forEach(item => {
+        const id = item.id;
+        const bloquesPermitidos = parseInt(item.bloques); // Convertir a número el valor de bloques
+
+        // Inicializar el límite de bloques para este id si no está registrado
+        if (!limitePorId[id]) {
+            limitePorId[id] = 0;
+        }
+
+        // Si no se ha alcanzado el límite de bloques, se agrega el elemento
+        if (limitePorId[id] < bloquesPermitidos) {
+            nuevoArray.push(item);
+            limitePorId[id] += 1; // Incrementar el contador de bloques para este id
+        }
+    });
+
+    // Ahora recorremos el array horarioPe y verificamos si el id de re coincide con id_p de horarioPe
+    horarioPe.forEach(item => {
+        const id_p = item.id_p;
+        const bloquesPermitidos = parseInt(item.bloques); // Convertir a número el valor de bloques
+
+        // Si este id_p ya está en el nuevoArray, verificar cuántos bloques quedan disponibles
+        if (!limitePorId[id_p]) {
+            limitePorId[id_p] = 0;
+        }
+
+        const bloquesRestantes = bloquesPermitidos - limitePorId[id_p];
+
+        // Si aún quedan bloques disponibles y el id coincide con el id_p, agregar el elemento
+        if (bloquesRestantes > 0) {
+            nuevoArray.push(item);
+            limitePorId[id_p] += 1; // Incrementar el contador de bloques para este id_p
+        }
+    });
+
+    return nuevoArray;
+}
+
+// Aplicar la función a tus arrays re y horarioPe
+let nuevoRe = limitarElementosPorId(re, horarioPe);
+
+console.log('Nuevo array re con elementos limitados por bloques y horarioPe añadido si id coincide con id_p:', nuevoRe);
+
+
+
+
 
                 
-                
                 localStorage.setItem('horario_generado', JSON.stringify(re));
-                re.forEach(res => {
+                nuevoRe.forEach(res => {
                     if (res.id_h === selectedHorarioId)
                     {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
