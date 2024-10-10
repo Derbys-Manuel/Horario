@@ -603,8 +603,7 @@ $(document).ready(function() {
                                 data: dato,
                                 success: function(result) {
                                     console.log("Registro eliminado:", result);
-                                    $(`#${element}`).val("");
-                                                              
+                                    $(`#${element}`).val("");                           
                                 }
                             });
                         }
@@ -620,7 +619,7 @@ $(document).ready(function() {
                                 data: dato,
                                 success: function(result) {
                                     console.log("Registro eliminado:", result);
-                                    $(`#${element}`).val("");                                                    
+                                    $(`#${element}`).val("");                                                   
                                 }
                             });
                         }
@@ -714,6 +713,7 @@ $(document).ready(function() {
         if ($(this).hasClass('on')) {
             // Si tiene la clase "on", no hace nada
             console.log('El elemento tiene la clase "on" y no se puede modificar');
+            showAlert('No se pueden alterar las selecciones de otro horario');
             return; 
         }
         else 
@@ -748,6 +748,7 @@ $(document).ready(function() {
                     $(this).addClass('border-danger border-2');
                     selectedID = localStorage.getItem('selectedID');
                     numerico = localStorage.getItem('numero');
+                    nombre = localStorage.getItem('selectedHorarioText');
                     console.log(direccion);
                     console.log(id_r);
                     const dato = {
@@ -755,7 +756,8 @@ $(document).ready(function() {
                         id_h: selectedHorarioId,
                         id_p: selectedID,
                         direccion: direccion,
-                        numerico: numerico
+                        numerico: numerico,
+                        nombre: nombre
                     }
                     $.ajax ({
                         url: "../php/preferencias/insertPrefen.php",
@@ -768,77 +770,9 @@ $(document).ready(function() {
                     });
                 }    
             }
-        }
-
-
-        
+        }       
         });
-
-
-
-
-
-
-
-
-    //FUNCION COLOR
-
-
-
-    // function ubicarColor() {
-    //     let numero = localStorage.getItem('numero');
-    //     let dato = {
-    //         numerico: numero 
-    //     };
-    //     let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
-
-    //     $.ajax({
-    //         url: "../php/register/ubicarColor.php",
-    //         type: "POST",
-    //         data: dato,
-    //         success: function(respuest) {
-    //             const respuesta = JSON.parse(respuest);
-    //             console.log(respuesta);
-    //             id_h = localStorage.getItem('selectedHorarioId');
-    //             for (let i = 0; i < respuesta.length; i++) {
-    //                 if (i < selectedBloque) {
-    //                     id_r = respuesta[i].id_r;
-    //                     id_h = selectedHorarioId;
-    //                     id_p = respuesta[i].id_p;
-    //                     direccion = respuesta[i].direccion
-
-    //                     const dato = {
-    //                         id_r: id_r,
-    //                         id_h: id_h,
-    //                         id_p: id_p,
-    //                         direccion
-    //                     }
-      
-    //                     const element = $(`#${respuesta[i].direccion}`);
-    //                     if (element.length) {  // Verifica si el elemento existe
-    //                             element.addClass('border-danger border-2');
-    //                             $.ajax ({
-    //                                 url: "../php/preferencias/insertPrefen.php",
-    //                                 type: "POST",
-    //                                 data: dato,
-    //                                 success: function(res) {
-    //                                     console.log('Ingreso de Preferencias');
-    //                                     localStorage.setItem('id_r', id_r);
-    //                                 }
-    //                             })
-    //                     } else {
-    //                         console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
-    //                     }
-    //                 }
-    //             }
-    //         },
-    //         error: function(error) {
-    //             console.error("Error en la petición AJAX", error);
-    //         }
-    //     });
-    // }
-
-   
+ 
     // Evento para cambiar el estado del modo examen
     $(document).on('change', '#modoExamen', function() {
         modoExamen = $(this).is(':checked');
@@ -861,6 +795,7 @@ $(document).ready(function() {
         $('.PM').addClass('tarde');
         $('.mañana, .tarde').addClass('menu');
         $('.AM, .PM').removeClass('preferencias');
+        $('.AM, .PM').removeClass('on');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -877,6 +812,7 @@ $(document).ready(function() {
         $('.PM').addClass('tarde');
         $('.mañana, .tarde').addClass('menu');
         $('.AM, .PM').removeClass('preferencias');
+        $('.AM, .PM').removeClass('on');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -914,9 +850,10 @@ $(document).ready(function() {
                         <div>${selectedCourse}</div>
                         <div>(${selectedTeacher})</div>
                     </div>`);
-                    $(`#${res.direccion}`).val(`${res.id_r}`)
+                    $(`#${res.direccion}`).val(`${res.id_r}`);
                 });
                 listar_preferencias();
+                listar_otras_preferencias();
             }
         });
     }
@@ -932,7 +869,7 @@ $(document).ready(function() {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
                     $(`#${res.direccion}`).addClass('border-danger border-2');
-                    listar_otras_preferencias()
+     
                 });              
             }
         });
@@ -954,6 +891,10 @@ $(document).ready(function() {
                         $(`#${res.direccion}`).css('opacity', '0.7');
                         $(`#${res.direccion}`).removeClass('menu mañana tarde');
                         $(`#${res.direccion}`).addClass('on');
+
+                        $(`#${res.direccion}`).html(`<div class="text-success" data-direccion="${res.direccion}" value="${res.id_r}" >
+                            <div>${res.nombre}</div>
+                        </div>`);
 
                     }
                     
