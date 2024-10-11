@@ -1,9 +1,10 @@
 <?php
 include "../../database/conexion.php"; 
-$id_p = $_POST['id_p'];
-$query = "SELECT id_r, direccion FROM horario.registro where id_p = :id_p";
+$numerico = $_POST['numerico'];
+$query = "SELECT p.numerico,p.id, r.id_r, p.id_h, p.curso,p.bloques,r.direccion,r.turno from profesor p
+    join  registro r on p.id = r.id_p having numerico = :numerico order by id";
 $result = $conn->prepare($query);
-$result->bindParam(":id_p", $id_p, PDO::PARAM_INT);
+$result->bindParam(":numerico", $numerico, PDO::PARAM_INT);
 $result->execute();
 if(!$result){
     die ('Hubo un error');

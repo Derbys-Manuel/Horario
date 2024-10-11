@@ -1,6 +1,5 @@
 $(document).ready(function() {
     borrar_localstorage();
-    listarHorari();
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -27,27 +26,85 @@ $(document).ready(function() {
     }
 
     listar();
+    listar_otras_preferencias();
 
     // Mostrar/Ocultar barra de herramientas
     $('#toolbarIcon').click(function() {
         $('#toolbarContent').toggle();
     });
 
+    function listarNumeroRegistro()
+    {
+        numerico = localStorage.getItem('numero')
+            const data = {
+                turno: selectedPeriod,
+                numerico: numerico
+            };
+            $.ajax({
+                url:  "../php/profesor/listNumerico.php",
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    respuesta = JSON.parse(response); 
+                        localStorage.setItem('numerosArray', JSON.stringify(respuesta));
+                }
+            });    
+    }
+
+    function listarNumerico()
+    {
+        numerico = ""
+        if (!selectedPeriod)          
+            {
+                console.log('esperando por elegir turno');
+            }
+        else {
+            const data = {
+                turno: selectedPeriod,
+                numerico: numerico
+            };
+            $.ajax({
+                url:  "../php/profesor/listNumerico.php",
+                type: "POST",
+                data: data,
+                success: function(response) {
+                    respuesta = JSON.parse(response);
+                    if(respuesta.length === 0)
+                    {
+                        console.log('Sin registros de profesores en listar numerico');
+                    }
+                    else
+                    {
+                        localStorage.setItem('numerico', respuesta[0].numerico);    
+                    }
+
+                }
+            });
+        }
+        
+    }
+
     // Evento para el formulario de agregar profesor
     $(document).on("submit", "#modal1", function(e) {
         e.preventDefault();
+        let num;
+        let url = "../php/profesor/insert.php";
+        if(!localStorage.getItem('numerico'))
+        {
+            num = 1;
+        }
+        else {
+            num = parseInt(localStorage.getItem('numerico'), 10);  
+            num += 1;
+        }
         const data = {
             nombre: $("#nombre").val(),
             curso: $("#curso").val(),
             id_h: selectedHorarioId,
             bloques: $('#bloques').val(),
-            turno: selectedPeriod
+            turno: "Mañana",
+            numerico: num
         };
-        const id = $("#btnUpdate").val();
-        const url = id ? "../php/profesor/editar.php" : "../php/profesor/insert.php";
-        if (id) {
-            data.id = id;
-        }
         $.ajax({
             url: url,
             data: data,
@@ -56,14 +113,42 @@ $(document).ready(function() {
                 listar();
                 $('#staticBackdrop').modal('hide');
                 resetForm();
+                listarNumerico();
             }
         });
+        let turno = ['Mañana', 'Tarde'];
         horarios = localStorage.getItem('horarios');
         horarios = JSON.parse(horarios);
         console.log(horarios);
+        console.log(turno.length);
+        for(i=0; i < turno.length; i++)
+            {
+                if(selectedPeriod != turno[i])
+                    {
+                        for (e=0; e < horarios.length; e++)
+                            {
+                                const data = {
+                                    nombre: $("#nombre").val(),
+                                    curso: $("#curso").val(),
+                                    id_h: horarios[e].id,
+                                    bloques: $('#bloques').val(),
+                                    turno: turno[i],
+                                    numerico: num
+                                };
+                                $.ajax({
+                                    url: "../php/profesor/insert.php",
+                                    data: data,
+                                    type: "POST",
+                                    success: function(response) {
+                                        console.log('se ingreso ok', response);
+                                    }
+                                })
+                            }
+                    }
+    
+            }
         for (i=0; i < horarios.length; i++)
         {
-            console.log('Comparando:', horarios[i].id, selectedHorarioId); 
             if (parseInt(horarios[i].id) === parseInt(selectedHorarioId)) {
                 continue; // Omitir esta iteración si es igual a selectedHorarioId
             }
@@ -74,7 +159,8 @@ $(document).ready(function() {
                     curso: $("#curso").val(),
                     id_h: horarios[i].id,
                     bloques: $('#bloques').val(),
-                    turno: selectedPeriod
+                    turno: selectedPeriod,
+                    numerico: num
                 };
                 $.ajax({
                     url: "../php/profesor/insert.php",
@@ -86,12 +172,11 @@ $(document).ready(function() {
                 })
             }
         }
+
     });
 
     // Función para listar los profesores
     function listar() {
-        selectedHorarioId = localStorage.getItem('selectedHorarioId');
-        selectedPeriod = localStorage.getItem('selectedPeriod');
         const dato = {
             id_h: selectedHorarioId,
             turno: selectedPeriod
@@ -107,7 +192,7 @@ $(document).ready(function() {
                 if (calculo === 0) {
                     const enfoque = `
                     <tr>
-                        <td colspan="3"> No hay profesores registrados </td>
+                        <td colspan="3"> No hay Profesores Registrados</td>
                     </tr>
                     `;
                     $('#lista').html(enfoque);          
@@ -118,7 +203,7 @@ $(document).ready(function() {
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                             <td>
-                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
+                                <button value="${element.id}" class="btn btn-primary tool-action default-action calendarios" data-numerico=${element.numerico} data-id="${element.id}" data-curso="${element.curso}" data-nombre="${element.nombre_p}" data-bloques="${element.bloques}">
                                     <i class="bi bi-calendar2-week "></i>
                                 </button>
                             </td>
@@ -126,6 +211,8 @@ $(document).ready(function() {
                         `;
                     });
                     $('#lista').html(template);
+                    numerico = profesor.length;
+                    localStorage.setItem('numerico', numerico);
                     attachEvents();
                 }
             }
@@ -251,11 +338,17 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox1', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox1').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox2').prop('checked', false);
             selectedPeriod = 'Mañana';
             localStorage.setItem('selectedPeriod', selectedPeriod);
             listar();
+            listarNumerico();
             $('#turno_profesor').val(selectedPeriod);
         } else {
             selectedPeriod = "";
@@ -265,9 +358,15 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '#inlineCheckbox2', function() {
+        if (!selectedHorarioId) { // verificar si hay un horario seleccionado
+            showAlert("Seleccione destino de horario"); // Mostrar alerta si no hay un horario seleccionado
+            $('#inlineCheckbox2').prop('checked', false);
+            return;
+        }
         if ($(this).is(':checked')) {
             $('#inlineCheckbox1').prop('checked', false);
             selectedPeriod = 'Tarde';
+            listarNumerico();
             listar();
             localStorage.setItem('selectedPeriod', selectedPeriod);
             $('#turno_profesor').val(selectedPeriod);
@@ -349,11 +448,13 @@ $(document).ready(function() {
 
         $(document).off('click', '#btnUpdate').on('click', '#btnUpdate', function() {
             const id = $(this).val();
+            numerico = localStorage.getItem('numero');
+            console.log(numerico);
             const data = {
                 id: id,
                 nombre: $("#nombre").val(),
                 curso: $("#curso").val(),
-                bloques: $("#bloques").val(),
+                numerico: numerico
             };
             $.ajax({
                 url: "../php/profesor/editar.php",
@@ -373,24 +474,6 @@ $(document).ready(function() {
     function limpiarCeldas() {
         $('td').removeClass('selected');
         $('.calendar-cell').html('');
-    }
-
-    function listarHorari() {
-        $.ajax({
-            url: '../php/horario/listar_horarios.php',
-            type: 'GET',
-            success: function(response) {
-                const horarios = JSON.parse(response);
-                for (i=0; i<horarios.length; i++)
-                {
-                    localStorage.setItem('selectedHorarioId', horarios[0].id);
-                    localStorage.setItem('selectedHorarioText', horarios[0].nombre);
-                    nombre = localStorage.getItem('selectedHorarioText');
-                    $('#nombre-horario-am').html(nombre);
-                    $('#nombre-horario-pm').html(nombre);
-                }
-            }
-        });
     }
 
     // Evento para enviar a horario
@@ -435,10 +518,10 @@ $(document).ready(function() {
 
     // Manejar el evento de clic del botón de confirmación de eliminación
     $('#confirmDeleteBtn').click(function() {
-        if (deleteId) {
+        numerico = localStorage.getItem('numero');
             $.ajax({
                 url: "../php/profesor/delete.php",
-                data: { id: deleteId },
+                data: { numerico: numerico},
                 type: "POST",
                 success: function(response) {
                     listar();
@@ -447,7 +530,7 @@ $(document).ready(function() {
                     $('#confirmDeleteModal').modal('hide'); // Oculta el modal de confirmación
                 }
             });
-        }
+        
     });
 
     // Evento para el botón de cerrar en el modal de alerta
@@ -504,91 +587,194 @@ $(document).ready(function() {
             if ($(`.${element}`).length) {  
                 $(`.${element}`).remove();
                 $(`#${element}`).removeClass('border-danger border-2');
-
-                const dato = {
-                    direccion: element,
-                    id_p: selectedId
-                };
-                $.ajax({
-                    url: "../php/register/delete.php",
-                    type: "POST",
-                    data: dato,
-                    success: function(result) {
-                        console.log("Registro eliminado:", result);
-                        ubicarColor();
-                        
-                    }
-                });
-                
+                let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
+                console.log(numerosArray, "Eliminar registro , parte Numerico");
+                for (i=0; i<numerosArray.length; i++)
+                    {
+                        if(numerosArray[i].id_h === selectedHorarioId )
+                        {
+                            const dato = {
+                                direccion: element,
+                                id_p: selectedId
+                            };
+                            $.ajax({
+                                url: "../php/register/delete.php",
+                                type: "POST",
+                                data: dato,
+                                success: function(result) {
+                                    console.log("Registro eliminado:", result);
+                                    $(`#${element}`).val("");                           
+                                }
+                            });
+                        }
+                        else 
+                        {
+                            const dato = {
+                                direccion: element,
+                                id_p: numerosArray[i].id
+                            };
+                            $.ajax({
+                                url: "../php/register/delete.php",
+                                type: "POST",
+                                data: dato,
+                                success: function(result) {
+                                    console.log("Registro eliminado:", result);
+                                    $(`#${element}`).val("");                                                   
+                                }
+                            });
+                        }
+                    }             
             } else {
                 //RESUMIR LA LATENCIA DEL INSERTAR
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
                 const valor = $(this).data('valor');
+                const numerico = localStorage.getItem('numero');
+                let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
+                console.log(numerosArray, "Inserte , parte Numerico");
                 let datas = {};
-
-                const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
-                datas = {
-                    disponibilidad_i: hora_inicial2_i,
-                    disponibilidad_f: hora_inicial2_f,
-                    dia: parte,
-                    tiempo: tiempo,
-                    id_p: selectedId,
-                    direccion: element,
-                    turno: selectedPeriod,
-                    valor: valor
-                }
-                dato = {
-                    id_p: selectedId
-                }
-
-                $.ajax({
-                    url: "../php/register/insert_r.php",
-                    data: datas,
-                    type: "POST",
-                    success: function(response) {
-                        console.log(response);
-                        listar_registros();
+                for (i=0; i<numerosArray.length; i++)
+                {
+                    if(numerosArray[i].id_h === selectedHorarioId )
+                    {
+                        const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
+                        datas = {
+                            disponibilidad_i: hora_inicial2_i,
+                            disponibilidad_f: hora_inicial2_f,
+                            dia: parte,
+                            tiempo: tiempo,
+                            id_p: selectedId,
+                            direccion: element,
+                            turno: selectedPeriod,
+                            valor: valor
+                        }
+                        dato = {
+                            id_p: selectedId
+                        }
+    
+                        $.ajax({
+                            url: "../php/register/insert_r.php",
+                            data: datas,
+                            type: "POST",
+                            success: function(response) {
+                                console.log(response);
+                                listar_registros();
+                            }
+                        });
                     }
-                });
-                
+                    else 
+                    {
+                        const [hora_inicial2_i, hora_inicial2_f] = hora.split('-');
+                        datas = {
+                            disponibilidad_i: hora_inicial2_i,
+                            disponibilidad_f: hora_inicial2_f,
+                            dia: parte,
+                            tiempo: tiempo,
+                            id_p: numerosArray[i].id,
+                            direccion: element,
+                            turno: selectedPeriod,
+                            valor: valor
+                        }
+                        dato = {
+                            id_p: selectedId
+                        }   
+                        $.ajax({
+                            url: "../php/register/insert_r.php",
+                            data: datas,
+                            type: "POST",
+                            success: function(response) {
+                                console.log(response);
+                                listar_registros();
+                            }
+                        });
+                    }
+                }               
             }
         }
     });
-    //FUNCION COLOR
-    function ubicarColor() {
-        let id = localStorage.getItem('selectedID');
-        let dato = {
-            id_p: id
-        };
-        let selectedBloque = parseInt(localStorage.getItem('selectedBloques'), 10);
 
-        $.ajax({
-            url: "../php/register/ubicarColor.php",
-            type: "POST",
-            data: dato,
-            success: function(respuest) {
-                const respuesta = JSON.parse(respuest);
-                console.log(respuesta);
-
-                for (let i = 0; i < respuesta.length; i++) {
-                    if (i < selectedBloque) {
-                        const element = $(`#${respuesta[i].direccion}`);
-                        if (element.length) {  // Verifica si el elemento existe
-                            element.addClass('border-danger border-2');
-                        } else {
-                            console.warn(`Elemento con ID ${respuesta[i].direccion} no encontrado.`);
-                        }
-                    }
-                }
-            },
-            error: function(error) {
-                console.error("Error en la petición AJAX", error);
-            }
+    $(document).on('click', '.h1Bloques', function() {
+        $('#btnCancel5, #btnCancel6').css('display', 'block'); 
+        $('.mañana, .tarde').removeClass('menu');
+        $('.AM').removeClass('mañana');
+        $('.PM').removeClass('tarde');
+        $('.AM, .PM').addClass('preferencias');
         });
-    }
 
-   
+    $(document).on('click', '#btnCancel5, #btnCancel6 ', function() {
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
+        });
+
+    $(document).on('click', '.preferencias', function() {
+        if ($(this).hasClass('on')) {
+            // Si tiene la clase "on", no hace nada
+            console.log('El elemento tiene la clase "on" y no se puede modificar');
+            showAlert('No se pueden alterar las selecciones de otro horario');
+            return; 
+        }
+        else 
+        {
+            // Verifica si el elemento ya tiene la clase 'border-danger border-2'
+            if ($(this).hasClass('border-danger border-2')) {
+                // Si ya la tiene, la quita
+                id_r = $(this).val();
+                console.log(id_r);
+                const dato = {
+                    id_r: id_r
+                }
+                $.ajax ({
+                    url: "../php/preferencias/deletePreferen.php",
+                    type: "POST",
+                    data: dato,
+                    success: function(res) {
+                        console.log('Delete de Preferencias');
+                        listar_preferencias();
+                    }
+                });
+                $(this).removeClass('border-danger border-2');
+            } else {
+                // Si no la tiene, la agrega          
+                direccion = $(this).attr('id');
+                id_r = $(this).val();
+                if(!id_r)
+                {
+                    showAlert('No puede seleccionar un bloque vacio');
+                }
+                else
+                {
+                    $(this).addClass('border-danger border-2');
+                    selectedID = localStorage.getItem('selectedID');
+                    numerico = localStorage.getItem('numero');
+                    nombre = localStorage.getItem('selectedHorarioText');
+                    console.log(direccion);
+                    console.log(id_r);
+                    const dato = {
+                        id_r: id_r,
+                        id_h: selectedHorarioId,
+                        id_p: selectedID,
+                        direccion: direccion,
+                        numerico: numerico,
+                        nombre: nombre
+                    }
+                    $.ajax ({
+                        url: "../php/preferencias/insertPrefen.php",
+                        type: "POST",
+                        data: dato,
+                        success: function(res) {
+                            console.log('Ingreso de Preferencias');
+                            listar_preferencias();
+                            localStorage.setItem('id_r', id_r);
+                        }
+                    });
+                }    
+            }
+        }       
+        });
+ 
     // Evento para cambiar el estado del modo examen
     $(document).on('change', '#modoExamen', function() {
         modoExamen = $(this).is(':checked');
@@ -606,6 +792,12 @@ $(document).ready(function() {
         $('#btnCancel1').css('display', 'none');  
         $('#btnCancel2').css('display', 'none');
         $('#btnCancel3, #btnCancel4').css('display','none');
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
+        $('.AM, .PM').removeClass('on');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -617,6 +809,12 @@ $(document).ready(function() {
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
         $('#btnCancel3, #btnCancel4').css('display','none');
+        $('#btnCancel5, #btnCancel6').css('display', 'none');
+        $('.AM').addClass('mañana');
+        $('.PM').addClass('tarde');
+        $('.mañana, .tarde').addClass('menu');
+        $('.AM, .PM').removeClass('preferencias');
+        $('.AM, .PM').removeClass('on');
         restaurarModoHorario();
         $('#colorPickerAM').val('#FFFFFF');
         listar();
@@ -650,16 +848,76 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" data-direccion="${res.direccion}" value="${res.id_r}" >
                         <div>${selectedCourse}</div>
                         <div>(${selectedTeacher})</div>
                     </div>`);
+                    $(`#${res.direccion}`).val(`${res.id_r}`);
                 });
-                ubicarColor();
+                listar_preferencias();
+                listar_otras_preferencias();
             }
         });
     }
-
+    function listar_preferencias() {
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/preferencias/listarPreferen.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                re.forEach(res => {
+                    $(`#${res.direccion}`).addClass('border-danger border-2');
+                });  
+                
+                bloques = re.length;
+                data = {
+                    id: selectedId,
+                    bloques: bloques
+                }
+                url = "../php/profesor/editarBloques.php";
+                $.ajax({
+                    url: url,
+                    data: data,
+                    type: "POST",
+                    success: function(response) {
+                        console.log('esta bn el editar bloques', bloques);
+                    }
+                });
+            }
+        });
+    }
+    function listar_otras_preferencias() {
+        numerico = localStorage.getItem('numero');
+        const dato = {
+            id_p: selectedId
+        };
+        $.ajax({
+            url: "../php/preferencias/listarNoPreferen.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                localStorage.setItem('horario_preferencias', JSON.stringify(re));
+                re.forEach(res => {
+                    if(numerico === res.numerico && selectedId != res.id_p)
+                    {
+                        $(`#${res.direccion}`).css('opacity', '0.7');
+                        $(`#${res.direccion}`).removeClass('menu mañana tarde');
+                        $(`#${res.direccion}`).addClass('on');
+                        $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" data-direccion="${res.direccion}" value="${res.id_r}" >
+                            <div>${selectedCourse}</div>
+                            <div>(${selectedTeacher})</div>
+                            <div>${res.nombre}</div>
+                        </div>`);
+                    }          
+                });              
+            }
+        });
+    }
     //FUNCION PARA LISTAR EXAMENES EN EL HORARIO
     function listar_examenes() {
         const dato = {
@@ -679,9 +937,7 @@ $(document).ready(function() {
             }
         });
     }
-
     //FUNCION PARA LIMPIAR HORARIO CON EL BOTON DE CLOSE
-
     function limpiarTodo() {
         $.ajax({
             url: "../php/generar_h/limpiar.php",
@@ -691,20 +947,21 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).text("");
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
+                    $(`#${res.direccion}`).css('opacity', '1');
+                    $(`#${res.direccion}`).val("");
                 });
                 limpiar_registro_editar();
             }
         });
     }
-
     //GENERAR HORARIO INTELIGENTE
-
     $(document).on('click', '#btnHorario', function() {
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
+        nomb = selectedHorarioText;
+        $('#nombre-horario-pm').text(nomb);
+        $('#nombre-horario-am').text(nomb);
         $('.decrease2, .increase2').css('display','none');
-        nombre = localStorage.getItem('selectedHorarioText');
-        $('#nombre-horario-am').html(nombre);
-        $('#nombre-horario-pm').html(nombre);
         $('.btn-001').css('display','block');
         $('.color01').css('display','block');
         $('.color02').css('display','block');
@@ -720,10 +977,9 @@ $(document).ready(function() {
         $('.table').removeClass('table-hover');
 
         const dato = {
-            id_h: selectedHorarioId,
-            turno: selectedPeriod
+            turno: selectedPeriod,
+            id_h: selectedHorarioId
         };
-
         //SE REALIZA LA COLSULTA A LA BASE DE DATOS // algoritmo prioridad
         $.ajax({
             url: "../php/generar_h/generar_horario.php",
@@ -793,43 +1049,36 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
-                // Paso 1: Inicializar un objeto para contar las ocurrencias por 'id'
-                const conteo = {};
-                // Paso 2: Crear el array 'resultadoFinal' priorizando los elementos que están en 'prioridad'
-                const resultadoFinal = [];
-                re.forEach(item => {
-                    const key = `${item.id}-${item.id_r}`;         
-                    // Obtener el máximo de bloques para este 'id'
-                    const maxBloques = parseInt(item.bloques, 10);
-                    // Incrementar el contador de ocurrencias para este 'id'
-                    if (!conteo[item.id]) {
-                        conteo[item.id] = 0;
-                    } 
-                    // Verificar si el item está en prioridad
-                    const enPrioridad = prioridad.some(priItem => priItem.id === item.id && priItem.id_r === item.id_r); 
-                    // Agregar solo si no excede el límite de bloques
-                    if (conteo[item.id] < maxBloques) {
-                        resultadoFinal.push(item);
-                        conteo[item.id]++;
-                    } else if (enPrioridad) {
-                        // Si está en prioridad pero el límite se ha alcanzado, preferimos incluirlo si hay espacio
-                        const indexNoPrioridad = resultadoFinal.findIndex(
-                            resultItem => resultItem.id === item.id && !prioridad.some(priItem => priItem.id === resultItem.id && priItem.id_r === resultItem.id_r)
-                        );  
-                        if (indexNoPrioridad !== -1) {
-                            // Reemplazamos un elemento que no está en prioridad por uno que sí lo está
-                            resultadoFinal.splice(indexNoPrioridad, 1, item);
-                        }
+                horarioPe = [];
+                selectedHorarioId= localStorage.getItem('selectedHorarioId');
+                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
+                for (i=0; i<horarioPreferencia.length; i++)
+                {
+                    if (selectedHorarioId === horarioPreferencia[i].id_h)
+                    {
+                        horarioPe.push(horarioPreferencia[i]);
+                    }      
+                }
+                nuevoArray = [];
+                for (i=0; i<re.length;i++)
+                {
+                    for (e=0; e<horarioPe.length;e++)
+                    {
+                        if (horarioPe[e].id_p === re[i].id && horarioPe[e].id_r === re[i].id_r)
+                            {
+                                nuevoArray.push(re[i]);
+                            }
                     }
-                });
-
-                console.log("Resultado final:", resultadoFinal);
-                localStorage.setItem('horario_generado', JSON.stringify(resultadoFinal));
-                resultadoFinal.forEach(res => {
-                    $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
-                        <div>${res.curso}</div>
-                        <div>(${res.nombre_p})</div>
-                    </div>`);
+                       
+                }
+                console.log('nuevo Array', nuevoArray);
+         
+                localStorage.setItem('horario_generado', JSON.stringify(re));
+                nuevoArray.forEach(res => {
+                        $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
+                            <div>${res.curso}</div>
+                            <div>(${res.nombre_p})</div>
+                        </div>`);
                 });
 
                 listar_examenes(); // Llamar a listar_examenes después de listar registros normales
@@ -855,7 +1104,10 @@ $(document).ready(function() {
     }
 
     $(document).on('click', '.calendarios' ,function(){
-        listarHorari();
+        
+        $('.PM').addClass('.tarde');
+        $('.AM').addClass('.mañana');
+        $('#btnCancel3, #btnCancel4').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
@@ -872,6 +1124,12 @@ $(document).ready(function() {
         localStorage.setItem('selectedID', selectedID);
         localStorage.setItem('selectedNombre', selectedNombre);
         localStorage.setItem('selectedCurso', selectedCurso);
+
+        numerico = $(this).data('numerico');
+        console.log('estoy', numerico);
+        localStorage.setItem('numero', numerico)
+
+        listarNumeroRegistro();
         })
     $(document).on('click', '.btn-001', function(){
         $('#modal-001').modal('show');
@@ -891,6 +1149,7 @@ $(document).ready(function() {
         localStorage.setItem('nombre', nombre);
         localStorage.setItem('activo', activo);
         activoColor = localStorage.getItem('colorActivo');
+        
 
         if(activoColor === 'color')
         {
@@ -991,7 +1250,7 @@ $(document).ready(function() {
             curso: curso,
             bloques: bloques
         }
-        const url = "../php/profesor/editar.php";
+        const url = "../php/profesor/editarBloques.php";
         $.ajax({
             url: url,
             data: data,
@@ -1003,15 +1262,17 @@ $(document).ready(function() {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
-                    ubicarColor();
+                    
                 }
                 else if (num === -1) {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
                     $('#cantidadBloques2').text(bloques);
+                        id_r = localStorage.getItem('id_r');
+                        }
                     limpiarTodo2();
                 }            
-            }
+            
         }) 
     });
     function limpiarTodo2() {
@@ -1023,7 +1284,7 @@ $(document).ready(function() {
                 re.forEach(res => {
                     $(`#${res.direccion}`).removeClass("border-danger border-2");
                 });
-                ubicarColor();
+                
             }
         });
     }
@@ -1031,24 +1292,9 @@ $(document).ready(function() {
         $('#btnCancel3, #btnCancel4').css('display','block');
         colorActivo = $(this).data('color');
         localStorage.setItem('colorActivo', colorActivo);
-        activoEditar = localStorage.getItem('activo');
-
-        if(activoEditar === 'on')
-        {
-            $('.mañana, .tarde').removeClass('menu');
-            $('.mañana').removeClass('modal1');
-            $('.tarde').removeClass('modal2');
-        }
     });
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
         $('#btnCancel3, #btnCancel4').css('display','none');
-        localStorage.removeItem('colorActivo');
-        activoEditar = localStorage.getItem('activo');
-        if (activoEditar==='on')
-        {
-            $('.mañana, .tarde').addClass('menu');
-            $('.mañana').addClass('modal1');
-            $('.tarde').addClass('modal2'); 
-        }       
+        localStorage.removeItem('colorActivo');     
     });
 });
