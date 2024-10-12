@@ -1024,23 +1024,23 @@ $(document).ready(function() {
                     if (result[elementos_repetidos_a[i].id] > result[elementos_repetidos_b[i].id]) {
                         prioridad.push(elementos_repetidos_b[i]);
                         no_prioridad.push(elementos_repetidos_a[i]);
-                        const index = elementos_repetidos_a[i].id;
-                        const num_restar = result[elementos_repetidos_a[i].id];
-                        result[index] = num_restar -1;  
+                        // const index = elementos_repetidos_a[i].id;
+                        // const num_restar = result[elementos_repetidos_a[i].id];
+                        // result[index] = num_restar -1;  
                     }
                     //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
                     else if (result[elementos_repetidos_a[i].id] < result[elementos_repetidos_b[i].id]) {
                         prioridad.push(elementos_repetidos_a[i]);
                         no_prioridad.push(elementos_repetidos_b[i]);
-                        const index = elementos_repetidos_b[i].id;
-                        const num_restar = result[elementos_repetidos_b[i].id];
-                        result[index] = num_restar - 1;
+                        // const index = elementos_repetidos_b[i].id;
+                        // const num_restar = result[elementos_repetidos_b[i].id];
+                        // result[index] = num_restar - 1;
                     } else {
                         prioridad.push(elementos_repetidos_a[i]);
                         no_prioridad.push(elementos_repetidos_b[i]);
-                        const index = elementos_repetidos_b[i].id;
-                        const num_restar = result[elementos_repetidos_b[i].id];
-                        result[index] = num_restar - 1;
+                        // const index = elementos_repetidos_b[i].id;
+                        // const num_restar = result[elementos_repetidos_b[i].id];
+                        // result[index] = num_restar - 1;
                     }
                 }
                 for (let i = 0; i < no_prioridad.length; i++) {         
@@ -1060,27 +1060,54 @@ $(document).ready(function() {
                     }      
                 }
                 nuevoArray = [];
-                for (i=0; i<re.length;i++)
-                {
-                    for (e=0; e<horarioPe.length;e++)
-                    {
-                        if (horarioPe[e].id_p === re[i].id && horarioPe[e].id_r === re[i].id_r)
-                            {
-                                nuevoArray.push(re[i]);
-                            }
+                console.log('horarioPe: ', horarioPe);
+                for (let i = 0; i < horarioPe.length; i++) {
+                    const index = re.findIndex(res => res.id_r === horarioPe[i].id_r);
+                    if (index !== -1) {
+                        nuevoArray.push(re[index]);
                     }
-                       
                 }
                 console.log('nuevo Array', nuevoArray);
-         
+
+                // Crear un nuevo array que almacene registros limitados por bloques
+                let registrosPorId = {};
+                let nuevoArrayFinal = [];
+                let idRsAgregados = new Set(); // Usaremos un Set para rastrear los 'id_r' ya agregados
+                // Contamos cuántos bloques se permiten para cada id
+                re.forEach(el => {
+                    registrosPorId[el.id] = {
+                        registros: [],
+                        maxBloques: parseInt(el.bloques) || 0, // Limita según 'bloques'
+                        contador: 0 // Mantiene la cuenta de los bloques ya agregados
+                    };
+                });
+                // Insertar en el nuevo array con prioridad a los registros de nuevoArray
+                nuevoArray.forEach(el => {
+                    if (registrosPorId[el.id].contador < registrosPorId[el.id].maxBloques && !idRsAgregados.has(el.id_r)) {
+                        nuevoArrayFinal.push(el);
+                        registrosPorId[el.id].contador++;
+                        registrosPorId[el.id].registros.push(el);
+                        idRsAgregados.add(el.id_r); // Añadir 'id_r' al Set
+                    }
+                });
+                // Agregar los elementos restantes de 're', siempre respetando el límite de bloques
+                re.forEach(el => {
+                    if (registrosPorId[el.id].contador < registrosPorId[el.id].maxBloques && !idRsAgregados.has(el.id_r)) {
+                        nuevoArrayFinal.push(el);
+                        registrosPorId[el.id].contador++;
+                        registrosPorId[el.id].registros.push(el);
+                        idRsAgregados.add(el.id_r); // Añadir 'id_r' al Set
+                    }
+                });
+                console.log("Nuevo array final con prioridad, límite de bloques y sin duplicados de id_r:", nuevoArrayFinal);
+
                 localStorage.setItem('horario_generado', JSON.stringify(re));
-                nuevoArray.forEach(res => {
+                nuevoArrayFinal.forEach(res => {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                             <div>${res.curso}</div>
                             <div>(${res.nombre_p})</div>
                         </div>`);
                 });
-
                 listar_examenes(); // Llamar a listar_examenes después de listar registros normales
                 if (selectedPeriod === 'Mañana') {
                     $('#calendario').modal('show');
