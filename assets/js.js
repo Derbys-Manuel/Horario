@@ -628,7 +628,6 @@ $(document).ready(function() {
                 //RESUMIR LA LATENCIA DEL INSERTAR
                 const parte = $(this).data('dia');
                 const hora = $(this).attr('value');
-                const valor = $(this).data('valor');
                 const numerico = localStorage.getItem('numero');
                 let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
                 console.log(numerosArray, "Inserte , parte Numerico");
@@ -645,8 +644,7 @@ $(document).ready(function() {
                             tiempo: tiempo,
                             id_p: selectedId,
                             direccion: element,
-                            turno: selectedPeriod,
-                            valor: valor
+                            turno: selectedPeriod
                         }
                         dato = {
                             id_p: selectedId
@@ -672,8 +670,7 @@ $(document).ready(function() {
                             tiempo: tiempo,
                             id_p: numerosArray[i].id,
                             direccion: element,
-                            turno: selectedPeriod,
-                            valor: valor
+                            turno: selectedPeriod
                         }
                         dato = {
                             id_p: selectedId
@@ -750,6 +747,7 @@ $(document).ready(function() {
                     selectedID = localStorage.getItem('selectedID');
                     numerico = localStorage.getItem('numero');
                     nombre = localStorage.getItem('selectedHorarioText');
+                    turno = localStorage.getItem('selectedPeriod');
                     console.log(direccion);
                     console.log(id_r);
                     const dato = {
@@ -758,7 +756,8 @@ $(document).ready(function() {
                         id_p: selectedID,
                         direccion: direccion,
                         numerico: numerico,
-                        nombre: nombre
+                        nombre: nombre,
+                        turno: turno
                     }
                     $.ajax ({
                         url: "../php/preferencias/insertPrefen.php",
@@ -901,7 +900,6 @@ $(document).ready(function() {
             data: dato,
             success: function(respo) {
                 const re = JSON.parse(respo);
-                localStorage.setItem('horario_preferencias', JSON.stringify(re));
                 re.forEach(res => {
                     if(numerico === res.numerico && selectedId != res.id_p)
                     {
@@ -918,6 +916,23 @@ $(document).ready(function() {
             }
         });
     }
+    function listar_preferencias_horario(){       
+        const dato = {
+            id_h: selectedHorarioId,
+            turno: selectedPeriod
+        };
+        $.ajax({
+            url: "../php/preferencias/listarNoPreferen.php",
+            type: "POST",
+            data: dato,
+            success: function(respo) {
+                const re = JSON.parse(respo);
+                localStorage.setItem('horario_preferencias', JSON.stringify(re));   
+            }
+        });
+    }
+
+
     //FUNCION PARA LISTAR EXAMENES EN EL HORARIO
     function listar_examenes() {
         const dato = {
@@ -956,6 +971,7 @@ $(document).ready(function() {
     }
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
+        listar_preferencias_horario();
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
         nomb = selectedHorarioText;
@@ -986,7 +1002,12 @@ $(document).ready(function() {
             type: "POST",   
             data: dato,
             success: function(response) {
-                const re = JSON.parse(response);   
+                const res = JSON.parse(response);
+                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
+                const re = res.filter(res =>
+                    horarioPreferencia.some(horario => horario.id_p === res.id)
+                )
+                console.log('filter => ',re);
                 function capturarIndicesDeRepetidos(re) {
                     let elementosVistos = {};
                     let indices1 = [];
@@ -1021,28 +1042,49 @@ $(document).ready(function() {
                 //este for sirve para ir almacenando los datos en => prioridad y => no_prioridad
                 for (let i = 0; i < elementos_repetidos_a.length; i++) {
                     //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
-                    if (result[elementos_repetidos_a[i].id] > result[elementos_repetidos_b[i].id]) {
+                    const existeEnHorarioA = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_a[i].id_r);
+                    const existeEnHorarioB = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_b[i].id_r);
+                    console.log(existeEnHorarioA, 'aaaaaaaaaaaaaa');
+                    console.log(existeEnHorarioB, 'bbbbbbbbbbbbb');
+                    if(existeEnHorarioA === true && existeEnHorarioB === false)
+                    {
+                        prioridad.push(elementos_repetidos_a[i]);
+                        no_prioridad.push(elementos_repetidos_b[i]);          
+                    }
+                    else if (existeEnHorarioB === true && existeEnHorarioA === false)
+                    {
                         prioridad.push(elementos_repetidos_b[i]);
                         no_prioridad.push(elementos_repetidos_a[i]);
-                        // const index = elementos_repetidos_a[i].id;
-                        // const num_restar = result[elementos_repetidos_a[i].id];
-                        // result[index] = num_restar -1;  
                     }
-                    //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
-                    else if (result[elementos_repetidos_a[i].id] < result[elementos_repetidos_b[i].id]) {
-                        prioridad.push(elementos_repetidos_a[i]);
-                        no_prioridad.push(elementos_repetidos_b[i]);
-                        // const index = elementos_repetidos_b[i].id;
-                        // const num_restar = result[elementos_repetidos_b[i].id];
-                        // result[index] = num_restar - 1;
-                    } else {
-                        prioridad.push(elementos_repetidos_a[i]);
-                        no_prioridad.push(elementos_repetidos_b[i]);
-                        // const index = elementos_repetidos_b[i].id;
-                        // const num_restar = result[elementos_repetidos_b[i].id];
-                        // result[index] = num_restar - 1;
+                    else if (existeEnHorarioB === false && existeEnHorarioA === false || existeEnHorarioB === true && existeEnHorarioA === true)
+                    {
+                        if (result[elementos_repetidos_a[i].id] > result[elementos_repetidos_b[i].id]) 
+                        {
+                            prioridad.push(elementos_repetidos_b[i]);
+                            no_prioridad.push(elementos_repetidos_a[i]);
+                            const index = elementos_repetidos_a[i].id;
+                            const num_restar = result[elementos_repetidos_a[i].id];
+                            result[index] = num_restar -1;  
+                        }
+                        //lo mismo que arriba ^_^, solo que aqui se realiza con los elementos del grupo b
+                        else if (result[elementos_repetidos_a[i].id] < result[elementos_repetidos_b[i].id]) 
+                        {
+                            prioridad.push(elementos_repetidos_a[i]);
+                            no_prioridad.push(elementos_repetidos_b[i]);
+                            const index = elementos_repetidos_b[i].id;
+                            const num_restar = result[elementos_repetidos_b[i].id];
+                            result[index] = num_restar - 1;
+                        } else if (result[elementos_repetidos_a[i].id] === result[elementos_repetidos_b[i].id]) 
+                        {
+                            prioridad.push(elementos_repetidos_a[i]);
+                            no_prioridad.push(elementos_repetidos_b[i]);
+                            const index = elementos_repetidos_b[i].id;
+                            const num_restar = result[elementos_repetidos_b[i].id];
+                            result[index] = num_restar - 1;
+                        }
                     }
-                }
+                    }
+                    
                 for (let i = 0; i < no_prioridad.length; i++) {         
                     const index = re.findIndex(res => res.id_r === no_prioridad[i].id_r);
                     if (index !== -1) {
@@ -1051,7 +1093,6 @@ $(document).ready(function() {
                 }
                 horarioPe = [];
                 selectedHorarioId= localStorage.getItem('selectedHorarioId');
-                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
                 for (i=0; i<horarioPreferencia.length; i++)
                 {
                     if (selectedHorarioId === horarioPreferencia[i].id_h)
@@ -1067,8 +1108,9 @@ $(document).ready(function() {
                         nuevoArray.push(re[index]);
                     }
                 }
-                console.log('nuevo Array', nuevoArray);
-
+                console.log('nuevoArray sin orden', nuevoArray);
+                nuevoArray.sort((a, b) => a.id_r - b.id_r);
+                console.log('nuevoArray con orden', nuevoArray);
                 // Crear un nuevo array que almacene registros limitados por bloques
                 let registrosPorId = {};
                 let nuevoArrayFinal = [];
