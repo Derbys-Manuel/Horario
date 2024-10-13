@@ -787,6 +787,7 @@ $(document).ready(function() {
 
     $('#closeBtn1').click(function() {
         limpiarTodo();
+   
         $('.mañana').removeClass('modal1');
         $('#btnCancel1').css('display', 'none');  
         $('#btnCancel2').css('display', 'none');
@@ -804,6 +805,7 @@ $(document).ready(function() {
 
     $('#closeBtn2').click(function() {
         limpiarTodo();
+     
         $('.tarde').removeClass('modal2');
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
@@ -972,6 +974,8 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
         listar_preferencias_horario();
+
+        $('#btnAgregar').css('display','block');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
         nomb = selectedHorarioText;
@@ -1003,7 +1007,7 @@ $(document).ready(function() {
             data: dato,
             success: function(response) {
                 const res = JSON.parse(response);
-                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias'));
+                const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias')) || [];
                 const re = res.filter(res =>
                     horarioPreferencia.some(horario => horario.id_p === res.id)
                 )
@@ -1143,7 +1147,7 @@ $(document).ready(function() {
                 });
                 console.log("Nuevo array final con prioridad, límite de bloques y sin duplicados de id_r:", nuevoArrayFinal);
 
-                localStorage.setItem('horario_generado', JSON.stringify(re));
+                localStorage.setItem('horario_generado', JSON.stringify(nuevoArrayFinal));
                 nuevoArrayFinal.forEach(res => {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                             <div>${res.curso}</div>
@@ -1177,6 +1181,7 @@ $(document).ready(function() {
         $('.PM').addClass('.tarde');
         $('.AM').addClass('.mañana');
         $('#btnCancel3, #btnCancel4').css('display','none');
+        $('#btnAgregar').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
@@ -1365,5 +1370,9 @@ $(document).ready(function() {
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
         $('#btnCancel3, #btnCancel4').css('display','none');
         localStorage.removeItem('colorActivo');     
+    });
+    $(document).on('click', '#btnAgregar', function(){
+        $('#horarioGuardar').modal('show');
+           
     });
 });

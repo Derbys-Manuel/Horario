@@ -102,15 +102,18 @@
     <!-- MODAL HORARIO MAÑANA -->
     <div class="modal fade modal-xl" id="calendario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content ">
                 <!-- Modal Header -->
-                <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1> 
-                    <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
+                <div class="modal-header horario-header ">
+                    <div class=" hora align-items-center mt-2 ">
+                        <h1 class="modal-title fs-5 d-flex" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span><button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button></h1>
+                    </div>
+
+                    <div class=" d-flex position-absolute top-85 end-0 mx-3 ">
                         <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button>
-                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
+                            <h1 class="modal-title fs-5 h1Bloques  mx-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
                         <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button>
-                        <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel5" style="display:none;">
+                        <div class="btn-icon2 mx-2  menu" id="btnCancel5" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
                         </div>
@@ -118,23 +121,21 @@
                     <div class="d-flex align-items-center mt-2">
                         <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
                         <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
-                        <i class="bi bi-check-lg text-light bg-success rounded p-1 px-2 mx-2 menu" id="checkAM" data-color="color"></i>
-                        <div class="btn-icon2 mx-2 mt-2 menu" id="btnCancel3" style="display:none;">
+                        <i class="bi bi-check-lg text-light bg-success rounded p-1  mx-2 menu" id="checkAM" data-color="color"></i>
+                        <div class="btn-icon2 mx-2  menu" id="btnCancel3" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
                         </div>
                     </div>  
-                    <div class="row">
-                        <div class="col-5">
-                            <button class="btn-001 btn btn-success menu mt-1">Editar</button>
-                        </div>
-                        <div class="col-7">
-                            <div class="btn-icon2 mt-3 menu" id="btnCancel1" style="display:none;">
-                                <i class="bi bi-x-circle"></i>
-                                <span class="tooltiptext">Cancelar</span>
-                            </div>
+                  
+                    <div class="d-flex align-items-center mt-2">
+                        <button class="btn-001 btn btn-success menu ">Editar</button>
+                        <div class="btn-icon2 mx-3 menu" id="btnCancel1" style="display:none;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
                         </div>
                     </div>
+            
                     <label id="modoExamenLabel" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen">
                         <span class="slider round">Modo Examen</span>
@@ -232,7 +233,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                    <div class="d-flex">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span><button class="btn menu" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button></h1>
+                    </div>
+                    
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
                         <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button>
                             <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN<span class="d-none"id="cantidadBloques2"></span></h1>
@@ -328,6 +332,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="horarioGuardar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Guardar Horario</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="modal2">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control " id="nombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="hidden" id="turno_profesor">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" id="btnGuardar1" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btnUpdate" class="btn btn-primary" style="display: none;">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
     let selectedColorAM = document.getElementById('colorPickerAM').value;
     let selectedColorPM = document.getElementById('colorPickerPM').value;
