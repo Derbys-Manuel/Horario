@@ -383,13 +383,17 @@
         td.addEventListener('click', function() {
             if (canApplyColorAM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorAM;
-                this.classList.add('selected');  } });
+                this.classList.add('selected');  
+                localStorage.setItem('colorArray', selectedColorAM);
+            
+            } });
     });
     document.querySelectorAll('#table-horario-pm td').forEach(function(td) {
         td.addEventListener('click', function() {
             if (canApplyColorPM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorPM;
                 this.classList.add('selected');} });
+                localStorage.setItem('colorArray', JSON.stringify(selectedColorPM));
     });
     document.getElementById('btnCancel3').addEventListener('click', function() {
         canApplyColorAM = false;  // Deshabilita la aplicación del color en el horario AM

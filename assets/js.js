@@ -1112,9 +1112,7 @@ $(document).ready(function() {
                         nuevoArray.push(re[index]);
                     }
                 }
-                console.log('nuevoArray sin orden', nuevoArray);
                 nuevoArray.sort((a, b) => a.id_r - b.id_r);
-                console.log('nuevoArray con orden', nuevoArray);
                 // Crear un nuevo array que almacene registros limitados por bloques
                 let registrosPorId = {};
                 let nuevoArrayFinal = [];
@@ -1148,6 +1146,7 @@ $(document).ready(function() {
                 console.log("Nuevo array final con prioridad, límite de bloques y sin duplicados de id_r:", nuevoArrayFinal);
 
                 localStorage.setItem('horario_generado', JSON.stringify(nuevoArrayFinal));
+                localStorage.setItem('nuevo_horario_generado', JSON.stringify(nuevoArrayFinal));
                 nuevoArrayFinal.forEach(res => {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                             <div>${res.curso}</div>
@@ -1231,28 +1230,33 @@ $(document).ready(function() {
             $('.mañana').removeClass('modal1');
             $('.tarde').removeClass('modal2');
         }
-
     });
     $(document).on('click', '.modal1, .modal2', function(){
         direccion = localStorage.getItem('direccion');
         nombre = localStorage.getItem('nombre');
         curso = localStorage.getItem('curso');
+        let elemento = { direccion: direccion, nombre: nombre, curso: curso, id_h: selectedHorarioId, id: selectedId };
+        let horario = JSON.parse(localStorage.getItem('nuevo_horario_generado')) || [];
         if ($(`.${direccion}`).length) {  
             $(`.${direccion}`).remove();
-        }
+             // Filtrar el array 'horario' para eliminar el elemento con la dirección especificada
+            horario = horario.filter(function(element) {
+                return element.direccion !== direccion;
+            });
+            localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
+            console.log("Array actualizado en localStorage:", horario);
+                }
         else {
             $(`#${direccion}`).html(`<div class="text-success ${direccion}">
                 <div>${curso}</div>
                 <div>(${nombre})</div>
             </div>`);
+            horario.push(elemento);
+            localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
             agregarElementoAlArray(direccion);
-            // Función para agregar un nuevo elemento al array en localStorage
             function agregarElementoAlArray(nuevoElemento) {
-                // Obtener el array existente en localStorage
                 let miArray = JSON.parse(localStorage.getItem('miArray')) || [];
-                // Agregar el nuevo elemento al array
                 miArray.push(nuevoElemento);
-                // Guardar el array actualizado en localStorage
                 localStorage.setItem('miArray', JSON.stringify(miArray));
             }
         }
@@ -1286,6 +1290,9 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
         localStorage.removeItem('activo');
+        localStorage.removeItem('nuevo_horario_generado');
+        let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
+        localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
         limpiar_registro_editar();
         guardar_horario_generado();
     });
@@ -1295,6 +1302,9 @@ $(document).ready(function() {
         $('.tarde').removeClass('modal2');
         $('.mañana, .tarde').removeClass('menu');
         localStorage.removeItem('activo');
+        let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
+        localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
+        localStorage.removeItem('nuevo_horario_generado');
         limpiar_registro_editar();
         guardar_horario_generado();    
     });
@@ -1366,13 +1376,30 @@ $(document).ready(function() {
         $('#btnCancel3, #btnCancel4').css('display','block');
         colorActivo = $(this).data('color');
         localStorage.setItem('colorActivo', colorActivo);
+        $(".PM").addClass('colores');
+        $(".AM").addClass('colores');
+
     });
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
         $('#btnCancel3, #btnCancel4').css('display','none');
-        localStorage.removeItem('colorActivo');     
+        localStorage.removeItem('colorActivo');
+        $(".PM").removeClass('colores');
+        $(".AM").removeClass('colores');     
     });
     $(document).on('click', '#btnAgregar', function(){
-        $('#horarioGuardar').modal('show');
-           
+        $('#horarioGuardar').modal('show');         
+    });
+    $(document).on('click', '.colores', function(){
+        let color_generado = JSON.parse(localStorage.getItem('color_Array')) || [];
+        color = localStorage.getItem('colorArray');
+        direccion = localStorage.getItem('direccion');  
+        console.log(color, 'color', direccion, 'direccion'); 
+        let colorArray = 
+        {
+            color: color,
+            direccion: direccion
+        }   
+        color_generado.push(colorArray);
+        localStorage.setItem('color_Array', JSON.stringify(color_generado));
     });
 });
