@@ -23,7 +23,7 @@ try {
     $stmt->bindParam(':id_p', $id_p, PDO::PARAM_INT);
     $stmt->bindParam(':bloques', $bloques, PDO::PARAM_STR);
     $stmt->bindParam(':direccion', $direccion, PDO::PARAM_STR);
-    $stmt->bindParam(':numerico', $numerico, PDO::PARAM_STR);
+    $stmt->bindParam(':numerico', $numerico, PDO::PARAM_INT);
   
     if ($stmt->execute()) {
         echo "Ingreso exitoso";

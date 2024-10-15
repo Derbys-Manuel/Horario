@@ -77,13 +77,34 @@ $(document).ready(function() {
                     {
                         localStorage.setItem('numerico', respuesta[0].numerico);    
                     }
-
                 }
             });
-        }
-        
+        }      
     }
 
+    function listarNumerico_horario() {
+        let numerico = 0;
+        $.ajax({
+            url: "../php/horario_generados/list.php",
+            type: "GET",
+            success: function(response) {
+                let respuesta = JSON.parse(response);
+    
+                if (respuesta.length === 0) {
+                    numerico = 1; // Si no hay datos, empieza desde 1
+                } else {
+                    respuesta.reverse();
+                    numerico = respuesta[0].numerico; // Incrementa el valor del primer objeto
+                    numerico += 1;
+                } 
+                localStorage.setItem('numerico_horario', numerico); // Guarda el valor actualizado
+            },
+            error: function(err) {
+                console.error("Error al obtener los datos:", err);
+            }
+        });
+    }
+    
     // Evento para el formulario de agregar profesor
     $(document).on("submit", "#modal1", function(e) {
         e.preventDefault();
@@ -1209,6 +1230,7 @@ $(document).ready(function() {
         listar2();
     });
     $(document).on('click', '.profe', function(){
+        
         $('.mañana, .tarde').addClass('menu');
         $('.mañana').addClass('modal1');
         $('.tarde').addClass('modal2');
@@ -1394,7 +1416,8 @@ $(document).ready(function() {
         $(".AM").removeClass('colores');     
     });
     $(document).on('click', '#btnAgregar', function(){
-        $('#horarioGuardar').modal('show');         
+        $('#horarioGuardar').modal('show');    
+        listarNumerico_horario();      
     });
     $(document).on('click', '.colores', function(){
         let color_generado = JSON.parse(localStorage.getItem('color_Array')) || [];
@@ -1410,10 +1433,12 @@ $(document).ready(function() {
         localStorage.setItem('color_Array', JSON.stringify(color_generado));
     });
     $(document).on('click', '#btnGuardar1', function(){
-        listar_numerico_horario();
-        numerico = localStorage.getItem('numerico_horario')
+           
+        
         nombreHorario = $('#nombreHorario').val();
         guardar = JSON.parse(localStorage.getItem('nuevo_horario_generado'));
+        numerico =localStorage.getItem('numerico_horario');
+        console.log(numerico);
         for (i=0;i<guardar.length;i++)
         {
             data = {
@@ -1432,19 +1457,63 @@ $(document).ready(function() {
                 data: data,
                 type: "POST",
                 success: function(response) {
-                    console.log(response);
-                    
-               
+                    console.log(response);                           
                 }
             });
 
         }
         $('#horarioGuardar').modal('hide'); 
     });
-    function listar_numerico_horario()
-    {
-        num = localStorage.getItem('numerico_horario') || 0;
-        num += 1
-        localStorage.setItem('numerico_horario', num);
+
+     // Función para listar los profesores
+     function listar_horarios_generados() {
+        $.ajax({
+            url: '../php/horario_generados/list.php',
+            type: 'GET',
+            success: function(r) {
+                const profesor = JSON.parse(r);
+                const calculo = profesor.length;
+                let template = "";
+                if (calculo === 0) {
+                    const enfoque = `
+                    <tr>
+                        <td colspan="3"> No hay Horarios Guardados</td>
+                    </tr>
+                    `;
+                    $('#lista-003').html(enfoque);          
+                } else {
+                    for(i=0;i<profesor.length;i++)
+                    {
+                        if(i === 0 || profesor[i].numerico !== profesor[i-1].numerico)
+                        {
+                            template += `
+                            <tr class="numerico-${profesor[i].numerico} text-center">
+                                <td>${profesor[i].nombre_horario}</td>
+                                <td>${profesor[i].creado_en}</td>
+                                <td>
+                                    <button value="${profesor[i].numerico}" class="btn btn-primary tool-action default-action calendarios" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
+                                       <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button value="${profesor[i].numerico}" class="btn btn-primary tool-action default-action calendarios" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            `;
+                        }     
+                    }          
+                    $('#lista-003').html(template);
+                }
+            }
+        });
     }
+    $(document).on('click', '.horarios', function(){
+        $('#modal-004').modal('show');    
+        listar_horarios_generados();     
+    });
+
+    
 });
+ 

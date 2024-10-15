@@ -105,8 +105,9 @@
             <div class="modal-content ">
                 <!-- Modal Header -->
                 <div class="modal-header horario-header ">
-                    <div class=" hora align-items-center mt-2 ">
-                        <h1 class="modal-title fs-5 d-flex" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span><button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button></h1>
+                    <div class=" hora align-items-center mt-2 d-flex">
+                        <h1 class="modal-title fs-5 d-flex menu horarios" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                        <button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
                     </div>
 
                     <div class=" d-flex position-absolute top-85 end-0 mx-3 ">
@@ -234,7 +235,8 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <div class="d-flex">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span><button class="btn menu" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button></h1>
+                        <h1 class="modal-title fs-5 menu horarios" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                        <button class="btn menu" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
                     </div>
                     
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
@@ -436,6 +438,35 @@
                         </tr>
                     </thead>
                     <tbody id="lista-002">
+                        <!-- Aquí se generarán dinámicamente las filas de la tabla -->
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-004" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col"><h1 class="modal-title fs-5" id="staticBackdropLabel">Lista de Horarios Guardados</h1></div>
+                        </div> 
+                    </div>
+                </div>
+                <table id="example-003" class="table table-bordered text-center">
+                    <thead class="text-center align-items-center">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th colspan="2">Herramientas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-003" class="text-center align-items-center">
                         <!-- Aquí se generarán dinámicamente las filas de la tabla -->
                     </tbody>
                 </table>
