@@ -243,7 +243,7 @@ $(document).ready(function() {
                 } else {
                     profesor.forEach(element => {
                         template += `
-                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}" data-activo="on">
+                        <tr id="${element.id}" class="menu profe" data-nombre="${element.nombre_p}" data-curso="${element.curso}" data-id="${element.id}" data-bloques="${element.bloques}" data-turno="${element.turno}"data-activo="on">
                             <td>${element.nombre_p}</td>
                             <td>${element.curso}</td>
                         </tr>
@@ -1217,9 +1217,13 @@ $(document).ready(function() {
         $('#btnCancel2').css('display', 'block');
         nombre = $(this).data('nombre');
         curso = $(this).data('curso');
+        bloques = $(this).data('bloques');
+        id = $(this).data('id');
         activo = $(this).data('activo');
         localStorage.setItem('curso', curso);
         localStorage.setItem('nombre', nombre);
+        localStorage.setItem('id', id);
+        localStorage.setItem('bloques', bloques);
         localStorage.setItem('activo', activo);
         activoColor = localStorage.getItem('colorActivo');
         
@@ -1235,7 +1239,10 @@ $(document).ready(function() {
         direccion = localStorage.getItem('direccion');
         nombre = localStorage.getItem('nombre');
         curso = localStorage.getItem('curso');
-        let elemento = { direccion: direccion, nombre: nombre, curso: curso, id_h: selectedHorarioId, id: selectedId };
+        bloques = localStorage.getItem('bloques');
+        id = localStorage.getItem('id');
+        selectedPeriod = localStorage.getItem('selectedPeriod');
+        let elemento = { direccion: direccion, nombre_p: nombre, curso: curso, id_h: selectedHorarioId, id: id, turno: selectedPeriod, bloques: bloques };
         let horario = JSON.parse(localStorage.getItem('nuevo_horario_generado')) || [];
         if ($(`.${direccion}`).length) {  
             $(`.${direccion}`).remove();
@@ -1402,4 +1409,42 @@ $(document).ready(function() {
         color_generado.push(colorArray);
         localStorage.setItem('color_Array', JSON.stringify(color_generado));
     });
+    $(document).on('click', '#btnGuardar1', function(){
+        listar_numerico_horario();
+        numerico = localStorage.getItem('numerico_horario')
+        nombreHorario = $('#nombreHorario').val();
+        guardar = JSON.parse(localStorage.getItem('nuevo_horario_generado'));
+        for (i=0;i<guardar.length;i++)
+        {
+            data = {
+                nombre_horario: nombreHorario,
+                nombre_p: guardar[i].nombre_p,
+                curso: guardar[i].curso,
+                turno: guardar[i].turno,
+                id_h: guardar[i].id_h,
+                id_p: guardar[i].id,
+                direccion: guardar[i].direccion,
+                bloques: guardar[i].bloques,
+                numerico: numerico
+            }  
+            $.ajax({
+                url: "../php/horario_generados/insert_h.php",
+                data: data,
+                type: "POST",
+                success: function(response) {
+                    console.log(response);
+                    
+               
+                }
+            });
+
+        }
+        $('#horarioGuardar').modal('hide'); 
+    });
+    function listar_numerico_horario()
+    {
+        num = localStorage.getItem('numerico_horario') || 0;
+        num += 1
+        localStorage.setItem('numerico_horario', num);
+    }
 });

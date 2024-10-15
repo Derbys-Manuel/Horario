@@ -344,16 +344,16 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control " id="nombre" name="nombre" required>
+                            <input type="text" class="form-control " id="nombreHorario" name="nombreHorario" required>
                         </div>
                         <div class="mb-3">
-                            <input type="hidden" id="turno_profesor">
+                            <input type="hidden" id="">
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" id="btnGuardar1" class="btn btn-primary">Guardar</button>
-                        <button type="button" id="btnUpdate" class="btn btn-primary" style="display: none;">Actualizar</button>
+                        <button type="button" id="btnGuardar1" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btnUpdate1" class="btn btn-primary" style="display: none;">Actualizar</button>
                     </div>
                 </form>
             </div>
