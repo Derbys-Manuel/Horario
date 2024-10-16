@@ -808,7 +808,8 @@ $(document).ready(function() {
 
     $('#closeBtn1').click(function() {
         limpiarTodo();
-   
+        localStorage.removeItem('color_Array');
+        localStorage.removeItem('numerico_horario');
         $('.mañana').removeClass('modal1');
         $('#btnCancel1').css('display', 'none');  
         $('#btnCancel2').css('display', 'none');
@@ -826,7 +827,8 @@ $(document).ready(function() {
 
     $('#closeBtn2').click(function() {
         limpiarTodo();
-     
+        localStorage.removeItem('color_Array');
+        localStorage.removeItem('numerico_horario');
         $('.tarde').removeClass('modal2');
         $('#btnCancel1').css('display', 'none'); 
         $('#btnCancel2').css('display', 'none');
@@ -1033,6 +1035,7 @@ $(document).ready(function() {
                     horarioPreferencia.some(horario => horario.id_p === res.id)
                 )
                 console.log('filter => ',re);
+                console.log('horarioPreferencia =>', horarioPreferencia);
                 function capturarIndicesDeRepetidos(re) {
                     let elementosVistos = {};
                     let indices1 = [];
@@ -1074,12 +1077,18 @@ $(document).ready(function() {
                     if(existeEnHorarioA === true && existeEnHorarioB === false)
                     {
                         prioridad.push(elementos_repetidos_a[i]);
-                        no_prioridad.push(elementos_repetidos_b[i]);          
+                        no_prioridad.push(elementos_repetidos_b[i]);
+                        const index = elementos_repetidos_b[i].id;
+                        const num_restar = result[elementos_repetidos_b[i].id];
+                        result[index] = num_restar -1;           
                     }
                     else if (existeEnHorarioB === true && existeEnHorarioA === false)
                     {
                         prioridad.push(elementos_repetidos_b[i]);
                         no_prioridad.push(elementos_repetidos_a[i]);
+                        const index = elementos_repetidos_a[i].id;
+                        const num_restar = result[elementos_repetidos_a[i].id];
+                        result[index] = num_restar -1; 
                     }
                     else if (existeEnHorarioB === false && existeEnHorarioA === false || existeEnHorarioB === true && existeEnHorarioA === true)
                     {
@@ -1116,23 +1125,31 @@ $(document).ready(function() {
                         re.splice(index, 1);         
                     }
                 }
+
                 horarioPe = [];
-                selectedHorarioId= localStorage.getItem('selectedHorarioId');
-                for (i=0; i<horarioPreferencia.length; i++)
-                {
-                    if (selectedHorarioId === horarioPreferencia[i].id_h)
-                    {
+                selectedHorarioId = localStorage.getItem('selectedHorarioId');
+
+                for (let i = 0; i < horarioPreferencia.length; i++) {
+                    // Convertir selectedHorarioId a entero
+                    if (parseInt(selectedHorarioId) === horarioPreferencia[i].id_h) {
                         horarioPe.push(horarioPreferencia[i]);
                     }      
                 }
-                nuevoArray = [];
+
                 console.log('horarioPe: ', horarioPe);
+                console.log('selectedHorarioId: ', selectedHorarioId);
+                console.log('horarioPreferencia: ', horarioPreferencia);
+
+                nuevoArray1= [];
+        
                 for (let i = 0; i < horarioPe.length; i++) {
                     const index = re.findIndex(res => res.id_r === horarioPe[i].id_r);
                     if (index !== -1) {
-                        nuevoArray.push(re[index]);
+                        nuevoArray1.push(re[index]);
                     }
                 }
+                console.log(re);
+                nuevoArray = re;
                 nuevoArray.sort((a, b) => a.id_r - b.id_r);
                 // Crear un nuevo array que almacene registros limitados por bloques
                 let registrosPorId = {};
@@ -1229,8 +1246,7 @@ $(document).ready(function() {
         $('#modal-001').modal('show');
         listar2();
     });
-    $(document).on('click', '.profe', function(){
-        
+    $(document).on('click', '.profe', function(){     
         $('.mañana, .tarde').addClass('menu');
         $('.mañana').addClass('modal1');
         $('.tarde').addClass('modal2');
@@ -1247,8 +1263,7 @@ $(document).ready(function() {
         localStorage.setItem('id', id);
         localStorage.setItem('bloques', bloques);
         localStorage.setItem('activo', activo);
-        activoColor = localStorage.getItem('colorActivo');
-        
+        activoColor = localStorage.getItem('colorActivo');    
 
         if(activoColor === 'color')
         {
@@ -1374,8 +1389,7 @@ $(document).ready(function() {
                 {
                     localStorage.setItem('selectedBloques', bloques);
                     $('#cantidadBloques').text(bloques);
-                    $('#cantidadBloques2').text(bloques);
-                    
+                    $('#cantidadBloques2').text(bloques);             
                 }
                 else if (num === -1) {
                     localStorage.setItem('selectedBloques', bloques);
@@ -1384,8 +1398,7 @@ $(document).ready(function() {
                         id_r = localStorage.getItem('id_r');
                         }
                     limpiarTodo2();
-                }            
-            
+                }               
         }) 
     });
     function limpiarTodo2() {
@@ -1402,6 +1415,10 @@ $(document).ready(function() {
         });
     }
     $(document).on('click', '#checkAM, #checkPM', function(){
+        listarNumerico_horario();
+        $('.mañana, .tarde').removeClass('menu');
+        $('.mañana').removeClass('modal1');
+        $('.tarde').removeClass('modal2');
         $('#btnCancel3, #btnCancel4').css('display','block');
         colorActivo = $(this).data('color');
         localStorage.setItem('colorActivo', colorActivo);
@@ -1410,15 +1427,48 @@ $(document).ready(function() {
 
     });
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
+        $('.mañana, .tarde').addClass('menu');
+        $('.mañana').addClass('modal1');
+        $('.tarde').addClass('modal2');
         $('#btnCancel3, #btnCancel4').css('display','none');
         localStorage.removeItem('colorActivo');
         $(".PM").removeClass('colores');
         $(".AM").removeClass('colores');     
     });
     $(document).on('click', '#btnAgregar', function(){
+        $('#staticBackdropLabel3').text('Guardar Horario');
+        $('#nombreHorario').val("");
         $('#horarioGuardar').modal('show');    
         listarNumerico_horario();      
     });
+    function ingresar_colores_horario()
+    {     
+        colores = JSON.parse(localStorage.getItem('color_Array'));
+        numerico = localStorage.getItem('numerico');
+        for (i=0; i<colores.length; i++)
+        {
+            color = colores[i].color;
+            direccion = colores[i].direccion;
+            num = numerico;
+
+            data = {
+                color: color,
+                direccion: direccion,
+                numerico: num
+            }
+
+            $.ajax({
+                url: '../php/colores/insert_c.php',
+                data: data,
+                type: 'POST',
+                success: function(response)
+                {
+                    console.log(response);
+                }
+            })
+        }
+    }
+
     $(document).on('click', '.colores', function(){
         let color_generado = JSON.parse(localStorage.getItem('color_Array')) || [];
         color = localStorage.getItem('colorArray');
@@ -1432,9 +1482,7 @@ $(document).ready(function() {
         color_generado.push(colorArray);
         localStorage.setItem('color_Array', JSON.stringify(color_generado));
     });
-    $(document).on('click', '#btnGuardar1', function(){
-           
-        
+    $(document).on('click', '#btnGuardar1', function(){    
         nombreHorario = $('#nombreHorario').val();
         guardar = JSON.parse(localStorage.getItem('nuevo_horario_generado'));
         numerico =localStorage.getItem('numerico_horario');
@@ -1457,15 +1505,14 @@ $(document).ready(function() {
                 data: data,
                 type: "POST",
                 success: function(response) {
-                    console.log(response);                           
+                    console.log(response);                          
                 }
             });
-
         }
+        ingresar_colores_horario(); 
         $('#horarioGuardar').modal('hide'); 
     });
 
-     // Función para listar los profesores
      function listar_horarios_generados() {
         $.ajax({
             url: '../php/horario_generados/list.php',
@@ -1488,16 +1535,16 @@ $(document).ready(function() {
                         {
                             template += `
                             <tr class="numerico-${profesor[i].numerico} text-center">
-                                <td>${profesor[i].nombre_horario}</td>
-                                <td>${profesor[i].creado_en}</td>
+                                <td class="menu">${profesor[i].nombre_horario}</td>
+                                <td class="menu">${profesor[i].creado_en}</td>
                                 <td>
-                                    <button value="${profesor[i].numerico}" class="btn btn-primary tool-action default-action calendarios" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
+                                    <button value="${profesor[i].numerico}" class="btn btn-primary editar_horario" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
                                        <i class="bi bi-pencil"></i>
                                     </button>
                                 </td>
                                 <td>
-                                    <button value="${profesor[i].numerico}" class="btn btn-primary tool-action default-action calendarios" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
-                                        <i class="bi bi-trash"></i>
+                                    <button value="${profesor[i].numerico}" class="btn btn-primary eliminar_horario " data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
+                                        <i class="bi bi-trash "></i>
                                     </button>
                                 </td>
                             </tr>
@@ -1509,10 +1556,78 @@ $(document).ready(function() {
             }
         });
     }
-    $(document).on('click', '.horarios', function(){
-        $('#modal-004').modal('show');    
-        listar_horarios_generados();     
+    $(document).on('click', '.eliminar_horario', function(){
+        $('#confirmDeleteModal1').modal('show'); 
+        numerico = $(this).data('numerico');
+        localStorage.setItem('numerico_eliminar', numerico); 
+
+           
     });
+    $(document).on('click', '#confirmarDelete', function(){
+        numerico = localStorage.getItem('numerico_eliminar'); 
+        data = {
+            numerico: numerico
+        }
+        $.ajax({
+
+            url: "../php/horario_generados/delete.php",
+            data: data,
+            type: 'POST',
+            success: function(response)
+            {
+                console.log(response);
+                $('#confirmDeleteModal1').modal('hide');
+                listar_horarios_generados(); 
+            }
+        })  
+           
+    });
+
+    $(document).on('click', '.horarios', function(){ 
+        listar_horarios_generados();
+        $('#modal-004').modal('show');    
+             
+    });
+    $(document).on('click', '#btnCerrar4', function(){
+        $('#staticBackdropLabel3').text('Guardar Horario');
+        $('#btnUpdate1').css('display','none');
+        $('#btnGuardar1').css('display','block');    
+    });
+    $(document).on('click', '#btnUpdate1', function(){
+        
+        numerico = localStorage.getItem('numerico_h');
+        nombreHorario = $('#nombreHorario').val();
+        data = {
+            numerico: numerico,
+            nombre_horario: nombreHorario
+        }
+
+        $.ajax({    
+            url: "../php/horario_generados/editar.php",
+            type: "POST",
+            data: data,
+            success:  function(response){
+                console.log(response);
+                $('#horarioGuardar').modal('hide');
+                $('#btnUpdate1').css('display','none');
+                $('#btnGuardar1').css('display','block'); 
+            }
+       });
+    });
+    $(document).on('click', '.editar_horario', function(){
+        numerico = $(this).data('numerico');
+        nombre = $(this).data('nombre');
+        localStorage.setItem('nombre_h', nombre);
+        localStorage.setItem('numerico_h', numerico);
+        $('#staticBackdropLabel3').text('Actualizar Horario');
+        $('#nombreHorario').val(nombre);
+        $('#horarioGuardar').modal('show');
+        $('#modal-004').modal('hide');
+        $('#btnGuardar1').css('display','none');
+        $('#btnUpdate1').css('display','block');
+        
+    });
+
 
     
 });

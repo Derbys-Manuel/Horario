@@ -174,6 +174,28 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
         </div>
     </div>
 
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="confirmDeleteModal1" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                </div>
+                <div class="modal-body" id="confirmDeleteModalBody">
+                    ¿Estás seguro de que quieres eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn" id="confirmarDelete" style="background-color: #4CAF50; color: white;">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
     <!-- Incluir archivos JavaScript de Bootstrap y el archivo js.js -->
     <script src="../assets/js/bootstrap.min.js?v=<?php echo $date['seconds'] ?>"></script>
     <script src="../assets/js.js?v=<?php echo $date['seconds'] ?>"></script>

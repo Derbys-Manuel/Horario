@@ -339,7 +339,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Guardar Horario</h1>
+                    <h1 class="modal-title fs-5 " id="staticBackdropLabel3">Guardar Horario</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="modal2">
@@ -353,7 +353,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" id= "btnCerrar4"class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <button type="button" id="btnGuardar1" class="btn btn-primary">Guardar</button>
                         <button type="button" id="btnUpdate1" class="btn btn-primary" style="display: none;">Actualizar</button>
                     </div>
