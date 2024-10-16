@@ -72,7 +72,8 @@ CREATE TABLE `horario`.`horarios_generados` (
   CREATE TABLE color (
     id_color INT AUTO_INCREMENT PRIMARY KEY,
     color VARCHAR(50) NOT NULL,
-    direccion VARCHAR(50) NOT NULL
+    direccion VARCHAR(50) NOT NULL,
+     numerico INT NOT NULL
 );
   
 

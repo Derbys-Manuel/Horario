@@ -92,9 +92,11 @@ $(document).ready(function() {
     
                 if (respuesta.length === 0) {
                     numerico = 1; // Si no hay datos, empieza desde 1
+                    numerico = parseInt(numerico);
                 } else {
                     respuesta.reverse();
                     numerico = respuesta[0].numerico; // Incrementa el valor del primer objeto
+                    numerico = parseInt(numerico);
                     numerico += 1;
                 } 
                 localStorage.setItem('numerico_horario', numerico); // Guarda el valor actualizado
@@ -1444,7 +1446,7 @@ $(document).ready(function() {
     function ingresar_colores_horario()
     {     
         colores = JSON.parse(localStorage.getItem('color_Array'));
-        numerico = localStorage.getItem('numerico');
+        numerico =localStorage.getItem('numerico_horario');
         for (i=0; i<colores.length; i++)
         {
             color = colores[i].color;
@@ -1534,9 +1536,9 @@ $(document).ready(function() {
                         if(i === 0 || profesor[i].numerico !== profesor[i-1].numerico)
                         {
                             template += `
-                            <tr class="numerico-${profesor[i].numerico} text-center">
-                                <td class="menu">${profesor[i].nombre_horario}</td>
-                                <td class="menu">${profesor[i].creado_en}</td>
+                            <tr class="numerico-${profesor[i].numerico} text-center menu ">
+                                <td class="listar-horario">${profesor[i].nombre_horario}</td>
+                                <td class="listar-horario">${profesor[i].creado_en}</td>
                                 <td>
                                     <button value="${profesor[i].numerico}" class="btn btn-primary editar_horario" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
                                        <i class="bi bi-pencil"></i>
@@ -1556,12 +1558,17 @@ $(document).ready(function() {
             }
         });
     }
+
+    $(document).on('click', '.listar-horario', function(){
+       alert('dasadsa');
+       console.log('¿sd')
+
+    });
+
     $(document).on('click', '.eliminar_horario', function(){
         $('#confirmDeleteModal1').modal('show'); 
         numerico = $(this).data('numerico');
-        localStorage.setItem('numerico_eliminar', numerico); 
-
-           
+        localStorage.setItem('numerico_eliminar', numerico);     
     });
     $(document).on('click', '#confirmarDelete', function(){
         numerico = localStorage.getItem('numerico_eliminar'); 
@@ -1577,11 +1584,32 @@ $(document).ready(function() {
             {
                 console.log(response);
                 $('#confirmDeleteModal1').modal('hide');
+                eliminar_color_horario();
                 listar_horarios_generados(); 
             }
-        })  
-           
+        })       
     });
+
+    function eliminar_color_horario()
+    {
+        numerico =localStorage.getItem('numerico_horario');
+        data = {
+            numerico: numerico
+        }
+        $.ajax({
+
+            url: "../php/color/delete.php",
+            data: data,
+            type: 'POST',
+            success: function(response)
+            {
+                console.log(response);
+            }
+        })     
+    }
+
+
+
 
     $(document).on('click', '.horarios', function(){ 
         listar_horarios_generados();
