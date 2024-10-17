@@ -999,7 +999,6 @@ $(document).ready(function() {
             $(`#${direccion[i]}`).val("");
             $(`#${direccion[i]}`).css('background-color', `#FFFFFF`);
         }
-            limpiar_registro_editar();   
     }
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
@@ -1343,8 +1342,7 @@ $(document).ready(function() {
         localStorage.removeItem('nuevo_horario_generado');
         let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
         localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
-        limpiar_registro_editar();
-        guardar_horario_generado();
+
     });
     $(document).on('click', '#btnCancel2', function(){
         $('#btnCancel2').css('display', 'none');
@@ -1355,8 +1353,7 @@ $(document).ready(function() {
         let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
         localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
         localStorage.removeItem('nuevo_horario_generado');
-        limpiar_registro_editar();
-        guardar_horario_generado();    
+ 
     });
 
     $(document).on('click', '.decrease2, .increase2', function(){
@@ -1579,6 +1576,8 @@ $(document).ready(function() {
         success: function(response)
         {
             res = JSON.parse(response);
+            localStorage.setItem('color_Array', JSON.stringify(res));
+
             for (i=0; i < res.length; i++)
             {
                 $(`#${res[i].direccion}`).css('background-color', `${res[i].color}`);              
@@ -1592,6 +1591,8 @@ $(document).ready(function() {
         success: function(response)
         {
             res = JSON.parse(response);
+            localStorage.setItem('nuevo_horario_generado',JSON.stringify(res));
+
             for (i=0; i < res.length; i++)
             {
                 $(`#${res[i].direccion}`).html(`<div class="text-success ${res[i].direccion}" value="${res[i].id_r}">
@@ -1602,10 +1603,6 @@ $(document).ready(function() {
             }
         }
        });
-
-
-
-
     });
 
     $(document).on('click', '.eliminar_horario', function(){
