@@ -609,7 +609,7 @@ $(document).ready(function() {
             // Modo normal, insertar o eliminar clases
             if ($(`.${element}`).length) {  
                 $(`.${element}`).remove();
-                $(`#${element}`).removeClass('border-danger border-2');
+                $(`#${element}`).removeClass('border-danger border-3');
                 let numerosArray = JSON.parse(localStorage.getItem('numerosArray'));
                 console.log(numerosArray, "Eliminar registro , parte Numerico");
                 for (i=0; i<numerosArray.length; i++)
@@ -1018,7 +1018,7 @@ $(document).ready(function() {
         nomb = selectedHorarioText;
         $('#nombre-horario-pm').text(nomb);
         $('#nombre-horario-am').text(nomb);
-        $('.decrease2, .increase2').css('display','none');
+        // $('.decrease2, .increase2').css('display','none');
         $('.btn-001').css('display','block');
         $('.color01').css('display','block');
         $('.color02').css('display','block');
@@ -1075,8 +1075,8 @@ $(document).ready(function() {
                     elementos_repetidos_a.push(re[resultado.indices1[i]]);
                     elementos_repetidos_b.push(re[resultado.indices2[i]]);
                 }
-                console.log(elementos_repetidos_a ,"Elementos repetidos A" );
-                console.log(elementos_repetidos_b ,"Elementos repetidos B");
+                // console.log(elementos_repetidos_a ,"Elementos repetidos A" );
+                // console.log(elementos_repetidos_b ,"Elementos repetidos B");
                 const prioridad = [];
                 const no_prioridad = [];
                 const result = {};
@@ -1087,8 +1087,8 @@ $(document).ready(function() {
                     //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
                     const existeEnHorarioA = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_a[i].id_r);
                     const existeEnHorarioB = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_b[i].id_r);
-                    console.log(existeEnHorarioA, 'aaaaaaaaaaaaaa');
-                    console.log(existeEnHorarioB, 'bbbbbbbbbbbbb');
+                    // console.log(existeEnHorarioA, 'aaaaaaaaaaaaaa');
+                    // console.log(existeEnHorarioB, 'bbbbbbbbbbbbb');
                     if(existeEnHorarioA === true && existeEnHorarioB === false)
                     {
                         prioridad.push(elementos_repetidos_a[i]);
@@ -1465,9 +1465,10 @@ $(document).ready(function() {
             num = numerico;
 
             data = {
+                id_h: selectedHorarioId,
                 color: color,
                 direccion: direccion,
-                numerico: num
+                numerico: num      
             }
 
             $.ajax({
