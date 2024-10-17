@@ -739,7 +739,7 @@ $(document).ready(function() {
         else 
         {
             // Verifica si el elemento ya tiene la clase 'border-danger border-2'
-            if ($(this).hasClass('border-danger border-2')) {
+            if ($(this).hasClass('border-danger border-3')) {
                 // Si ya la tiene, la quita
                 id_r = $(this).val();
                 console.log(id_r);
@@ -755,7 +755,7 @@ $(document).ready(function() {
                         listar_preferencias();
                     }
                 });
-                $(this).removeClass('border-danger border-2');
+                $(this).removeClass('border-danger border-3');
             } else {
                 // Si no la tiene, la agrega          
                 direccion = $(this).attr('id');
@@ -766,7 +766,7 @@ $(document).ready(function() {
                 }
                 else
                 {
-                    $(this).addClass('border-danger border-2');
+                    $(this).addClass('border-danger border-3');
                     selectedID = localStorage.getItem('selectedID');
                     numerico = localStorage.getItem('numero');
                     nombre = localStorage.getItem('selectedHorarioText');
@@ -809,7 +809,10 @@ $(document).ready(function() {
     //LLAMADA A LA FUNCION LIMPIAR, REALIZANDO CLICK EN LOS BOTONES DE CLOSE, DE LOS MODALES DEL HORARIO
 
     $('#closeBtn1').click(function() {
-        limpiarTodo();
+        limpiarTodo(); 
+        $('.h').removeClass('horarios');
+        $('.h').removeClass('menu');
+
         localStorage.removeItem('color_Array');
         localStorage.removeItem('numerico_horario');
         $('.mañana').removeClass('modal1');
@@ -829,6 +832,9 @@ $(document).ready(function() {
 
     $('#closeBtn2').click(function() {
         limpiarTodo();
+        $('.h').removeClass('horarios');
+        $('.h').removeClass('menu');
+
         localStorage.removeItem('color_Array');
         localStorage.removeItem('numerico_horario');
         $('.tarde').removeClass('modal2');
@@ -896,7 +902,7 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).addClass('border-danger border-2');
+                    $(`#${res.direccion}`).addClass('border-danger border-3');
                 });  
                 
                 bloques = re.length;
@@ -994,7 +1000,7 @@ $(document).ready(function() {
         for(i=0;i<direccion.length;i++)
         {
             $(`#${direccion[i]}`).text("");
-            $(`#${direccion[i]}`).removeClass("border-danger border-2");
+            $(`#${direccion[i]}`).removeClass("border-danger border-3");
             $(`#${direccion[i]}`).css('opacity', '1');
             $(`#${direccion[i]}`).val("");
             $(`#${direccion[i]}`).css('background-color', `#FFFFFF`);
@@ -1003,6 +1009,9 @@ $(document).ready(function() {
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
         listar_preferencias_horario();
+
+        $('.h').addClass('horarios');
+        $('.h').addClass('menu');
         $('#btnAgregar').css('display','block');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
@@ -1035,6 +1044,7 @@ $(document).ready(function() {
             data: dato,
             success: function(response) {
                 const res = JSON.parse(response);
+
                 const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias')) || [];
                 const re = res.filter(res =>
                     horarioPreferencia.some(horario => horario.id_p === res.id)
@@ -1352,7 +1362,7 @@ $(document).ready(function() {
         localStorage.removeItem('activo');
         let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
         localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
-        localStorage.removeItem('nuevo_horario_generado');
+
  
     });
 
@@ -1411,7 +1421,7 @@ $(document).ready(function() {
             success: function(respo) {
                 const re = JSON.parse(respo);
                 re.forEach(res => {
-                    $(`#${res.direccion}`).removeClass("border-danger border-2");
+                    $(`#${res.direccion}`).removeClass("border-danger border-3");
                 });
                 
             }

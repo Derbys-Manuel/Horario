@@ -106,7 +106,7 @@
                 <!-- Modal Header -->
                 <div class="modal-header horario-header ">
                     <div class=" hora align-items-center mt-2 d-flex">
-                        <h1 class="modal-title fs-5 d-flex menu horarios" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                        <h1 class="modal-title fs-5 d-flex h" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
                         <button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
                     </div>
 
@@ -235,7 +235,7 @@
             <div class="modal-content">
                 <div class="modal-header horario-header">
                     <div class="d-flex">
-                        <h1 class="modal-title fs-5 menu horarios" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                        <h1 class="modal-title fs-5  h" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
                         <button class="btn menu" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
                     </div>
                     
