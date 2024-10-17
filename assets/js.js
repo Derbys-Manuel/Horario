@@ -92,9 +92,11 @@ $(document).ready(function() {
     
                 if (respuesta.length === 0) {
                     numerico = 1; // Si no hay datos, empieza desde 1
+                    numerico = parseInt(numerico);
                 } else {
                     respuesta.reverse();
                     numerico = respuesta[0].numerico; // Incrementa el valor del primer objeto
+                    numerico = parseInt(numerico);
                     numerico += 1;
                 } 
                 localStorage.setItem('numerico_horario', numerico); // Guarda el valor actualizado
@@ -979,25 +981,29 @@ $(document).ready(function() {
     }
     //FUNCION PARA LIMPIAR HORARIO CON EL BOTON DE CLOSE
     function limpiarTodo() {
-        $.ajax({
-            url: "../php/generar_h/limpiar.php",
-            type: "GET",
-            success: function(respo) {
-                const re = JSON.parse(respo);
-                re.forEach(res => {
-                    $(`#${res.direccion}`).text("");
-                    $(`#${res.direccion}`).removeClass("border-danger border-2");
-                    $(`#${res.direccion}`).css('opacity', '1');
-                    $(`#${res.direccion}`).val("");
-                });
-                limpiar_registro_editar();
-            }
-        });
+
+        direccion =   
+        [
+            "lu8-AM","ma8-AM","mi8-AM","ju8-AM","vi8-AM","sa8-AM","do8-AM",
+            "lu11-AM","ma11-AM","mi11-AM","ju11-AM","vi11-AM","sa11-AM","do11-AM",
+            "lu12-AM","ma12-AM","mi12-AM","ju12-AM","vi12-AM","sa12-AM","do12-AM", 
+            "lu14-PM","ma14-PM","mi14-PM","ju14-PM","vi14-PM","sa14-PM","do14-PM",
+            "lu17-PM","ma17-PM","mi17-PM","ju17-PM","vi17-PM","sa17-PM","do17-PM",
+            "lu20-PM","ma20-PM","mi20-PM","ju20-PM","vi20-PM","sa20-PM","do20-PM"
+        ]
+        for(i=0;i<direccion.length;i++)
+        {
+            $(`#${direccion[i]}`).text("");
+            $(`#${direccion[i]}`).removeClass("border-danger border-2");
+            $(`#${direccion[i]}`).css('opacity', '1');
+            $(`#${direccion[i]}`).val("");
+            $(`#${direccion[i]}`).css('background-color', `#FFFFFF`);
+        }
+            limpiar_registro_editar();   
     }
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
         listar_preferencias_horario();
-
         $('#btnAgregar').css('display','block');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
@@ -1444,7 +1450,7 @@ $(document).ready(function() {
     function ingresar_colores_horario()
     {     
         colores = JSON.parse(localStorage.getItem('color_Array'));
-        numerico = localStorage.getItem('numerico');
+        numerico =localStorage.getItem('numerico_horario');
         for (i=0; i<colores.length; i++)
         {
             color = colores[i].color;
@@ -1534,9 +1540,9 @@ $(document).ready(function() {
                         if(i === 0 || profesor[i].numerico !== profesor[i-1].numerico)
                         {
                             template += `
-                            <tr class="numerico-${profesor[i].numerico} text-center">
-                                <td class="menu">${profesor[i].nombre_horario}</td>
-                                <td class="menu">${profesor[i].creado_en}</td>
+                            <tr class="numerico-${profesor[i].numerico} text-center menu ">
+                                <td class="listar-horario" data-numerico="${profesor[i].numerico}">${profesor[i].nombre_horario}</td>
+                                <td class="listar-horario" data-numerico="${profesor[i].numerico}">${profesor[i].creado_en}</td>
                                 <td>
                                     <button value="${profesor[i].numerico}" class="btn btn-primary editar_horario" data-numerico="${profesor[i].numerico}"  data-nombre="${profesor[i].nombre_horario}" data-creado="${profesor[i].creado_en}">
                                        <i class="bi bi-pencil"></i>
@@ -1556,12 +1562,56 @@ $(document).ready(function() {
             }
         });
     }
+
+    $(document).on('click', '.listar-horario', function(){
+        $('#modal-004').modal('hide'); 
+       limpiarTodo();
+       numerico = $(this).data('numerico');
+
+       data ={
+        numerico: numerico
+       }
+       
+       $.ajax ({
+        url: "../php/colores/list.php",
+        data: data,
+        type: "POST",
+        success: function(response)
+        {
+            res = JSON.parse(response);
+            for (i=0; i < res.length; i++)
+            {
+                $(`#${res[i].direccion}`).css('background-color', `${res[i].color}`);              
+            }
+        }
+       });
+       $.ajax ({
+        url: "../php/horario_generados/listar_horarios.php",
+        data: data,
+        type: "POST",
+        success: function(response)
+        {
+            res = JSON.parse(response);
+            for (i=0; i < res.length; i++)
+            {
+                $(`#${res[i].direccion}`).html(`<div class="text-success ${res[i].direccion}" value="${res[i].id_r}">
+                    <div>${res[i].curso}</div>
+                    <div>(${res[i].nombre_p})</div>
+                </div>`); 
+
+            }
+        }
+       });
+
+
+
+
+    });
+
     $(document).on('click', '.eliminar_horario', function(){
         $('#confirmDeleteModal1').modal('show'); 
         numerico = $(this).data('numerico');
-        localStorage.setItem('numerico_eliminar', numerico); 
-
-           
+        localStorage.setItem('numerico_eliminar', numerico);     
     });
     $(document).on('click', '#confirmarDelete', function(){
         numerico = localStorage.getItem('numerico_eliminar'); 
@@ -1577,17 +1627,35 @@ $(document).ready(function() {
             {
                 console.log(response);
                 $('#confirmDeleteModal1').modal('hide');
+                eliminar_color_horario();
                 listar_horarios_generados(); 
             }
-        })  
-           
+        })       
     });
+
+    function eliminar_color_horario()
+    {
+        numerico =localStorage.getItem('numerico_horario');
+        data = {
+            numerico: numerico
+        }
+        $.ajax({
+
+            url: "../php/colores/delete.php",
+            data: data,
+            type: 'POST',
+            success: function(response)
+            {
+                console.log(response);
+            }
+        })     
+    }
 
     $(document).on('click', '.horarios', function(){ 
         listar_horarios_generados();
-        $('#modal-004').modal('show');    
-             
+        $('#modal-004').modal('show');             
     });
+
     $(document).on('click', '#btnCerrar4', function(){
         $('#staticBackdropLabel3').text('Guardar Horario');
         $('#btnUpdate1').css('display','none');
@@ -1624,8 +1692,7 @@ $(document).ready(function() {
         $('#horarioGuardar').modal('show');
         $('#modal-004').modal('hide');
         $('#btnGuardar1').css('display','none');
-        $('#btnUpdate1').css('display','block');
-        
+        $('#btnUpdate1').css('display','block');      
     });
 
 
