@@ -1320,29 +1320,29 @@ $(document).ready(function() {
             }
         }
     });
-    function limpiar_registro_editar() {
-        const arrayGuardado = JSON.parse(localStorage.getItem('miArray'));
-        // Verifica si arrayGuardado es null o no es un array
-        if (!arrayGuardado || !Array.isArray(arrayGuardado) || arrayGuardado.length === 0) {
-            console.log('');
-        } else {
-            for (let i = 0; i < arrayGuardado.length; i++) {
-                $(`#${arrayGuardado[i]}`).html('');
-            }
-        }
-    }
+    // function limpiar_registro_editar() {
+    //     const arrayGuardado = JSON.parse(localStorage.getItem('miArray'));
+    //     // Verifica si arrayGuardado es null o no es un array
+    //     if (!arrayGuardado || !Array.isArray(arrayGuardado) || arrayGuardado.length === 0) {
+    //         console.log('');
+    //     } else {
+    //         for (let i = 0; i < arrayGuardado.length; i++) {
+    //             $(`#${arrayGuardado[i]}`).html('');
+    //         }
+    //     }
+    // }
     
-    function guardar_horario_generado()
-    {
-        const horario_generado = JSON.parse(localStorage.getItem('horario_generado'));
-        for (i = 0 ; i < horario_generado.length; i++)
-        {
-            $(`#${horario_generado[i].direccion}`).html(`<div class="text-success ${horario_generado[i].direccion}" value="${horario_generado[i].id_r}">
-                <div>${horario_generado[i].curso}</div>
-                <div>(${horario_generado[i].nombre_p})</div>
-            </div>`);
-        }
-    }
+    // function guardar_horario_generado()
+    // {
+    //     const horario_generado = JSON.parse(localStorage.getItem('horario_generado'));
+    //     for (i = 0 ; i < horario_generado.length; i++)
+    //     {
+    //         $(`#${horario_generado[i].direccion}`).html(`<div class="text-success ${horario_generado[i].direccion}" value="${horario_generado[i].id_r}">
+    //             <div>${horario_generado[i].curso}</div>
+    //             <div>(${horario_generado[i].nombre_p})</div>
+    //         </div>`);
+    //     }
+    // }
     $(document).on('click', '#btnCancel1', function(){
         $('#btnCancel1').css('display', 'none');
         $('.mañana').removeClass('modal1');
@@ -1366,67 +1366,67 @@ $(document).ready(function() {
  
     });
 
-    $(document).on('click', '.decrease2, .increase2', function(){
-        nombre = localStorage.getItem('selectedNombre');
-        curso = localStorage.getItem('selectedCurso');
-        id = localStorage.getItem('selectedID');
-        id_h = localStorage.getItem('selectedHorarioId');
-        turno = localStorage.getItem('selectedPeriod');
-        blo = localStorage.getItem('selectedBloques');
-        bloques = parseInt(blo);
+    // $(document).on('click', '.decrease2, .increase2', function(){
+    //     nombre = localStorage.getItem('selectedNombre');
+    //     curso = localStorage.getItem('selectedCurso');
+    //     id = localStorage.getItem('selectedID');
+    //     id_h = localStorage.getItem('selectedHorarioId');
+    //     turno = localStorage.getItem('selectedPeriod');
+    //     blo = localStorage.getItem('selectedBloques');
+    //     bloques = parseInt(blo);
         
-        num = $(this).data('num'); // Obtener el valor de num      
-        num = Number(num); // Convertir num a un número
+    //     num = $(this).data('num'); // Obtener el valor de num      
+    //     num = Number(num); // Convertir num a un número
 
-        if (num === 1) {
-            bloques += 1; // Sumar 1 a bloques
-        } else if (num === -1) {
-            bloques -= 1; // Restar 1 a bloques
-        } 
-        console.log('Resultado de bloques:', bloques);
+    //     if (num === 1) {
+    //         bloques += 1; // Sumar 1 a bloques
+    //     } else if (num === -1) {
+    //         bloques -= 1; // Restar 1 a bloques
+    //     } 
+    //     console.log('Resultado de bloques:', bloques);
 
-        data = {
-            id: id,
-            nombre: nombre,
-            curso: curso,
-            bloques: bloques
-        }
-        const url = "../php/profesor/editarBloques.php";
-        $.ajax({
-            url: url,
-            data: data,
-            type: "POST",
-            success: function(response) {
-                console.log(response);
-                if (num === 1)
-                {
-                    localStorage.setItem('selectedBloques', bloques);
-                    $('#cantidadBloques').text(bloques);
-                    $('#cantidadBloques2').text(bloques);             
-                }
-                else if (num === -1) {
-                    localStorage.setItem('selectedBloques', bloques);
-                    $('#cantidadBloques').text(bloques);
-                    $('#cantidadBloques2').text(bloques);
-                        id_r = localStorage.getItem('id_r');
-                        }
-                    limpiarTodo2();
-                }               
-        }) 
-    });
-    function limpiarTodo2() {
-        $.ajax({
-            url: "../php/generar_h/limpiar.php",
-            type: "GET",
-            success: function(respo) {
-                const re = JSON.parse(respo);
-                re.forEach(res => {
-                    $(`#${res.direccion}`).removeClass("border-danger border-3");
-                });
+    //     data = {
+    //         id: id,
+    //         nombre: nombre,
+    //         curso: curso,
+    //         bloques: bloques
+    //     }
+    //     const url = "../php/profesor/editarBloques.php";
+    //     $.ajax({
+    //         url: url,
+    //         data: data,
+    //         type: "POST",
+    //         success: function(response) {
+    //             console.log(response);
+    //             if (num === 1)
+    //             {
+    //                 localStorage.setItem('selectedBloques', bloques);
+    //                 $('#cantidadBloques').text(bloques);
+    //                 $('#cantidadBloques2').text(bloques);             
+    //             }
+    //             else if (num === -1) {
+    //                 localStorage.setItem('selectedBloques', bloques);
+    //                 $('#cantidadBloques').text(bloques);
+    //                 $('#cantidadBloques2').text(bloques);
+    //                     id_r = localStorage.getItem('id_r');
+    //                     }
+    //                 limpiarTodo2();
+    //             }               
+    //     }) 
+    // });
+    // function limpiarTodo2() {
+    //     $.ajax({
+    //         url: "../php/generar_h/limpiar.php",
+    //         type: "GET",
+    //         success: function(respo) {
+    //             const re = JSON.parse(respo);
+    //             re.forEach(res => {
+    //                 $(`#${res.direccion}`).removeClass("border-danger border-3");
+    //             });
                 
-            }
-        });
-    }
+    //         }
+    //     });
+    // }
     $(document).on('click', '#checkAM, #checkPM', function(){
         listarNumerico_horario();
         $('.mañana, .tarde').removeClass('menu');

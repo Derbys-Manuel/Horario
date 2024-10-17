@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </div>
-                    <script>
+                    <!-- <script>
                     // Variables para mantener el estado de los bloques
                     let bloque = 1;
                     const bloqueInput = document.getElementById('bloques');
@@ -87,7 +87,7 @@
 
                     // Inicializar el valor del input
                     updateBloqueInput();
-                </script>
+                </script> -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" id="btn1" class="btn btn-primary">Añadir</button>
@@ -111,9 +111,9 @@
                     </div>
 
                     <div class=" d-flex position-absolute top-85 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button>
+                        <!-- <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button> -->
                             <h1 class="modal-title fs-5 h1Bloques  mx-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
-                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button>
+                        <!-- <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button> -->
                         <div class="btn-icon2 mx-2  menu" id="btnCancel5" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
@@ -240,9 +240,9 @@
                     </div>
                     
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button>
+                        <!-- <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button> -->
                             <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN<span class="d-none"id="cantidadBloques2"></span></h1>
-                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="hidden" >+</button>
+                        <!-- <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="hidden" >+</button> -->
                         <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel6" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
