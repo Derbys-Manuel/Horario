@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $user = 'root';
-$password = '';
+$password = '27508062';
 $dbname = 'horario';
 
 try {

@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </div>
-                    <script>
+                    <!-- <script>
                     // Variables para mantener el estado de los bloques
                     let bloque = 1;
                     const bloqueInput = document.getElementById('bloques');
@@ -87,7 +87,7 @@
 
                     // Inicializar el valor del input
                     updateBloqueInput();
-                </script>
+                </script> -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" id="btn1" class="btn btn-primary">Añadir</button>
@@ -102,15 +102,19 @@
     <!-- MODAL HORARIO MAÑANA -->
     <div class="modal fade modal-xl" id="calendario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content ">
                 <!-- Modal Header -->
-                <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1> 
-                    <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button>
-                            <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
-                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button>
-                        <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel5" style="display:none;">
+                <div class="modal-header horario-header ">
+                    <div class=" hora align-items-center mt-2 d-flex">
+                        <h1 class="modal-title fs-5 d-flex h" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                        <button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
+                    </div>
+
+                    <div class=" d-flex position-absolute top-85 end-0 mx-3 ">
+                        <!-- <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="button" >-</button> -->
+                            <h1 class="modal-title fs-5 h1Bloques  mx-3 menu " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
+                        <!-- <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="button" >+</button> -->
+                        <div class="btn-icon2 mx-2  menu" id="btnCancel5" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
                         </div>
@@ -118,23 +122,21 @@
                     <div class="d-flex align-items-center mt-2">
                         <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
                         <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
-                        <i class="bi bi-check-lg text-light bg-success rounded p-1 px-2 mx-2 menu" id="checkAM" data-color="color"></i>
-                        <div class="btn-icon2 mx-2 mt-2 menu" id="btnCancel3" style="display:none;">
+                        <i class="bi bi-check-lg text-light bg-success rounded p-1  mx-2 menu" id="checkAM" data-color="color"></i>
+                        <div class="btn-icon2 mx-2  menu" id="btnCancel3" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
                         </div>
                     </div>  
-                    <div class="row">
-                        <div class="col-5">
-                            <button class="btn-001 btn btn-success menu mt-1">Editar</button>
-                        </div>
-                        <div class="col-7">
-                            <div class="btn-icon2 mt-3 menu" id="btnCancel1" style="display:none;">
-                                <i class="bi bi-x-circle"></i>
-                                <span class="tooltiptext">Cancelar</span>
-                            </div>
+                  
+                    <div class="d-flex align-items-center mt-2">
+                        <button class="btn-001 btn btn-success menu ">Editar</button>
+                        <div class="btn-icon2 mx-3 menu" id="btnCancel1" style="display:none;">
+                            <i class="bi bi-x-circle"></i>
+                            <span class="tooltiptext">Cancelar</span>
                         </div>
                     </div>
+            
                     <label id="modoExamenLabel" class="switch" style="display: none;">
                         <input type="checkbox" id="modoExamen">
                         <span class="slider round">Modo Examen</span>
@@ -159,71 +161,57 @@
                                 <tbody id="AM">
                                     <tr id="h8" value="AM">
                                         <th scope="row" class="p-3">8:00 - 8:50</th>
-                                        <td id="lu8-AM" data-dia="Lunes"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="ma8-AM" data-dia="Martes"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="mi8-AM" data-dia="Miércoles"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="ju8-AM" data-dia="Jueves"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="vi8-AM" data-dia="Viernes"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="sa8-AM" data-dia="Sábado"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
-                                        <td id="do8-AM" data-dia="Domingo"  data-valor="1" value="08:00-08:50" class="mañana menu AM"></td>
+                                        <td id="lu8-AM" data-dia="Lunes" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="ma8-AM" data-dia="Martes" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="mi8-AM" data-dia="Miercoles" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="ju8-AM" data-dia="Juevos" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="vi8-AM" data-dia="Viernes" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="sa8-AM" data-dia="Sabado" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="do8-AM" data-dia="Domingo" value="08:00-8:50|08:50-09:40" class="mañana menu AM" rowspan="2"></td>
                                     </tr>
-                                    <tr id="h9" value="AM">
+                                    <tr id="h9">
                                         <th scope="row" class="p-3">8:50 - 9:40</th>
-                                        <td id="lu9-AM" data-dia="Lunes"  data-valor="1" value="08:50-09:40" class="mañana menu AM"></td>
-                                        <td id="ma9-AM" data-dia="Martes"  data-valor="1" value="08:50-09:40" class="mañana menu AM" AM></td>
-                                        <td id="mi9-AM" data-dia="Miércoles"  data-valor="1" value="08:50-09:40" class="mañana menu AM"></td>
-                                        <td id="ju9-AM" data-dia="Jueves"  data-valor="1" value="08:50-09:40" class="mañana menu AM"></td>
-                                        <td id="vi9-AM" data-dia="Viernes" data-valor="1"  value="08:50-09:40" class="mañana menu AM"></td>
-                                        <td id="sa9-AM" data-dia="Sábado" data-valor="1"  value="08:50-09:40" class="mañana menu AM"></td>
-                                        <td id="do9-AM" data-dia="Domingo"  data-valor="1" value="08:50-09:40" class="mañana menu AM"></td>
                                     </tr>
                                     <tr id="h10">
                                         <th scope="row" class="p-2">9:40 - 10:00</th>
-                                        <td id="receso1" colspan="7"><h2>Receso</h2></td>
+                                        <td id="receso1" colspan="7" class="table-success"><h1>Receso</h1></td>
                                     </tr>
                                     <tr id="h11">
                                         <th scope="row" class="p-3">10:00 - 10:50</th>
-                                        <td id="lu10-AM" data-dia="Lunes"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="ma10-AM" data-dia="Martes"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="mi10-AM" data-dia="Miércoles"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="ju10-AM" data-dia="Jueves"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="vi10-AM" data-dia="Viernes"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="sa10-AM" data-dia="Sábado"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
-                                        <td id="do10-AM" data-dia="Domingo"  data-valor="1" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="lu11-AM" data-dia="Lunes" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="ma11-AM" data-dia="Martes" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="mi11-AM" data-dia="Miercoles" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="ju11-AM" data-dia="Jueves" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="vi11-AM" data-dia="Viernes" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="sa11-AM" data-dia="Sabado" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
+                                        <td id="do11-AM" data-dia="Domingo" value="10:00-10:50" class="mañana menu AM" rowspan=""></td>
                                     </tr>
                                     <tr id="h12">
                                         <th scope="row" class="p-3">10:50 - 11:40</th>
-                                        <td id="lu11-AM" data-dia="Lunes"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="ma11-AM" data-dia="Martes"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="mi11-AM" data-dia="Miércoles"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="ju11-AM" data-dia="Jueves"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="vi11-AM" data-dia="Viernes"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="sa11-AM" data-dia="Sábado"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
-                                        <td id="do11-AM" data-dia="Domingo"  data-valor="1" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="lu12-AM" data-dia="Lunes" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="ma12-AM" data-dia="Martes" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="mi12-AM" data-dia="Miercoles" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="ju12-AM" data-dia="Jueves" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="vi12-AM" data-dia="Viernes" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="sa12-AM" data-dia="Sabado" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
+                                        <td id="do12-AM" data-dia="Domingo" value="10:50-11:40" class="mañana menu AM" rowspan=""></td>
                                     </tr>
                                     <tr id="h13">
                                         <th scope="row" class="p-3">11:40 - 12:00</th>
-                                        <td id="receso2" colspan="7"><h2>Receso</h2></td>
+                                        <td id="receso2" colspan="7" class="table-success"><h1>Receso</h1></td>
                                     </tr>
                                     <tr id="h14">
                                         <th scope="row" class="p-3">12:00 - 12:50</th>
-                                        <td id="lu12-PM" data-dia="Lunes"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="ma12-PM" data-dia="Martes"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="mi12-PM" data-dia="Miércoles" data-valor="1"  value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="ju12-PM" data-dia="Jueves"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="vi12-PM" data-dia="Viernes"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="sa12-PM" data-dia="Sábado"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
-                                        <td id="do12-PM" data-dia="Domingo"  data-valor="1" value="12:00-12:50" class="mañana menu AM"></td>
+                                        <td id="lu14-PM" data-dia="Lunes" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="ma14-PM" data-dia="Martes" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="mi14-PM" data-dia="Miercoles" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="ju14-PM" data-dia="Jueves" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="vi14-PM" data-dia="Viernes" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="sa14-PM" data-dia="Sabado" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
+                                        <td id="do14-PM" data-dia="Domingo" value="12:00-12:50|12:50-01:30" class="mañana menu AM" rowspan="2"></td>
                                     </tr>
                                     <tr id="h15">
                                         <th scope="row" class="p-3">12:50 - 01:30</th>
-                                        <td id="lu1-PM" data-dia="Lunes"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="ma1-PM" data-dia="Martes"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="mi1-PM" data-dia="Miércoles"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="ju1-PM" data-dia="Jueves"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="vi1-PM" data-dia="Viernes"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="sa1-PM" data-dia="Sábado"  data-valor="1" value="12:50-01:30" class="mañana menu AM"></td>
-                                        <td id="do1-PM" data-dia="Domingo" data-valor="1"  value="12:50-01:30" class="mañana menu AM"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -246,11 +234,15 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header horario-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                    <div class="d-flex">
+                        <h1 class="modal-title fs-5  h" id="staticBackdropLabel2">HORARIO: <span id="nombre-horario-pm"></span></h1>
+                        <button class="btn menu" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
+                    </div>
+                    
                     <div class=" d-flex position-absolute top-0 end-0 mx-3 ">
-                        <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button>
+                        <!-- <button class="btn btn-outline-secondary decrease2 d-none" data-num="-1" type="hidden" >-</button> -->
                             <h1 class="modal-title fs-5 h1Bloques m-3 menu " id="staticBackdropLabel1">SELECCIÓN<span class="d-none"id="cantidadBloques2"></span></h1>
-                        <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="hidden" >+</button>
+                        <!-- <button class="btn btn-outline-secondary increase2 d-none" data-num="1" type="hidden" >+</button> -->
                         <div class="btn-icon2 mx-2 mt-3 menu" id="btnCancel6" style="display:none;">
                             <i class="bi bi-x-circle"></i>
                             <span class="tooltiptext">Cancelar</span>
@@ -301,47 +293,33 @@
                                 <tbody>
                                     <tr id="h17">
                                         <th scope="row" class="p-3">5:00 - 5:50</th>
-                                        <td id="lu17-PM" data-dia="Lunes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="ma17-PM" data-dia="Martes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="mi17-PM" data-dia="Miércoles" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="ju17-PM" data-dia="Jueves" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="vi17-PM" data-dia="Viernes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="sa17-PM" data-dia="Sábado" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="do17-PM" data-dia="Domingo" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
+                                        <td id="lu17-PM" data-dia="Lunes" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="ma17-PM" data-dia="Martes" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="mi17-PM" data-dia="Miercoles" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="ju17-PM" data-dia="Jueves" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="vi17-PM" data-dia="Viernes" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="sa17-PM" data-dia="Sabado" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="do17-PM" data-dia="Domingo" value="05:00-06:40" class="tarde menu PM" rowspan="2"></td>
                                     </tr>
                                     <tr id="h18">
                                         <th scope="row" class="p-3">5:50 - 6:40</th>
-                                        <td id="lu18-PM" data-dia="Lunes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="ma18-PM" data-dia="Martes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="mi18-PM" data-dia="Miércoles" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="ju18-PM" data-dia="Jueves" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="vi18-PM" data-dia="Viernes" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="sa18-PM" data-dia="Sábado" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
-                                        <td id="do18-PM" data-dia="Domingo" data-valor="1" value="05:00-06:40" class="tarde menu PM"></td>
                                     </tr>
                                     <tr id="h19">
                                         <th scope="row" class="p-3">6:40 - 7:00</th>
-                                        <td id="receso3" colspan="7"><h2>Receso</h2></td>
+                                        <td id="receso3" colspan="7" class="table-success"><h1>Receso</h1></td>
                                     </tr>
                                     <tr id="h20">
                                         <th scope="row" class="p-3">7:00 - 7:50</th>
-                                        <td id="lu20-PM" data-dia="Lunes" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="ma20-PM" data-dia="Martes" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="mi20-PM" data-dia="Miércoles" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="ju20-PM" data-dia="Jueves" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="vi20-PM" data-dia="Viernes" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="sa20-PM" data-dia="Sábado" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
-                                        <td id="do20-PM" data-dia="Domingo" data-valor="1" value="07:00-07:50" class="tarde menu PM"></td>
+                                        <td id="lu20-PM" data-dia="Lunes" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="ma20-PM" data-dia="Martes" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="mi20-PM" data-dia="Miercoles" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="ju20-PM" data-dia="Jueves" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="vi20-PM" data-dia="Viernes" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="sa20-PM" data-dia="Sabado" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
+                                        <td id="do20-PM" data-dia="Domingo" value="07:00-07:50" class="tarde menu PM" rowspan="2"></td>
                                     </tr>
-                                    <tr id="h21">
+                                    <tr id="h12">
                                         <th scope="row" class="p-3">7:50 - 8:40</th>
-                                        <td id="lu21-PM" data-dia="Lunes" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="ma21-PM" data-dia="Martes" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="mi21-PM" data-dia="Miércoles" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="ju21-PM" data-dia="Jueves" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="vi21-PM" data-dia="Viernes" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="sa21-PM" data-dia="Sábado" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
-                                        <td id="do21-PM" data-dia="Domingo" data-valor="1" value="07:50-08:40" class="tarde menu PM"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -356,6 +334,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="horarioGuardar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 " id="staticBackdropLabel3">Guardar Horario</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="modal2">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control " id="nombreHorario" name="nombreHorario" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="hidden" id="">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id= "btnCerrar4"class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" id="btnGuardar1" class="btn btn-primary">Guardar</button>
+                        <button type="button" id="btnUpdate1" class="btn btn-primary" style="display: none;">Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
     <script>
     let selectedColorAM = document.getElementById('colorPickerAM').value;
     let selectedColorPM = document.getElementById('colorPickerPM').value;
@@ -377,13 +385,17 @@
         td.addEventListener('click', function() {
             if (canApplyColorAM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorAM;
-                this.classList.add('selected');  } });
+                this.classList.add('selected');  
+                localStorage.setItem('colorArray', selectedColorAM);
+            
+            } });
     });
     document.querySelectorAll('#table-horario-pm td').forEach(function(td) {
         td.addEventListener('click', function() {
             if (canApplyColorPM) {  // Solo aplica el color si está habilitado
                 this.style.backgroundColor = selectedColorPM;
                 this.classList.add('selected');} });
+                localStorage.setItem('colorArray', JSON.stringify(selectedColorPM));
     });
     document.getElementById('btnCancel3').addEventListener('click', function() {
         canApplyColorAM = false;  // Deshabilita la aplicación del color en el horario AM
@@ -426,6 +438,35 @@
                         </tr>
                     </thead>
                     <tbody id="lista-002">
+                        <!-- Aquí se generarán dinámicamente las filas de la tabla -->
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-004" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col"><h1 class="modal-title fs-5" id="staticBackdropLabel">Lista de Horarios Guardados</h1></div>
+                        </div> 
+                    </div>
+                </div>
+                <table id="example-003" class="table table-bordered text-center">
+                    <thead class="text-center align-items-center">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th colspan="2">Herramientas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-003" class="text-center align-items-center">
                         <!-- Aquí se generarán dinámicamente las filas de la tabla -->
                     </tbody>
                 </table>
