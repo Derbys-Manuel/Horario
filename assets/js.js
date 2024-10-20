@@ -2,6 +2,15 @@ $(document).ready(function() {
     borrar_localstorage();
     listar_horarios();
 
+    const direccion2024 =   
+    [
+        "lu8-AM","ma8-AM","mi8-AM","ju8-AM","vi8-AM","sa8-AM","do8-AM",
+        "lu11-AM","ma11-AM","mi11-AM","ju11-AM","vi11-AM","sa11-AM","do11-AM",
+        "lu12-AM","ma12-AM","mi12-AM","ju12-AM","vi12-AM","sa12-AM","do12-AM", 
+        "lu14-PM","ma14-PM","mi14-PM","ju14-PM","vi14-PM","sa14-PM","do14-PM",
+        "lu17-PM","ma17-PM","mi17-PM","ju17-PM","vi17-PM","sa17-PM","do17-PM",
+        "lu20-PM","ma20-PM","mi20-PM","ju20-PM","vi20-PM","sa20-PM","do20-PM"
+    ]
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -1079,6 +1088,7 @@ $(document).ready(function() {
             "lu17-PM","ma17-PM","mi17-PM","ju17-PM","vi17-PM","sa17-PM","do17-PM",
             "lu20-PM","ma20-PM","mi20-PM","ju20-PM","vi20-PM","sa20-PM","do20-PM"
         ]
+
         for(i=0;i<direccion.length;i++)
         {
             $(`#${direccion[i]}`).text("");
@@ -1095,6 +1105,7 @@ $(document).ready(function() {
         $('.h').addClass('horarios');
         $('.h').addClass('menu');
         $('#btnAgregar').css('display','block');
+        $('#btnAgregar1').css('display','block');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('.h1Bloques').css('display','none');
         nomb = selectedHorarioText;
@@ -1242,7 +1253,7 @@ $(document).ready(function() {
       
                 console.log('selectedHorarioId: ', selectedHorarioId);
                 console.log('horarioPreferencia: ', horarioPreferencia);
-                console.log('horarioPwea: ', horarioPe);
+                console.log('horarioPea: ', horarioPe);
         
                 let horario_pre = []; // Inicializar horario_pre
 
@@ -1260,23 +1271,23 @@ $(document).ready(function() {
                 let limite_bloques = [];
                 let descartados = [];
                 let contador_bloques = {};
-                
                 // Primera pasada: Agregar los elementos de `re` que cumplan con las reglas
                 for (let i = 0; i < re.length; i++) {
                     let id_actual = re[i].id;
                     let bloques_permitidos = parseInt(re[i].bloques); // Convertir 'bloques' a número
-                
                     if (!contador_bloques[id_actual]) {
                         contador_bloques[id_actual] = 0;
                     }
-                
                     // Verificamos si aún podemos agregar más registros para este id
                     if (contador_bloques[id_actual] < bloques_permitidos) {
                         let agregado = false; 
                         for (let e = 0; e < horario_pre.length; e++) {
                             if (re[i].id_r === horario_pre[e].id_r) {
-                                limite_bloques.push(re[i]); 
-                                contador_bloques[id_actual]++; 
+                                // Solo agregar si la dirección no existe en limite_bloques
+                                if (!limite_bloques.some(item => item.direccion === re[i].direccion)) {
+                                    limite_bloques.push(re[i]); 
+                                    contador_bloques[id_actual]++; 
+                                }
                                 agregado = true; 
                                 break; 
                             }
@@ -1296,11 +1307,14 @@ $(document).ready(function() {
                 
                         for (let j = 0; j < descartados.length; j++) {
                             if (descartados[j].id === id_actual) {
-                                limite_bloques.push(descartados[j]); 
-                                contador_bloques[id_actual]++; 
-                                descartados.splice(j, 1); 
-                                encontrado = true;
-                                break; 
+                                // Verificar que la dirección no esté ya en limite_bloques
+                                if (!limite_bloques.some(item => item.direccion === descartados[j].direccion)) {
+                                    limite_bloques.push(descartados[j]); 
+                                    contador_bloques[id_actual]++;
+                                    descartados.splice(j, 1); 
+                                    encontrado = true;
+                                    break; 
+                                }
                             }
                         }
                         if (!encontrado) {
@@ -1308,17 +1322,43 @@ $(document).ready(function() {
                         }
                     }
                 }
-     
-                let resultado2 = capturarIndicesDeRepetidos(limite_bloques);
-                const elementos_repetidos_a2 = [];
-                const elementos_repetidos_b2 = [];
-                for (let i = 0; i < resultado2.indices1.length; i++) {
-                    elementos_repetidos_a2.push(limite_bloques[resultado2.indices1[i]]);
-                    elementos_repetidos_b2.push(limite_bloques[resultado2.indices2[i]]);
+                nuevo = [];
+                for (let i = 0; i < descartados.length; i++) {         
+                    const index = prioridad.findIndex(res => res.id_r === descartados[i].id_r);
+                    if (index !== -1) {
+                        nuevo.push(no_prioridad[index]);       
+                    }
                 }
-                console.log(elementos_repetidos_a2, "elementos_repetidos_a2");
-                console.log(elementos_repetidos_b2, "elementos_repetidos_b2");
-                
+                console.log('nuevo => ', nuevo);
+                // Verificar si hay ids en limite_bloques que no han alcanzado su límite y completarlos desde nuevo
+                for (let i = 0; i < limite_bloques.length; i++) {
+                    let id_actual = limite_bloques[i].id;
+                    let bloques_permitidos = parseInt(limite_bloques[i].bloques);
+
+                    // Si este id no ha alcanzado su límite de bloques
+                    while (contador_bloques[id_actual] < bloques_permitidos) {
+                        let encontrado = false;
+
+                        // Buscar en el array nuevo si hay algún elemento con el mismo id
+                        for (let j = 0; j < nuevo.length; j++) {
+                            if (nuevo[j].id === id_actual) {
+                                // Verificar que la dirección no esté ya en limite_bloques
+                                if (!limite_bloques.some(item => item.direccion === nuevo[j].direccion)) {
+                                    limite_bloques.push(nuevo[j]);
+                                    contador_bloques[id_actual]++; // Actualizar el contador de bloques para este id
+                                    nuevo.splice(j, 1); // Eliminar el elemento de nuevo
+                                    encontrado = true;
+                                    break; // Salir del ciclo una vez que se ha agregado un elemento
+                                }
+                            }
+                        }
+                        // Si no se encontró ningún elemento en el array nuevo para este id, salir del bucle
+                        if (!encontrado) {
+                            break;
+                        }
+                    }
+                }
+           
                 console.log('limite_bloques completado =>', limite_bloques);
                 console.log('Elementos descartados =>', descartados);
 
@@ -1350,6 +1390,7 @@ $(document).ready(function() {
         $('.AM').addClass('.mañana');
         $('#btnCancel3, #btnCancel4').css('display','none');
         $('#btnAgregar').css('display','none');
+        $('#btnAgregar1').css('display','none');
         $('.btn-001').css('display','none');
         $('.color01').css('display','none');
         $('.color02').css('display','none');
