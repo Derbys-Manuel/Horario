@@ -1089,7 +1089,7 @@ $(document).ready(function() {
         }
     }
     //GENERAR HORARIO INTELIGENTE
-    $(document).on('click', '#btnHorario', function() {
+    $(document).on('click', '.btn_horarios', function() {
         listar_preferencias_horario();
 
         $('.h').addClass('horarios');
@@ -1115,6 +1115,20 @@ $(document).ready(function() {
         $('.mañana, .tarde').removeClass('menu');
         $('.table').removeClass('table-hover');
 
+        listar_examenes(); // Llamar a listar_examenes después de listar registros normales
+        if (selectedPeriod === 'Mañana') {
+            $('#calendario').modal('show');
+        } else if (selectedPeriod === 'Tarde') {
+            $('#calendario2').modal('show');
+        } else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
+            showAlert("Seleccione AM o PM"); 
+            return false;
+        }
+    });
+
+    //GENERAR HORARIO INTELIGENTE
+    $(document).on('click', '#btnHorario', function() {
+
         const dato = {
             turno: selectedPeriod,
             id_h: selectedHorarioId
@@ -1125,14 +1139,8 @@ $(document).ready(function() {
             type: "POST",   
             data: dato,
             success: function(response) {
-                const res = JSON.parse(response);
-
+                const re = JSON.parse(response);
                 const horarioPreferencia = JSON.parse(localStorage.getItem('horario_preferencias')) || [];
-                const re = res.filter(res =>
-                    horarioPreferencia.some(horario => horario.id_p === res.id)
-                )
-                console.log('filter => ',re);
-                console.log('horarioPreferencia =>', horarioPreferencia);
                 function capturarIndicesDeRepetidos(re) {
                     let elementosVistos = {};
                     let indices1 = [];
@@ -1157,8 +1165,6 @@ $(document).ready(function() {
                     elementos_repetidos_a.push(re[resultado.indices1[i]]);
                     elementos_repetidos_b.push(re[resultado.indices2[i]]);
                 }
-                // console.log(elementos_repetidos_a ,"Elementos repetidos A" );
-                // console.log(elementos_repetidos_b ,"Elementos repetidos B");
                 const prioridad = [];
                 const no_prioridad = [];
                 const result = {};
@@ -1169,8 +1175,6 @@ $(document).ready(function() {
                     //aqui se compara para ver quien tenie mayor o menor disponibilidad y se almacenan en => priodad y => no_prioridad
                     const existeEnHorarioA = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_a[i].id_r);
                     const existeEnHorarioB = horarioPreferencia.some(horario => horario.id_r === elementos_repetidos_b[i].id_r);
-                    // console.log(existeEnHorarioA, 'aaaaaaaaaaaaaa');
-                    // console.log(existeEnHorarioB, 'bbbbbbbbbbbbb');
                     if(existeEnHorarioA === true && existeEnHorarioB === false)
                     {
                         prioridad.push(elementos_repetidos_a[i]);
@@ -1225,78 +1229,108 @@ $(document).ready(function() {
 
                 horarioPe = [];
                 selectedHorarioId = localStorage.getItem('selectedHorarioId');
+                // Verifica si selectedHorarioId no es nulo
+                if (selectedHorarioId !== null) {
+                    const selectedId = parseInt(selectedHorarioId); // Convertir a entero
 
-                for (let i = 0; i < horarioPreferencia.length; i++) {
-                    // Convertir selectedHorarioId a entero
-                    if (parseInt(selectedHorarioId) === horarioPreferencia[i].id_h) {
-                        horarioPe.push(horarioPreferencia[i]);
-                    }      
+                    horarioPreferencia.forEach(horario => {
+                        if (selectedId === parseInt(horario.id_h)) {
+                            horarioPe.push(horario);
+                        }
+                    });
                 }
-
-                console.log('horarioPe: ', horarioPe);
+      
                 console.log('selectedHorarioId: ', selectedHorarioId);
                 console.log('horarioPreferencia: ', horarioPreferencia);
-
-                nuevoArray1= [];
+                console.log('horarioPwea: ', horarioPe);
         
-                for (let i = 0; i < horarioPe.length; i++) {
-                    const index = re.findIndex(res => res.id_r === horarioPe[i].id_r);
-                    if (index !== -1) {
-                        nuevoArray1.push(re[index]);
+                let horario_pre = []; // Inicializar horario_pre
+
+                for (let i = 0; i < re.length; i++) {
+                    for (let e = 0; e < horarioPe.length; e++) { // Corregir la condición
+                        if (re[i].id_r === horarioPe[e].id_r) {
+                            horario_pre.push(re[i]);
+                            break; // Salir del bucle interno al encontrar una coincidencia
+                        }
                     }
                 }
-                console.log(re);
-                nuevoArray = re;
-                nuevoArray.sort((a, b) => a.id_r - b.id_r);
-                // Crear un nuevo array que almacene registros limitados por bloques
-                let registrosPorId = {};
-                let nuevoArrayFinal = [];
-                let idRsAgregados = new Set(); // Usaremos un Set para rastrear los 'id_r' ya agregados
-                // Contamos cuántos bloques se permiten para cada id
-                re.forEach(el => {
-                    registrosPorId[el.id] = {
-                        registros: [],
-                        maxBloques: parseInt(el.bloques) || 0, // Limita según 'bloques'
-                        contador: 0 // Mantiene la cuenta de los bloques ya agregados
-                    };
-                });
-                // Insertar en el nuevo array con prioridad a los registros de nuevoArray
-                nuevoArray.forEach(el => {
-                    if (registrosPorId[el.id].contador < registrosPorId[el.id].maxBloques && !idRsAgregados.has(el.id_r)) {
-                        nuevoArrayFinal.push(el);
-                        registrosPorId[el.id].contador++;
-                        registrosPorId[el.id].registros.push(el);
-                        idRsAgregados.add(el.id_r); // Añadir 'id_r' al Set
-                    }
-                });
-                // Agregar los elementos restantes de 're', siempre respetando el límite de bloques
-                re.forEach(el => {
-                    if (registrosPorId[el.id].contador < registrosPorId[el.id].maxBloques && !idRsAgregados.has(el.id_r)) {
-                        nuevoArrayFinal.push(el);
-                        registrosPorId[el.id].contador++;
-                        registrosPorId[el.id].registros.push(el);
-                        idRsAgregados.add(el.id_r); // Añadir 'id_r' al Set
-                    }
-                });
-                console.log("Nuevo array final con prioridad, límite de bloques y sin duplicados de id_r:", nuevoArrayFinal);
+           
+                console.log('horarioPre: ', horario_pre);
 
-                localStorage.setItem('horario_generado', JSON.stringify(nuevoArrayFinal));
-                localStorage.setItem('nuevo_horario_generado', JSON.stringify(nuevoArrayFinal));
-                nuevoArrayFinal.forEach(res => {
+                let limite_bloques = [];
+                let descartados = [];
+                let contador_bloques = {};
+                
+                // Primera pasada: Agregar los elementos de `re` que cumplan con las reglas
+                for (let i = 0; i < re.length; i++) {
+                    let id_actual = re[i].id;
+                    let bloques_permitidos = parseInt(re[i].bloques); // Convertir 'bloques' a número
+                
+                    if (!contador_bloques[id_actual]) {
+                        contador_bloques[id_actual] = 0;
+                    }
+                
+                    // Verificamos si aún podemos agregar más registros para este id
+                    if (contador_bloques[id_actual] < bloques_permitidos) {
+                        let agregado = false; 
+                        for (let e = 0; e < horario_pre.length; e++) {
+                            if (re[i].id_r === horario_pre[e].id_r) {
+                                limite_bloques.push(re[i]); 
+                                contador_bloques[id_actual]++; 
+                                agregado = true; 
+                                break; 
+                            }
+                        }
+                        if (!agregado) {
+                            descartados.push(re[i]);
+                        }
+                    } else {
+                        descartados.push(re[i]);
+                    }
+                }
+                for (let i = 0; i < re.length; i++) {
+                    let id_actual = re[i].id;
+                    let bloques_permitidos = parseInt(re[i].bloques);
+                    while (contador_bloques[id_actual] < bloques_permitidos) {
+                        let encontrado = false;
+                
+                        for (let j = 0; j < descartados.length; j++) {
+                            if (descartados[j].id === id_actual) {
+                                limite_bloques.push(descartados[j]); 
+                                contador_bloques[id_actual]++; 
+                                descartados.splice(j, 1); 
+                                encontrado = true;
+                                break; 
+                            }
+                        }
+                        if (!encontrado) {
+                            break;
+                        }
+                    }
+                }
+     
+                let resultado2 = capturarIndicesDeRepetidos(limite_bloques);
+                const elementos_repetidos_a2 = [];
+                const elementos_repetidos_b2 = [];
+                for (let i = 0; i < resultado2.indices1.length; i++) {
+                    elementos_repetidos_a2.push(limite_bloques[resultado2.indices1[i]]);
+                    elementos_repetidos_b2.push(limite_bloques[resultado2.indices2[i]]);
+                }
+                console.log(elementos_repetidos_a2, "elementos_repetidos_a2");
+                console.log(elementos_repetidos_b2, "elementos_repetidos_b2");
+                
+                console.log('limite_bloques completado =>', limite_bloques);
+                console.log('Elementos descartados =>', descartados);
+
+                localStorage.setItem('horario_generado', JSON.stringify(limite_bloques));
+                localStorage.setItem('nuevo_horario_generado', JSON.stringify(limite_bloques));
+                limite_bloques.forEach(res => {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                             <div>${res.curso}</div>
                             <div>(${res.nombre_p})</div>
                         </div>`);
                 });
-                listar_examenes(); // Llamar a listar_examenes después de listar registros normales
-                if (selectedPeriod === 'Mañana') {
-                    $('#calendario').modal('show');
-                } else if (selectedPeriod === 'Tarde') {
-                    $('#calendario2').modal('show');
-                } else if (!$('#inlineCheckbox1').is(':checked') && !$('#inlineCheckbox2').is(':checked')) {
-                    showAlert("Seleccione AM o PM"); 
-                    return false;
-                }
+
             }    
         });
     });
@@ -1402,29 +1436,7 @@ $(document).ready(function() {
             }
         }
     });
-    // function limpiar_registro_editar() {
-    //     const arrayGuardado = JSON.parse(localStorage.getItem('miArray'));
-    //     // Verifica si arrayGuardado es null o no es un array
-    //     if (!arrayGuardado || !Array.isArray(arrayGuardado) || arrayGuardado.length === 0) {
-    //         console.log('');
-    //     } else {
-    //         for (let i = 0; i < arrayGuardado.length; i++) {
-    //             $(`#${arrayGuardado[i]}`).html('');
-    //         }
-    //     }
-    // }
-    
-    // function guardar_horario_generado()
-    // {
-    //     const horario_generado = JSON.parse(localStorage.getItem('horario_generado'));
-    //     for (i = 0 ; i < horario_generado.length; i++)
-    //     {
-    //         $(`#${horario_generado[i].direccion}`).html(`<div class="text-success ${horario_generado[i].direccion}" value="${horario_generado[i].id_r}">
-    //             <div>${horario_generado[i].curso}</div>
-    //             <div>(${horario_generado[i].nombre_p})</div>
-    //         </div>`);
-    //     }
-    // }
+
     $(document).on('click', '#btnCancel1', function(){
         $('#btnCancel1').css('display', 'none');
         $('.mañana').removeClass('modal1');
@@ -1448,67 +1460,6 @@ $(document).ready(function() {
  
     });
 
-    // $(document).on('click', '.decrease2, .increase2', function(){
-    //     nombre = localStorage.getItem('selectedNombre');
-    //     curso = localStorage.getItem('selectedCurso');
-    //     id = localStorage.getItem('selectedID');
-    //     id_h = localStorage.getItem('selectedHorarioId');
-    //     turno = localStorage.getItem('selectedPeriod');
-    //     blo = localStorage.getItem('selectedBloques');
-    //     bloques = parseInt(blo);
-        
-    //     num = $(this).data('num'); // Obtener el valor de num      
-    //     num = Number(num); // Convertir num a un número
-
-    //     if (num === 1) {
-    //         bloques += 1; // Sumar 1 a bloques
-    //     } else if (num === -1) {
-    //         bloques -= 1; // Restar 1 a bloques
-    //     } 
-    //     console.log('Resultado de bloques:', bloques);
-
-    //     data = {
-    //         id: id,
-    //         nombre: nombre,
-    //         curso: curso,
-    //         bloques: bloques
-    //     }
-    //     const url = "../php/profesor/editarBloques.php";
-    //     $.ajax({
-    //         url: url,
-    //         data: data,
-    //         type: "POST",
-    //         success: function(response) {
-    //             console.log(response);
-    //             if (num === 1)
-    //             {
-    //                 localStorage.setItem('selectedBloques', bloques);
-    //                 $('#cantidadBloques').text(bloques);
-    //                 $('#cantidadBloques2').text(bloques);             
-    //             }
-    //             else if (num === -1) {
-    //                 localStorage.setItem('selectedBloques', bloques);
-    //                 $('#cantidadBloques').text(bloques);
-    //                 $('#cantidadBloques2').text(bloques);
-    //                     id_r = localStorage.getItem('id_r');
-    //                     }
-    //                 limpiarTodo2();
-    //             }               
-    //     }) 
-    // });
-    // function limpiarTodo2() {
-    //     $.ajax({
-    //         url: "../php/generar_h/limpiar.php",
-    //         type: "GET",
-    //         success: function(respo) {
-    //             const re = JSON.parse(respo);
-    //             re.forEach(res => {
-    //                 $(`#${res.direccion}`).removeClass("border-danger border-3");
-    //             });
-                
-    //         }
-    //     });
-    // }
     $(document).on('click', '#checkAM, #checkPM', function(){
         listarNumerico_horario();
         $('.mañana, .tarde').removeClass('menu');

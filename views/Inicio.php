@@ -53,7 +53,7 @@ $date = getdate(); //CAPTURAR SEGUNDOS PARA REALIZAR UNA ACTUALIZACION DINAMICA 
                             <span class="tooltiptext">Enviar a</span>
                         </div>
                         <!-- Botón Horario -->
-                        <div class="btn-icon" id="btnHorario">
+                        <div class="btn-icon btn_horarios" id="btnHorario">
                             <i class="bi bi-calendar"></i>
                             <span class="tooltiptext">Horario</span>
                         </div>
