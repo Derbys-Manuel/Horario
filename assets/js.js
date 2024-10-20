@@ -1,5 +1,7 @@
 $(document).ready(function() {
     borrar_localstorage();
+    listar_horarios();
+
     let selectedCourse = "";
     let selectedTeacher = "";
     let selectedHorarioText = localStorage.getItem('selectedHorarioText') || ""; // Obtener el nombre del horario del localStorage
@@ -198,6 +200,86 @@ $(document).ready(function() {
 
     });
 
+    // Función para listar los profesores FFFFFFFFFFFF
+    function listar_horarios() {
+
+        $.ajax({
+            url: '../php/horario/listar_horarios.php',
+            type: 'GET',
+            success: function (response)
+            {
+                const horari = JSON.parse(response);
+                const dato = {
+                    id_h: selectedHorarioId,
+                    turno: selectedPeriod
+                }
+
+                $.ajax({
+                    url: '../php/profesor/lista.php',
+                    type: 'POST',
+                    data: dato,
+                    success: function(r) {
+                        const profesor = JSON.parse(r);
+                        agg_horarios = [];
+                        // Comprobar si hay algún horari.id que no exista en profesor.id_h
+                        if (horari.length > 0 && profesor.length > 0) {
+                            horari.forEach(horario => {
+                                // Verificar si el id del horario existe en profesor.id_h
+                                const existe = profesor.some(prof => prof.id_h === horario.id);
+                                
+                                // Si no existe, mostramos el resultado en consola
+                                if (!existe) {
+                                    console.log(`El horario con id ${horario.id} no existe en profesor.id_h`);
+                                    agg_horarios.push(horario.id);
+                                }
+                            });
+                        }
+                        profesores = [];
+                        for (i=0; i< profesor.length;i++)
+                        {
+                            if(profesor[0].id_h === profesor[i].id_h)
+                            {
+                                profesores.push(profesor[i]);
+                            }
+                        }
+                        console.log('profesores => ', profesores );
+                        console.log('agg_horario', agg_horarios);
+                        if(agg_horarios.length > 0)
+                        {
+                            turno = ['Mañana', 'Tarde'];
+                            for(i=0;i<agg_horarios.length;i++)   
+                            {
+                                for(u=0;u<turno.length;u++)
+                                {
+                                    for(e=0;e<profesores.length;e++)
+                                    {
+                                        const data = 
+                                        {
+                                            nombre: profesores[e].nombre_p,
+                                            curso: profesores[e].curso,
+                                            id_h: agg_horarios[i],
+                                            bloques: profesores[e].bloques,
+                                            turno: turno[u],
+                                            numerico: profesores[e].numerico
+                                        }
+                                        $.ajax({
+                                            url: '../php/profesor/insert.php',
+                                            data: data,
+                                            type: "POST",
+                                            success: function(response) {
+                                                console.log(response);
+                                            }
+                                        });
+                                    }                 
+                                }   
+                            }
+                        }                
+                    }
+                });
+            }
+        });
+    }
+
     // Función para listar los profesores
     function listar() {
         const dato = {
@@ -210,6 +292,7 @@ $(document).ready(function() {
             data: dato,
             success: function(r) {
                 const profesor = JSON.parse(r);
+                profesor.sort((a, b) => Number(a.numerico) - Number(b.numerico));
                 const calculo = profesor.length;
                 let template = "";
                 if (calculo === 0) {
@@ -241,7 +324,6 @@ $(document).ready(function() {
             }
         });
     }
-
 
     function listar2() {
         const dato = {
