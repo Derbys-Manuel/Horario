@@ -38,20 +38,20 @@ CREATE TABLE `examenes` (
     `turno` VARCHAR(50) NOT NULL,
     foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
 );
-CREATE TABLE preferencias (
-    preferenciaId INT PRIMARY KEY AUTO_INCREMENT,
-    id_r INT,
-    id_h INT, -- Change varchar(45) to INT if horarios_creados.id is INT
-    id_p INT,
-    direccion VARCHAR(45),
-    turno VARCHAR(45),
-    numerico VARCHAR(45),
-    nombre VARCHAR(45),
-    FOREIGN KEY (id_h) REFERENCES horarios_creados(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_p) REFERENCES profesor(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_r) REFERENCES registro(id_r) ON DELETE CASCADE
+create table preferencias
+(
+preferenciaId int primary key auto_increment,
+id_r int,
+id_h varchar(45),
+id_p int,
+direccion varchar(45),
+turno varchar(45),
+numerico varchar(45),
+nombre varchar(45),
+foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE,
+foreign key (id_p) references profesor (id) ON DELETE CASCADE,
+foreign key (id_r) references registro (id_r) ON DELETE CASCADE
 );
-
 use horario;
 CREATE TABLE `horario`.`horarios_generados` (
   `idhorarios_generados` INT NOT NULL AUTO_INCREMENT,
@@ -71,11 +71,13 @@ CREATE TABLE `horario`.`horarios_generados` (
   
   CREATE TABLE color (
     id_color INT AUTO_INCREMENT PRIMARY KEY,
+     `id_h` INT NULL,
     color VARCHAR(50) NOT NULL,
     direccion VARCHAR(50) NOT NULL,
-     numerico INT NOT NULL
+    numerico int NOT NULL,
+    foreign key (id_h) references horarios_creados (id) ON DELETE CASCADE
 );
-  
+
 
 
 
