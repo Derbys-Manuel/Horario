@@ -2,8 +2,6 @@ $(document).ready(function() {
     borrar_localstorage();
     listar_horarios();
 
-    registrar_register();
-
     const direccion2024 =   
     [
         "lu8-AM","ma8-AM","mi8-AM","ju8-AM","vi8-AM","sa8-AM","do8-AM",
@@ -277,6 +275,7 @@ $(document).ready(function() {
                                             type: "POST",
                                             success: function(response) {
                                                 console.log(response);
+                                                registrar_register();
                                             }
                                         });
                                     }                 
@@ -296,10 +295,9 @@ $(document).ready(function() {
             type: 'GET',
             success: function(r)
             {
-                res = JSON.parse(r);
-                console.log(res);
+                console.log(r);
             }
-        })
+        });
     }
 
     // Función para listar los profesores
@@ -771,7 +769,8 @@ $(document).ready(function() {
                             tiempo: tiempo,
                             id_p: selectedId,
                             direccion: element,
-                            turno: selectedPeriod
+                            turno: selectedPeriod,
+                            numerico: numerico
                         }
                         dato = {
                             id_p: selectedId
@@ -797,7 +796,8 @@ $(document).ready(function() {
                             tiempo: tiempo,
                             id_p: numerosArray[i].id,
                             direccion: element,
-                            turno: selectedPeriod
+                            turno: selectedPeriod,
+                            numerico: numerico
                         }
                         dato = {
                             id_p: selectedId

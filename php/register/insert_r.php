@@ -7,8 +7,9 @@ $id_p = $_POST['id_p'];
 $tiempo = $_POST['tiempo'];
 $direccion = $_POST['direccion'];
 $turno = $_POST['turno'];
+$numerico = $_POST['numerico'];
 
-$query = 'INSERT INTO registro (disponibilidad_i,disponibilidad_f,dia,id_p,tiempo,direccion,turno) VALUES (:disponibilidad_i,:disponibilidad_f,:dia,:id_p,:tiempo,:direccion,:turno)';
+$query = 'INSERT INTO registro (disponibilidad_i,disponibilidad_f,dia,id_p,tiempo,direccion,turno, numerico) VALUES (:disponibilidad_i,:disponibilidad_f,:dia,:id_p,:tiempo,:direccion,:turno, :numerico)';
 
 try {
     $stmt = $conn->prepare($query);
@@ -19,6 +20,7 @@ try {
     $stmt->bindParam(':id_p', $id_p, PDO::PARAM_STR);
     $stmt->bindParam(':direccion', $direccion, PDO::PARAM_STR);
     $stmt->bindParam(':turno', $turno, PDO::PARAM_STR);
+    $stmt->bindParam(':numerico', $numerico, PDO::PARAM_INT);
   
     if ($stmt->execute()) {
         echo "Ingreso exitoso";
