@@ -54,7 +54,7 @@ body {
     background-color: #333; /* Fondo oscuro */
     color: #f0f0f0; /* Texto claro */
     margin-bottom: 10px; /* Reducido el margen inferior */
-    border: 2px solid yellow; /* Borde amarillo */
+    border: 2px solid rgb(139, 139, 128); /* Borde amarillo */
     max-width: 900px; /* Ajustar el tamaño máximo */
     margin: auto; /* Centrar la tabla */
     border-radius: 15px; /* Bordes redondeados */

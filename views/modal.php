@@ -63,7 +63,7 @@
             </div>
         </div>
     </div>
-    
+ 
 
     <!-- MODAL HORARIO MAÑANA -->
     <div class="modal fade modal-xl" id="calendario" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -71,53 +71,53 @@
             <div class="modal-content ">
                 <!-- Modal Header -->
                 <div class="modal-header horario-header ">
-                <table class="table table-borderless">
-                    <thead class="position-relative">
-                        <tr>
-                        <th scope="col">
-                            <div class=" hora align-items-center mt-2 d-flex">
-                                <h1 class="modal-title fs-5 d-flex h text-light" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
-                                <button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
-                            </div>
-                        </th>
-                        <th scope="col" >
-                            <div class=" d-flex position-absolute top-0 end-0 mx-3 mt-3">
-                                    <h1 class="modal-title fs-5 h1Bloques  mx-3 menu text-light " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
-                                <div class="btn-icon2 mx-2  menu" id="btnCancel5" style="display:none;">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span class="tooltiptext">Cancelar</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="d-flex align-items-center mt-2">
-                                <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
-                                <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
-                                <i class="bi bi-check-lg text-light bg-success rounded p-1  mx-2 menu" id="checkAM" data-color="color"></i>
-                                <div class="btn-icon2 mx-2  menu" id="btnCancel3" style="display:none;">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span class="tooltiptext">Cancelar</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="d-flex align-items-center mt-2">
-                                <button class="btn-001 btn btn-success menu ">Editar</button>
-                                <div class="btn-icon2 mx-3 menu" id="btnCancel1" style="display:none;">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span class="tooltiptext">Cancelar</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col">         
-                            <label id="modoExamenLabel" class="switch" style="display: none;">
-                                <input type="checkbox" id="modoExamen">
-                                <span class="slider round">Modo Examen</span>
-                            </label>
-                        </th>
-                        </tr>
-                    </thead>
-                </table>
+                    <table class="table excluir table-borderless">
+                        <thead class="position-relative">
+                            <tr>
+                                <th scope="col">
+                                    <div class=" hora align-items-center mt-2 d-flex">
+                                        <h1 class="modal-title fs-5 d-flex h text-light" id="staticBackdropLabel1">HORARIO: <span id="nombre-horario-am"></span></h1>
+                                        <button class="btn menu hora2" id="btnAgregar"><i class="bi bi-plus-circle-fill text-success "></i></button>
+                                    </div>
+                                </th>
+                                <th scope="col" >
+                                    <div class=" d-flex position-absolute top-0 end-0 mx-3 mt-3">
+                                            <h1 class="modal-title fs-5 h1Bloques  mx-3 menu text-light " id="staticBackdropLabel1">SELECCIÓN <span class="d-none"id="cantidadBloques"></span></h1>
+                                        <div class="btn-icon2 mx-2  menu" id="btnCancel5" style="display:none;">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span class="tooltiptext">Cancelar</span>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="d-flex align-items-center mt-2">
+                                        <label for="colorPickerAM" class="me-1 color01" style="font-size: 0.9rem;">color:</label>
+                                        <input type="color" id="colorPickerAM" class="form-control color02 form-control-color me-1" title="Elige un color" style="height: 30px; width: 30px; border: none; padding: 0;" value="#FFFFFF">
+                                        <i class="bi bi-check-lg text-light bg-success rounded p-1  mx-2 menu" id="checkAM" data-color="color"></i>
+                                        <div class="btn-icon2 mx-2  menu" id="btnCancel3" style="display:none;">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span class="tooltiptext">Cancelar</span>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="d-flex align-items-center mt-2">
+                                        <button class="btn-001 btn btn-success menu ">Editar</button>
+                                        <div class="btn-icon2 mx-3 menu" id="btnCancel1" style="display:none;">
+                                            <i class="bi bi-x-circle"></i>
+                                            <span class="tooltiptext">Cancelar</span>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="col">         
+                                    <label id="modoExamenLabel" class="switch" style="display: none;">
+                                        <input type="checkbox" id="modoExamen">
+                                        <span class="slider round">Modo Examen</span>
+                                    </label>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             <div class="modal-body">
                     <div class="container-fluid">

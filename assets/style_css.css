@@ -43,7 +43,7 @@ body {
     background-color: #333; /* Fondo oscuro */
     color: #f0f0f0; /* Texto claro */
     margin-bottom: 10px; /* Reducido el margen inferior */
-    border: 2px solid yellow; /* Borde amarillo */
+    border: 2px solid rgba(24, 24, 23, 0); /* Borde amarillo */
     border-radius: 15px; /* Bordes redondeados */
     overflow: hidden; /* Para evitar que el contenido sobresalga */
 }

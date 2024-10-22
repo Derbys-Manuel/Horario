@@ -2,6 +2,8 @@ $(document).ready(function() {
     borrar_localstorage();
     listar_horarios();
 
+    registrar_register();
+
     const direccion2024 =   
     [
         "lu8-AM","ma8-AM","mi8-AM","ju8-AM","vi8-AM","sa8-AM","do8-AM",
@@ -222,7 +224,6 @@ $(document).ready(function() {
                     id_h: selectedHorarioId,
                     turno: selectedPeriod
                 }
-
                 $.ajax({
                     url: '../php/profesor/lista.php',
                     type: 'POST',
@@ -234,8 +235,7 @@ $(document).ready(function() {
                         if (horari.length > 0 && profesor.length > 0) {
                             horari.forEach(horario => {
                                 // Verificar si el id del horario existe en profesor.id_h
-                                const existe = profesor.some(prof => prof.id_h === horario.id);
-                                
+                                const existe = profesor.some(prof => prof.id_h === horario.id);                             
                                 // Si no existe, mostramos el resultado en consola
                                 if (!existe) {
                                     console.log(`El horario con id ${horario.id} no existe en profesor.id_h`);
@@ -287,6 +287,19 @@ $(document).ready(function() {
                 });
             }
         });
+    }
+
+    function registrar_register()
+    {
+        $.ajax ({
+            url: '../php/register/listar2.php',
+            type: 'GET',
+            success: function(r)
+            {
+                res = JSON.parse(r);
+                console.log(res);
+            }
+        })
     }
 
     // Función para listar los profesores
@@ -1176,6 +1189,8 @@ $(document).ready(function() {
                     elementos_repetidos_a.push(re[resultado.indices1[i]]);
                     elementos_repetidos_b.push(re[resultado.indices2[i]]);
                 }
+                console.log('elementos_repetidos_a => ', elementos_repetidos_a);
+                console.log('elementos_repetidos_b => ', elementos_repetidos_b);
                 const prioridad = [];
                 const no_prioridad = [];
                 const result = {};
@@ -1322,14 +1337,6 @@ $(document).ready(function() {
                         }
                     }
                 }
-                nuevo = [];
-                for (let i = 0; i < descartados.length; i++) {         
-                    const index = prioridad.findIndex(res => res.id_r === descartados[i].id_r);
-                    if (index !== -1) {
-                        nuevo.push(no_prioridad[index]);       
-                    }
-                }
-                console.log('nuevo => ', nuevo);
                 // Verificar si hay ids en limite_bloques que no han alcanzado su límite y completarlos desde nuevo
                 for (let i = 0; i < limite_bloques.length; i++) {
                     let id_actual = limite_bloques[i].id;
@@ -1340,13 +1347,12 @@ $(document).ready(function() {
                         let encontrado = false;
 
                         // Buscar en el array nuevo si hay algún elemento con el mismo id
-                        for (let j = 0; j < nuevo.length; j++) {
-                            if (nuevo[j].id === id_actual) {
+                        for (let j = 0; j < elementos_repetidos_b.length; j++) {
+                            if (elementos_repetidos_b[j].id === id_actual) {
                                 // Verificar que la dirección no esté ya en limite_bloques
-                                if (!limite_bloques.some(item => item.direccion === nuevo[j].direccion)) {
-                                    limite_bloques.push(nuevo[j]);
+                                if (!limite_bloques.some(item => item.direccion === elementos_repetidos_b[j].direccion)) {
+                                    limite_bloques.push(elementos_repetidos_b[j]);
                                     contador_bloques[id_actual]++; // Actualizar el contador de bloques para este id
-                                    nuevo.splice(j, 1); // Eliminar el elemento de nuevo
                                     encontrado = true;
                                     break; // Salir del ciclo una vez que se ha agregado un elemento
                                 }
@@ -1497,8 +1503,6 @@ $(document).ready(function() {
         localStorage.removeItem('activo');
         let horario = JSON.parse(localStorage.getItem('horario_generado')) || [];
         localStorage.setItem('nuevo_horario_generado', JSON.stringify(horario));
-
- 
     });
 
     $(document).on('click', '#checkAM, #checkPM', function(){
@@ -1511,7 +1515,6 @@ $(document).ready(function() {
         localStorage.setItem('colorActivo', colorActivo);
         $(".PM").addClass('colores');
         $(".AM").addClass('colores');
-
     });
     $(document).on('click', '#btnCancel3, #btnCancel4', function(){
         $('.mañana, .tarde').addClass('menu');
