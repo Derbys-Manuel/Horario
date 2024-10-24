@@ -1150,6 +1150,54 @@ $(document).ready(function() {
         }
     });
 
+
+    //GENERAR HORARIO INTELIGENTE
+    $(document).on('click', '.btn_horario2', function() {
+        selectedHorarioId = selectedHorarioId;
+        const dato = {
+            id_h: selectedHorarioId
+        };
+        $.ajax({
+            url: "../php/registro_generado/listar.php",
+            type: 'GET',
+                success: function(r) {
+                res = JSON.parse(r);
+                let bol = true; // Asumimos que es verdadero hasta encontrar un registro existente
+                const index = res.findIndex(res => res.id_h === parseInt(selectedHorarioId));
+                
+                if (index !== -1) {
+                    bol = false; // Si se encuentra, cambia bol a false
+                }          
+                // Aquí corriges el operador de comparación
+                if (bol === true) {
+                    const registro_generado = JSON.parse(localStorage.getItem('registro_generado')) || [];
+                    for (let i = 0; i < registro_generado.length; i++) {
+                        const datas = {
+                            id_r: registro_generado[i].id_r,
+                            id_p: registro_generado[i].id,
+                            id_h: registro_generado[i].id_h,
+                            direccion: registro_generado[i].direccion,
+                            turno: registro_generado[i].turno,
+                            numerico: registro_generado[i].numerico
+                        };
+                        $.ajax({
+                            url: "../php/registro_generado/insert_r.php",
+                            data: datas,
+                            type: "POST",
+                            success: function(response) {
+                                console.log(response, "ingreso de registros_generados");
+                            }
+                        });
+                    }
+                } else {
+                    console.log("Ya existen registros con el mismo id_h. No se agregarán nuevos registros.");
+                    
+                }
+            }
+        });
+    });
+
+
     //GENERAR HORARIO INTELIGENTE
     $(document).on('click', '#btnHorario', function() {
 
@@ -1368,8 +1416,10 @@ $(document).ready(function() {
                 console.log('limite_bloques completado =>', limite_bloques);
                 console.log('Elementos descartados =>', descartados);
 
+                localStorage.setItem('registros_generados', JSON.stringify(limite_bloques));
                 localStorage.setItem('horario_generado', JSON.stringify(limite_bloques));
                 localStorage.setItem('nuevo_horario_generado', JSON.stringify(limite_bloques));
+
                 limite_bloques.forEach(res => {
                         $(`#${res.direccion}`).html(`<div class="text-success ${res.direccion}" value="${res.id_r}">
                             <div>${res.curso}</div>
